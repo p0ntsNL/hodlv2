@@ -42,7 +42,7 @@ class Notify:
     def send_pushover(self, msg):
 
         try:
-            r = requests.post(
+            requests.post(
                 "https://api.pushover.net/1/messages.json",
                 data={"token": self.token, "user": self.key, "message": msg, "html": 1},
             )
