@@ -51,16 +51,18 @@ class Notify:
 
     def send(self, msg, loglevel, logging_only=False):
 
-        # Remove HTML
-        msg = msg.replace("<br><br>", " | ")
-        msg = msg.replace("<br>", " | ")
-        msg = re.sub("<[^<]+?>", "", msg)
-
-        # Logger
-        self.send_logging(msg, loglevel)
-
+        # Push
         if not logging_only:
 
             # Pushover
             if self.notifier == "pushover":
                 self.send_pushover(msg)
+
+        # Remove HTML for logging
+        msg = msg.replace("<br><br>", " | ")
+        msg = msg.replace("<br>", " | ")
+        msg = re.sub("<[^<]+?>", "", msg)
+
+        # Logging
+        self.send_logging(msg, loglevel)
+
