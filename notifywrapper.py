@@ -65,4 +65,3 @@ class Notify:
 
         # Logging
         self.send_logging(msg, loglevel)
-

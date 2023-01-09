@@ -14,8 +14,9 @@ class CCXTwrapper:
 
         exchange_class = getattr(ccxt, self.config.EXCHANGE)
         self.exchange = exchange_class(
-            { "apiKey": self.config.EXCHANGE_KEY,
-               "secret": self.config.EXCHANGE_SECRET,
+            {
+                "apiKey": self.config.EXCHANGE_KEY,
+                "secret": self.config.EXCHANGE_SECRET,
                 "password": self.config.EXCHANGE_PASSWORD,
                 "enableRateLimit": True,
             }
