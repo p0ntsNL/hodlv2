@@ -1,7 +1,6 @@
 # HODLv2 Open Source Security Policies and Procedures
 
-This document outlines security procedures and general policies for the
-Atomist Open Source projects as found on https://github.com/StefanWarmerdam/hodlv2.
+This document outlines security procedures and general policies for https://github.com/StefanWarmerdam/hodlv2.
 
   * [Reporting a Vulnerability](#reporting-a-vulnerability)
   * [Disclosure Policy](#disclosure-policy)
