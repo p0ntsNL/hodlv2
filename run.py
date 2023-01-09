@@ -199,7 +199,6 @@ class Bot:
             importlib.reload(config)
 
             # Variables
-            self.ok = True
             self.new = False
             self.open_side = self.config.SIDE
             self.close_side = "sell" if self.open_side == "buy" else "buy"
@@ -207,7 +206,7 @@ class Bot:
             # If open and closed orders are received from exchange
             self.open_orders = self.ccxt.get_open_orders()
             self.closed_orders = self.ccxt.get_closed_orders()
-            if self.open_orders[0] and self.closed_orders[0] and self.ok:
+            if self.open_orders[0] and self.closed_orders[0]:
 
                 # Set open and closed orders
                 self.open_orders = self.open_orders[1]
@@ -217,7 +216,6 @@ class Bot:
                 for m in self.config.MARKETS:
 
                     # Market specific variables
-                    self.ok = True
                     self.new = False
                     self.market = m
                     self.base = self.market.split("/")[0]
@@ -229,7 +227,7 @@ class Bot:
 
                     # Retrieve exchange data
                     self.ticker_data = self.ccxt.get_ticker_data(self.market)
-                    if self.ticker_data[0] and self.ok:
+                    if self.ticker_data[0]:
 
                         # Set ticker data
                         self.ticker_data = self.ticker_data[1]
@@ -243,15 +241,14 @@ class Bot:
                             self.check_next_price(
                                 float(self.next_price), float(self.ticker_data["last"])
                             )
-                            and self.ok
                         ):
                             self.new = True
 
                         # Initiate new trade if required
-                        if self.new and self.ok:
+                        if self.new:
 
                             self.balances = self.ccxt.get_balances()
-                            if self.balances[0] and self.ok:
+                            if self.balances[0]:
 
                                 self.balances = self.balances[1]["total"]
                                 self.base_balance = float(self.balances[self.base])
@@ -268,7 +265,7 @@ class Bot:
                                     self.market_order = self.ccxt.create_market_order(
                                         self.market, self.open_side, self.trade_value
                                     )
-                                    if self.market_order[0] and self.ok:
+                                    if self.market_order[0]:
 
                                         self.open_order_id = self.market_order[1][
                                             "info"
@@ -277,7 +274,7 @@ class Bot:
                                             self.market, self.open_order_id
                                         )
 
-                                        if self.open_order_details[0] and self.ok:
+                                        if self.open_order_details[0]:
 
                                             self.open_order_details = (
                                                 self.open_order_details[1]
@@ -311,7 +308,7 @@ class Bot:
                                                     self.close_price,
                                                 )
                                             )
-                                            if self.close_limit_order[0] and self.ok:
+                                            if self.close_limit_order[0]:
 
                                                 self.close_order_details = (
                                                     self.close_limit_order[1]
