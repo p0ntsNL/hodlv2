@@ -1,8 +1,8 @@
 #!/usr/bin/python3.10
 
-import time
-import json
 import importlib
+import json
+import time
 
 import config
 
