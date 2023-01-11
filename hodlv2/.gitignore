@@ -1,4 +1,3 @@
 __pycache__
-config.py
-*.log
-*.json
+config/config.py
+logs/*.log
