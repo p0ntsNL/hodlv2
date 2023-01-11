@@ -48,14 +48,13 @@ Before installing HODLv2, you are required to install a few things beforehand.
 
 ### MongoDB
 
-The bot uses MongoDB to store its data in, to install MongoDB please refer to the official website and follow the manual.
-[Install MongoDB](https://www.mongodb.com/docs/manual/administration/install-community/)
+The bot uses MongoDB to store its data in, to [install MongoDB](https://www.mongodb.com/docs/manual/administration/install-community/) please refer to the official website and follow the manual.
 
 ### Python
 
-The bot required Python3.8 or higher, depending on the OS you are using you should install it.
+The bot requires Python3.8 or higher, depending on the OS you are using you should install it.
 
-Furtermore, a few extra python libraries should be installed:
+Furtermore, a few extra libraries should be installed:
 ```
 pip install ccxt
 pip install requests
@@ -65,17 +64,24 @@ pip install importlib
 
 ### Clone
 
-After successfully installation of the above, you can clone HODLv2 into your project directory from [hodlv2 GitHub repository](https://github.com/StefanWarmerdam/hodlv2):
+After successfull installation of the above, you can clone HODLv2 into your project directory from the [hodlv2 GitHub repository](https://github.com/StefanWarmerdam/hodlv2):
 ```
 git clone https://github.com/StefanWarmerdam/hodlv2.git
 ```
 
+## Configure
+
+- Rename config/config.py.example to config/config.py
+- Populate config.py with the desired settings
+
 ## Run
 
-From the main directory, run the following command:
+From the main directory, run the following command to start the bot:
 ```
 python3 hodlv2/main.py
 ```
 
 If successful, you should see the current version printed in the console.
-```HODLv2 2023.1```
+```
+HODLv2 2023.1
+```
