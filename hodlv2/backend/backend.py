@@ -57,7 +57,6 @@ class Backend:
         try:
             find = self._db[collection].find_one({"_id": _id, key: {"$exists": exists}})
             if not isinstance(find, type(None)):
-                print(find)
                 return True, find
         except Exception as error:
             self.notify.send(f"find_one_exists error: {error}", "ERROR")

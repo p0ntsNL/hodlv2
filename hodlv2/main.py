@@ -30,9 +30,12 @@ class Worker:
 
         self.config = config
         self.notify = Notify(self.config)
-        self.bot = HODLv2Bot(self.config)
 
-        self.notify.send(f"HODLv2 {__version__}", "INFO", logging_only=True)
+        self.version = f"HODLv2 {__version__}"
+        self.notify.send(self.version, "INFO", logging_only=True)
+        print (self.version)
+
+        self.bot = HODLv2Bot(self.config)
 
     def reload(self):
         """
