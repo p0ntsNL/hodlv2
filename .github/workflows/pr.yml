@@ -12,4 +12,3 @@ jobs:
           use-pylint: true
           use-black: true
           use-isort: true
-          extra-pylint-options: "--recursive=y"
