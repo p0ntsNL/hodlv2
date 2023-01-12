@@ -47,6 +47,7 @@ class Backend:
         except Exception as error:
             logger.error(f"find_one error: {error}")
 
+        logger.warning(f"find_one: Unable to find {_id} in {collection}.")
         return False, {}
 
     def find_one_exists(self, collection, _id, key, exists):
@@ -65,6 +66,7 @@ class Backend:
         except Exception as error:
             logger.error(f"find_one_exists error: {error}")
 
+        logger.warning(f"find_one_exists: Unable to find {_id} in {collection}.")
         return False, {}
 
     def update_one(self, collection, _id, data, upsert):
@@ -89,6 +91,7 @@ class Backend:
         except Exception as error:
             logger.error(f"update_one error: {error}")
 
+        logger.warning(f"update_one: Unable to update {_id} in {collection}.")
         return False, {}
 
     def insert_one(self, collection, data):
@@ -106,4 +109,5 @@ class Backend:
         except Exception as error:
             logger.error(f"insert_one error: {error}")
 
+        logger.warning(f"insert_one: Unable to insert trade in {collection}.")
         return False, {}

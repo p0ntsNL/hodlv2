@@ -14,11 +14,12 @@ from hodlv2.hodlv2bot import HODLv2Bot
 from hodlv2.notify.notify import Notify
 
 # Logging
-logger = logging.basicConfig(
+logging.basicConfig(
     filename="hodlv2/hodlv2.log",
     format="%(asctime)s | %(levelname)s | %(message)s",
     level=logging.INFO,
 )
+logger = logging.getLogger()
 
 # check min. python version
 if sys.version_info < (3, 8):
@@ -37,12 +38,12 @@ class Worker:
 
         self.config = config
         self.notify = Notify(self.config)
-
         self.version = "HODLv2 2023.1"
-        logger.info(self.version)
-        print(self.version)
 
         self.bot = HODLv2Bot(self.config)
+
+        logger.info(f"Starting worker {__version__}")
+        print(f"{__version__}")
 
     def reload(self):
         """
@@ -69,6 +70,7 @@ class Worker:
 
         time.sleep(self.sleep())
         self.reload()
+        logger.info("reset")
 
     def worker(self):
         """
