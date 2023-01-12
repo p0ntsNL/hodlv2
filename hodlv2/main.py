@@ -17,7 +17,6 @@ from hodlv2.notify.notify import Notify
 logging.basicConfig(
     filename="hodlv2/hodlv2.log",
     format="%(asctime)s | %(levelname)s | %(message)s",
-    level=logging.INFO,
 )
 logger = logging.getLogger()
 
@@ -42,6 +41,9 @@ class Worker:
 
         self.bot = HODLv2Bot(self.config)
 
+        loglevel = logging.getLevelName(self.config.LOGLEVEL)
+        logger.setLevel(loglevel)
+
         logger.info(f"Starting worker {self.version}")
         print(f"Starting worker {self.version}")
 
@@ -55,6 +57,10 @@ class Worker:
 
         # Init bot
         self.bot = HODLv2Bot(self.config)
+
+        # Logging
+        loglevel = logging.getLevelName(self.config.LOGLEVEL)
+        logger.setLevel(loglevel)
 
     def sleep(self):
         """
@@ -70,7 +76,6 @@ class Worker:
 
         time.sleep(self.sleep())
         self.reload()
-        logger.info("reset")
 
     def worker(self):
         """

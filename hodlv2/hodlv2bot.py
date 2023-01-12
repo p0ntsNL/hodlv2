@@ -54,8 +54,6 @@ class HODLv2Bot:
         self.open_side = self.side
         self.close_side = "sell" if self.side == "buy" else "buy"
 
-        logger.info("init")
-
     def open_closed_ok(self):
         """
         TO DO
