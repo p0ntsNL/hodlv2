@@ -8,16 +8,17 @@ import sys
 
 from hodlv2.backend.backend import Backend
 from hodlv2.exchange.exchange import Exchange
-from hodlv2.misc.misc import (
-    calculate_profit,
-    calculate_trade_value,
-    check_next_price,
-    get_base,
-    get_profit_currency,
-    get_quote,
-    profit_in_trade_value,
-)
 from hodlv2.notify.notify import Notify
+
+from hodlv2.misc.misc import (  # isort:skip
+    calculate_profit,  # isort:skip
+    calculate_trade_value,  # isort:skip
+    check_next_price,  # isort:skip
+    get_base,  # isort:skip
+    get_profit_currency,  # isort:skip
+    get_quote,  # isort:skip
+    profit_in_trade_value,  # isort:skip
+)  # isort:skip
 
 # check min. python version
 if sys.version_info < (3, 8):
