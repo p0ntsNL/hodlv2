@@ -6,7 +6,6 @@ TO DO
 
 import sys
 
-from hodlv2 import __version__
 from hodlv2.backend.backend import Backend
 from hodlv2.exchange.exchange import Exchange
 from hodlv2.notify.notify import Notify
@@ -112,8 +111,8 @@ class HODLv2Bot:
         if self.open_orders[0]:
             open_orders = 0
             for order in self.open_orders[1]:
-                if order['symbol'] == 'market':
-                  open_orders += 1
+                if order['symbol'] == market:
+                    open_orders += 1
 
             if open_orders == 0:
                 return True

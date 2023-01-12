@@ -8,7 +8,6 @@ import importlib
 import sys
 import time
 
-from hodlv2 import __version__
 from hodlv2.config import config
 from hodlv2.hodlv2bot import HODLv2Bot
 from hodlv2.notify.notify import Notify
@@ -31,7 +30,7 @@ class Worker:
         self.config = config
         self.notify = Notify(self.config)
 
-        self.version = f"HODLv2 {__version__}"
+        self.version= f"HODLv2 2023.1"
         self.notify.send(self.version, "INFO", logging_only=True)
         print (self.version)
 
