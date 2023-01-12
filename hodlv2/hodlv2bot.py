@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # pylint: disable=too-many-instance-attributes
 """
-Main bot class
+Main HODLv2 bot class
 """
 
 import sys
