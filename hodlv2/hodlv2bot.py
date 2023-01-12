@@ -103,13 +103,20 @@ class HODLv2Bot:
             market, self.close_side, trade_value, price
         )
 
-    def no_open_orders(self):
+    def no_open_orders(self, market):
         """
         TO DO
         """
 
-        if self.open_orders[0] and len(self.open_orders[1]) == 0:
-            return True
+        # If open orders is retrieved from exchange
+        if self.open_orders[0]:
+            open_orders = 0
+            for order in self.open_orders[1]:
+                if order['symbol'] == 'market':
+                  open_orders += 1
+
+            if open_orders == 0:
+                return True
 
         return False
 
@@ -214,7 +221,7 @@ class HODLv2Bot:
                     self.get_next_price(market),
                     market_data[1]["ticker"]["last"],
                 )
-                or self.no_open_orders()
+                or self.no_open_orders(market)
             ):
                 return True, market_data[1]
 
