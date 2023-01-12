@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # pylint: disable=too-many-instance-attributes
 """
-TO DO
+Main bot class
 """
 
 import sys
