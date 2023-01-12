@@ -99,13 +99,3 @@ def return_total_profit(profits):
         msg = msg + prof
 
     return msg
-
-
-def get_profit_currency(profit_in, quote, base):
-    """
-    TO DO
-    """
-
-    data = {"quote": quote, "base": base}
-
-    return data[profit_in]

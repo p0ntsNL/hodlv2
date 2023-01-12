@@ -15,7 +15,6 @@ from hodlv2.misc.misc import (  # isort:skip
     calculate_trade_value,  # isort:skip
     check_next_price,  # isort:skip
     get_base,  # isort:skip
-    get_profit_currency,  # isort:skip
     get_quote,  # isort:skip
     profit_in_trade_value,  # isort:skip
 )  # isort:skip
@@ -292,6 +291,11 @@ class HODLv2Bot:
             "open": open_order_details[1],
             "close": limit_close_order[1],
             "profit_in": self.profit_in,
+            "base": get_base(market),
+            "quote": get_quote(market),
+            "profit_currency": get_quote(market)
+            if self.profit_in == "quote"
+            else get_base(market),
             "status": "active",
         }
         self.backend.insert_one("trades", data)
@@ -303,15 +307,15 @@ class HODLv2Bot:
             Id: {limit_close_order[1]["info"]["txid"][0]}
             Market: {market}
             Side: {self.open_side}
-            Price: {open_order_details[1]['average']} quote
-            Amount: {open_order_details[1]['filled']} base
-            Cost: {open_order_details[1]['cost']} quote
+            Price: {open_order_details[1]['average']} {get_quote(market)}
+            Amount: {open_order_details[1]['filled']} {get_base(market)}
+            Cost: {open_order_details[1]['cost']} {get_quote(market)}
 
             <b>Closing order</b>
             Side: {self.close_side}
-            Close price: {limit_close_order[1]['price']} quote
-            Close amount: {close_trade_value} base
-            Close cost: {close_cost} quote""",
+            Close price: {limit_close_order[1]['price']} {get_quote(market)}
+            Close amount: {close_trade_value} {get_base(market)}
+            Close cost: {close_cost} {get_quote(market)}""",
             "INFO",
         )
 
@@ -331,6 +335,7 @@ class HODLv2Bot:
                 market = trade[1]["market"]
                 open_order = trade[1]["open"]
                 profit_in = trade[1]["profit_in"]
+                profit_currency = trade[1]["profit_currency"]
                 status = trade[1]["status"]
 
                 if status == "active" and close_order["status"] in [
@@ -346,7 +351,6 @@ class HODLv2Bot:
                         {
                             "close": close_order,
                             "profit": 0,
-                            "profit_currency": "n/a",
                             "status": close_order["status"],
                         },
                         False,
@@ -362,9 +366,6 @@ class HODLv2Bot:
                 elif status == "active" and close_order["status"] == "closed":
 
                     profit = calculate_profit(profit_in, open_order, close_order)
-                    profit_currency = get_profit_currency(
-                        profit_in, get_quote(market), get_base(market)
-                    )
 
                     # Update close order and profit to backend
                     update = self.backend.update_one(
@@ -373,7 +374,6 @@ class HODLv2Bot:
                         {
                             "close": close_order,
                             "profit": profit,
-                            "profit_currency": profit_currency,
                             "status": "finished",
                         },
                         False,
