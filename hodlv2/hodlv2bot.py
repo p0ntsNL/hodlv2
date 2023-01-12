@@ -41,7 +41,6 @@ class HODLv2Bot:
 
         self.open_orders = self.ccxt.get_open_orders()
         self.closed_orders = self.ccxt.get_closed_orders()
-        self.balances = self.ccxt.get_balances()
 
         self.trade_value = self.config.TRADE_VALUE
         self.side = self.config.SIDE
@@ -74,9 +73,9 @@ class HODLv2Bot:
         TO DO
         """
 
-        balance = self.balances
-        if balance[0]:
-            return balance[1]["total"][quote]
+        balances = self.ccxt.get_balances()
+        if balances[0]:
+            return balances[1]["total"][quote]
 
         return 0
 
