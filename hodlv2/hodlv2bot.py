@@ -1,22 +1,24 @@
 #!/usr/bin/env python3
 # pylint: disable=too-many-instance-attributes
 """
-TO DO
+Main bot class
 """
 
 import sys
 
-from hodlv2 import __version__
 from hodlv2.backend.backend import Backend
 from hodlv2.exchange.exchange import Exchange
 from hodlv2.notify.notify import Notify
-from hodlv2.misc.misc import calculate_trade_value
-from hodlv2.misc.misc import get_quote
-from hodlv2.misc.misc import get_base
-from hodlv2.misc.misc import check_next_price
-from hodlv2.misc.misc import calculate_profit
-from hodlv2.misc.misc import get_profit_currency
-from hodlv2.misc.misc import profit_in_trade_value
+
+from hodlv2.misc.misc import (  # isort:skip
+    calculate_profit,  # isort:skip
+    calculate_trade_value,  # isort:skip
+    check_next_price,  # isort:skip
+    get_base,  # isort:skip
+    get_profit_currency,  # isort:skip
+    get_quote,  # isort:skip
+    profit_in_trade_value,  # isort:skip
+)  # isort:skip
 
 # check min. python version
 if sys.version_info < (3, 8):
@@ -99,17 +101,22 @@ class HODLv2Bot:
         TO DO
         """
 
-        return self.ccxt.create_limit_order(
-            market, self.close_side, trade_value, price
-        )
+        return self.ccxt.create_limit_order(market, self.close_side, trade_value, price)
 
-    def no_open_orders(self):
+    def no_open_orders(self, market):
         """
         TO DO
         """
 
-        if self.open_orders[0] and len(self.open_orders[1]) == 0:
-            return True
+        # If open orders is retrieved from exchange
+        if self.open_orders[0]:
+            open_orders = 0
+            for order in self.open_orders[1]:
+                if order["symbol"] == market:
+                    open_orders += 1
+
+            if open_orders == 0:
+                return True
 
         return False
 
@@ -208,14 +215,11 @@ class HODLv2Bot:
         if market_data[0] and check_balance and max_trades:
 
             # If next price is reached or no open orders are found, give ok
-            if (
-                check_next_price(
-                    self.open_side,
-                    self.get_next_price(market),
-                    market_data[1]["ticker"]["last"],
-                )
-                or self.no_open_orders()
-            ):
+            if check_next_price(
+                self.open_side,
+                self.get_next_price(market),
+                market_data[1]["ticker"]["last"],
+            ) or self.no_open_orders(market):
                 return True, market_data[1]
 
         return False, {}
@@ -258,9 +262,7 @@ class HODLv2Bot:
         next_price = self.calculate_next_open_price(
             open_order_details[1]["average"],
         )
-        self.backend.update_one(
-            "markets", market, {"next_price": next_price}, True
-        )
+        self.backend.update_one("markets", market, {"next_price": next_price}, True)
 
         # Calculate trade value
         close_trade_value = profit_in_trade_value(
@@ -294,9 +296,7 @@ class HODLv2Bot:
         }
         self.backend.insert_one("trades", data)
 
-        close_cost = float(limit_close_order[1]["price"]) * float(
-            close_trade_value
-        )
+        close_cost = float(limit_close_order[1]["price"]) * float(close_trade_value)
 
         self.notify.send(
             f"""<b>Trade opened</b>

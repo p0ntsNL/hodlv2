@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
 # pylint: disable=import-error
 """
-TO DO
+Main worker class
 """
 
 import importlib
 import sys
 import time
 
-from hodlv2 import __version__
 from hodlv2.config import config
 from hodlv2.hodlv2bot import HODLv2Bot
 from hodlv2.notify.notify import Notify
@@ -33,7 +32,7 @@ class Worker:
 
         self.version = "HODLv2 2023.1"
         self.notify.send(self.version, "INFO", logging_only=True)
-        print (self.version)
+        print(self.version)
 
         self.bot = HODLv2Bot(self.config)
 
