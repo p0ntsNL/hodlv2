@@ -31,7 +31,7 @@ class Worker:
         self.config = config
         self.notify = Notify(self.config)
 
-        self.version = f"HODLv2 {__version__}"
+        self.version = f"HODLv2 version:{__version__}"
         self.notify.send(self.version, "INFO", logging_only=True)
         print (self.version)
 
