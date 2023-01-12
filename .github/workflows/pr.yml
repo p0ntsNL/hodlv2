@@ -6,9 +6,23 @@ jobs:
   pre-commit:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - uses: stefanwarmerdam/python-lint@v1.5.0
+      - uses: actions/checkout@v2
+      - uses: weibullguy/python-lint-plus@master
         with:
+          python-root-list: "tests"
+          virtual-env: "python-lint-plus"
           use-pylint: true
           use-black: true
           use-isort: true
+          use-yapf: false
+          use-docformatter: false
+          use-pycodestyle: false
+          use-autopep8: false
+          use-pydocstyle: false
+          use-mypy: false
+          use-flake8: false
+          use-mccabe: false
+          use-radon: false
+          use-rstcheck: false
+          use-check-manifest: false
+          use-pyroma: false
