@@ -36,16 +36,16 @@ class Worker:
         """
 
         self.config = config
-        self.notify = Notify(self.config)
-        self.version = "HODLv2 2023.1"
-
-        self.bot = HODLv2Bot(self.config)
 
         log_level = logging.getLevelName(self.config.LOG_LEVEL)
         logger.setLevel(log_level)
 
+        self.version = "HODLv2 2023.1"
         logger.info(f"Starting worker {self.version}")
         print(f"Starting worker {self.version}")
+
+        self.notify = Notify(self.config)
+        self.bot = HODLv2Bot(self.config)
 
     def reload(self):
         """
@@ -55,12 +55,12 @@ class Worker:
         # Bot configuration
         self.config = importlib.reload(config)
 
-        # Init bot
-        self.bot = HODLv2Bot(self.config)
-
         # Logging
         log_level = logging.getLevelName(self.config.LOG_LEVEL)
         logger.setLevel(log_level)
+
+        # Init bot
+        self.bot = HODLv2Bot(self.config)
 
     def sleep(self):
         """
