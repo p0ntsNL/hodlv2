@@ -41,8 +41,8 @@ class Worker:
 
         self.bot = HODLv2Bot(self.config)
 
-        loglevel = logging.getLevelName(self.config.LOGLEVEL)
-        logger.setLevel(loglevel)
+        log_level = logging.getLevelName(self.config.LOG_LEVEL)
+        logger.setLevel(log_level)
 
         logger.info(f"Starting worker {self.version}")
         print(f"Starting worker {self.version}")
@@ -59,8 +59,8 @@ class Worker:
         self.bot = HODLv2Bot(self.config)
 
         # Logging
-        loglevel = logging.getLevelName(self.config.LOGLEVEL)
-        logger.setLevel(loglevel)
+        log_level = logging.getLevelName(self.config.LOG_LEVEL)
+        logger.setLevel(log_level)
 
     def sleep(self):
         """
