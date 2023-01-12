@@ -1,4 +1,4 @@
-# hodlv2
+# HODLv2
 
 [![HODLv2 PR](https://github.com/StefanWarmerdam/hodlv2/workflows/PR/badge.svg)](https://github.com/StefanWarmerdam/hodlv2/actions/)
 [![HODLv2 CodeQL](https://github.com/StefanWarmerdam/hodlv2/workflows/CodeQL/badge.svg)](https://github.com/StefanWarmerdam/hodlv2/actions/)
