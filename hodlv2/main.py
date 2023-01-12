@@ -42,8 +42,8 @@ class Worker:
 
         self.bot = HODLv2Bot(self.config)
 
-        logger.info(f"Starting worker {__version__}")
-        print(f"{__version__}")
+        logger.info(f"Starting worker {self.version}")
+        print(f"Starting worker {self.version}")
 
     def reload(self):
         """
