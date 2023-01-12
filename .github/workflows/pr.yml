@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: stefanwarmerdam/python-lint-plus@master
+      - uses: p0ntsnl/python-lint-plus@master
         with:
           python-root-list: "hodlv2"
           virtual-env: "python-lint-plus"

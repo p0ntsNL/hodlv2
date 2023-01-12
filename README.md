@@ -1,7 +1,7 @@
 # hodlv2
 
-[![HODLv2 PR](https://github.com/StefanWarmerdam/hodlv2/workflows/PR/badge.svg)](https://github.com/StefanWarmerdam/hodlv2/actions/)
-[![HODLv2 CodeQL](https://github.com/StefanWarmerdam/hodlv2/workflows/CodeQL/badge.svg)](https://github.com/StefanWarmerdam/hodlv2/actions/)
+[![HODLv2 PR](https://github.com/p0ntsnl/hodlv2/workflows/PR/badge.svg)](https://github.com/p0ntsnl/hodlv2/actions/)
+[![HODLv2 CodeQL](https://github.com/p0ntsnl/hodlv2/workflows/CodeQL/badge.svg)](https://github.com/p0ntsnl/hodlv2/actions/)
 
 Free and open-source self-hosted automated crypto trading bot written in Python with the HODL strategy in mind.
 
@@ -64,9 +64,9 @@ pip install importlib
 
 ### Clone
 
-After successfull installation of the above, you can clone HODLv2 into your project directory from the [hodlv2 GitHub repository](https://github.com/StefanWarmerdam/hodlv2):
+After successfull installation of the above, you can clone HODLv2 into your project directory from the [hodlv2 GitHub repository](https://github.com/p0ntsnl/hodlv2):
 ```
-git clone https://github.com/StefanWarmerdam/hodlv2.git
+git clone https://github.com/p0ntsnl/hodlv2.git
 ```
 
 ## Configure
