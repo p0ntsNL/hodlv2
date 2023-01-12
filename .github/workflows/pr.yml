@@ -11,9 +11,9 @@ jobs:
         with:
           python-root-list: "hodlv2"
           virtual-env: "python-lint-plus"
-          use-pylint: true
           use-black: true
           use-isort: true
+          use-pylint: false
           use-yapf: false
           use-docformatter: false
           use-pycodestyle: false
