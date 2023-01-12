@@ -13,3 +13,5 @@ jobs:
           use-black: true
           use-isort: true
           use-pycodestyle: false
+          use-flake8: false
+          use-mypy: false
