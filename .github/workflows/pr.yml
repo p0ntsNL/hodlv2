@@ -9,7 +9,6 @@ jobs:
       - uses: actions/checkout@v2
       - uses: stefanwarmerdam/python-lint-plus@master
         with:
-          python-root-list: "tests"
           virtual-env: "python-lint-plus"
           use-pylint: true
           use-black: true
