@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # pylint: disable=import-error
 """
-TO DO
+Main worker class
 """
 
 import importlib
