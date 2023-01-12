@@ -5,12 +5,20 @@ Main worker class
 """
 
 import importlib
+import logging
 import sys
 import time
 
 from hodlv2.config import config
 from hodlv2.hodlv2bot import HODLv2Bot
 from hodlv2.notify.notify import Notify
+
+# Logging
+logger = logging.basicConfig(
+    filename="hodlv2/hodlv2.log",
+    format="%(asctime)s | %(levelname)s | %(message)s",
+    level=logging.INFO,
+)
 
 # check min. python version
 if sys.version_info < (3, 8):
@@ -31,7 +39,7 @@ class Worker:
         self.notify = Notify(self.config)
 
         self.version = "HODLv2 2023.1"
-        self.notify.send(self.version, "INFO", logging_only=True)
+        logger.info(self.version)
         print(self.version)
 
         self.bot = HODLv2Bot(self.config)

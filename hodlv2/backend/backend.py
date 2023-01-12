@@ -4,9 +4,13 @@ Main backend class.
 Currently defaults to MongoDB which is the only backend available.
 """
 
+import logging
+
 from pymongo import MongoClient
 
 from hodlv2.notify.notify import Notify
+
+logger = logging.getLogger(__name__)
 
 
 class Backend:
@@ -41,7 +45,7 @@ class Backend:
             if not isinstance(find, type(None)):
                 return True, find
         except Exception as error:
-            self.notify.send(f"find_one error: {error}", "ERROR")
+            logger.error(f"find_one error: {error}")
 
         return False, {}
 
@@ -59,7 +63,7 @@ class Backend:
             if not isinstance(find, type(None)):
                 return True, find
         except Exception as error:
-            self.notify.send(f"find_one_exists error: {error}", "ERROR")
+            logger.error(f"find_one_exists error: {error}")
 
         return False, {}
 
@@ -83,7 +87,7 @@ class Backend:
             if modified_count == 1 or not isinstance(upserted_id, type(None)):
                 return True, {}
         except Exception as error:
-            self.notify.send(f"update_one error: {error}", "ERROR")
+            logger.error(f"update_one error: {error}")
 
         return False, {}
 
@@ -100,6 +104,6 @@ class Backend:
             if inserted_id == data["_id"]:
                 return True, {}
         except Exception as error:
-            self.notify.send(f"insert_one error: {error}", "ERROR")
+            logger.error(f"insert_one error: {error}")
 
         return False, {}

@@ -8,6 +8,8 @@ import re
 
 import requests
 
+logger = logging.getLogger(__name__)
+
 
 class Notify:
     """
@@ -22,34 +24,10 @@ class Notify:
         # Load config
         self.config = config
 
-        # Logging
-        self.logger = logging
-        self.logger.basicConfig(
-            filename="hodlv2/logs/hodlv2.log",
-            format="%(asctime)s | %(levelname)s | %(message)s",
-            level=logging.INFO,
-        )
-
         # Force pushover
         self.notifier = "pushover"
         self.key = self.config.PUSHOVER_USER_KEY
         self.token = self.config.PUSHOVER_APP_TOKEN
-
-    def send_logging(self, msg, loglevel):
-        """
-        TO DO
-        """
-
-        if loglevel == "INFO":
-            self.logger.info(msg)
-        elif loglevel == "WARNING":
-            self.logger.warning(msg)
-        elif loglevel == "CRITICAL":
-            self.logger.critical(msg)
-        elif loglevel == "ERROR":
-            self.logger.error(msg)
-        elif loglevel == "DEBUG":
-            self.logger.debug(msg)
 
     def send_pushover(self, msg):
         """
@@ -63,24 +41,13 @@ class Notify:
                 timeout=10,
             )
         except Exception as error:
-            self.send_logging(error, "ERROR")
+            logger.error(error)
 
-    def send(self, msg, loglevel, logging_only=False):
+    def send(self, msg):
         """
         TO DO
         """
 
-        # Push
-        if not logging_only:
-
-            # Pushover
-            if self.notifier == "pushover":
-                self.send_pushover(msg)
-
-        # Remove HTML for logging
-        msg = msg.replace("<br><br>", " | ")
-        msg = msg.replace("<br>", " | ")
-        msg = re.sub("<[^<]+?>", "", msg)
-
-        # Logging
-        self.send_logging(msg, loglevel)
+        # Pushover
+        if self.notifier == "pushover":
+            self.send_pushover(msg)

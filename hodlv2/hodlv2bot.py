@@ -4,6 +4,7 @@
 Main bot class
 """
 
+import logging
 import sys
 
 from hodlv2.backend.backend import Backend
@@ -22,6 +23,8 @@ from hodlv2.misc.misc import (  # isort:skip
 # check min. python version
 if sys.version_info < (3, 8):
     sys.exit("HODLv2 requires Python version >= 3.8")
+
+logger = logging.getLogger(__name__)
 
 
 class HODLv2Bot:
@@ -233,9 +236,8 @@ class HODLv2Bot:
             market, market_data["ticker"]["last"]
         )
         if not market_open_order[0]:
-            self.notify.send(
+            logger.error(
                 f"{market}: Unable to create market open order, trade stopped.",
-                "ERROR",
             )
             return
 
@@ -245,9 +247,8 @@ class HODLv2Bot:
             market, market_open_order[1]["info"]["txid"][0]
         )
         if not open_order_details[0]:
-            self.notify.send(
+            logger.error(
                 f"{market}: Unable to retrieve open order details, trade stopped.",
-                "ERROR",
             )
             return
 
@@ -277,9 +278,8 @@ class HODLv2Bot:
             close_price,
         )
         if not limit_close_order[0]:
-            self.notify.send(
+            logger.error(
                 f"{market}: Unable to create limit close order, trade stopped.",
-                "ERROR",
             )
             return
 
@@ -315,7 +315,6 @@ class HODLv2Bot:
             Close price: {limit_close_order[1]['price']} {get_quote(market)}
             Close amount: {close_trade_value} {get_base(market)}
             Close cost: {close_cost} {get_quote(market)}""",
-            "INFO",
         )
 
     def check_closed_orders(self):
@@ -359,7 +358,6 @@ class HODLv2Bot:
                             f"""<b>Trade closed ({close_order['status']})</b>
                             Id: {close_order['id']}
                             Market: {market}""",
-                            "WARNING",
                         )
 
                 elif status == "active" and close_order["status"] == "closed":
@@ -384,5 +382,4 @@ class HODLv2Bot:
                             Id: {close_order['id']}
                             Market: {market}
                             Profit:{profit:.8f} {profit_currency}""",
-                            "INFO",
                         )

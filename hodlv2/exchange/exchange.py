@@ -3,9 +3,13 @@
 TO DO
 """
 
+import logging
+
 import ccxt
 
 from hodlv2.notify.notify import Notify
+
+logger = logging.getLogger(__name__)
 
 
 class Exchange:
@@ -43,7 +47,7 @@ class Exchange:
             result = self.exchange.fetchBalance()
             return [True, result]
         except Exception as error:
-            self.notify.send(f"get_balances error: {error}", "ERROR")
+            logger.error(f"get_balances error: {error}")
 
         return [False, {}]
 
@@ -56,7 +60,7 @@ class Exchange:
             result = self.exchange.fetchTicker(market)
             return [True, result]
         except Exception as error:
-            self.notify.send(f"{market}: get_ticker_data error: {error}", "ERROR")
+            logger.error(f"{market}: get_ticker_data error: {error}")
 
         return [False, {}]
 
@@ -69,7 +73,7 @@ class Exchange:
             result = self.exchange.fetchOpenOrders()
             return [True, result]
         except Exception as error:
-            self.notify.send(f"get_open_orders error: {error}", "ERROR")
+            logger.error(f"get_open_orders error: {error}")
 
         return [False, {}]
 
@@ -82,7 +86,7 @@ class Exchange:
             result = self.exchange.fetchClosedOrders()
             return [True, result]
         except Exception as error:
-            self.notify.send(f"get_closed_orders error: {error}", "ERROR")
+            logger.error(f"get_closed_orders error: {error}")
 
         return [False, {}]
 
@@ -95,7 +99,7 @@ class Exchange:
             result = self.exchange.fetchOrder(orderid, market)
             return [True, result]
         except Exception as error:
-            self.notify.send(f"{market}: fetch_order error: {error}", "ERROR")
+            logger.error(f"{market}: fetch_order error: {error}")
 
         return [False, {}]
 
@@ -112,7 +116,7 @@ class Exchange:
             )
             return [True, result]
         except Exception as error:
-            self.notify.send(f"{market}: create_limit_order error: {error}", "ERROR")
+            logger.error(f"{market}: create_limit_order error: {error}")
 
         return [False, {}]
 
@@ -126,6 +130,6 @@ class Exchange:
             result = self.exchange.createOrder(market, "market", side, trade_value)
             return [True, result]
         except Exception as error:
-            self.notify.send(f"{market}: create_market_order error: {error}", "ERROR")
+            logger.error(f"{market}: create_market_order error: {error}")
 
         return [False, {}]
