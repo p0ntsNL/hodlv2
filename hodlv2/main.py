@@ -32,7 +32,7 @@ class Worker:
 
         self.version = f"HODLv2 version:{__version__}"
         self.notify.send(self.version, "INFO", logging_only=True)
-        print (self.version)
+        print(self.version)
 
         self.bot = HODLv2Bot(self.config)
 
