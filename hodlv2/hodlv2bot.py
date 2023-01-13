@@ -18,6 +18,7 @@ from hodlv2.misc.misc import (  # isort:skip
     get_base,  # isort:skip
     get_quote,  # isort:skip
     profit_in_trade_value,  # isort:skip
+    find_key,  # isort:skip
 )  # isort:skip
 
 # check min. python version
@@ -82,7 +83,9 @@ class HODLv2Bot:
 
         balances = self.ccxt.get_balances()
         if balances[0]:
-            logger.info("%s: %s balance: %s", market, quote, balances[1]["total"][quote])
+            logger.info(
+                "%s: %s balance: %s", market, quote, balances[1]["total"][quote]
+            )
             return balances[1]["total"][quote]
 
         logger.error("%s balance set to 0.", quote)
@@ -372,6 +375,7 @@ class HODLv2Bot:
             "open": open_order_details[1],
             "close": limit_close_order[1],
             "profit_in": self.profit_in,
+            "profit_perc": self.perc_open,
             "base": get_base(market),
             "quote": get_quote(market),
             "profit_currency": get_quote(market)
@@ -429,6 +433,7 @@ class HODLv2Bot:
                 profit_in = trade[1]["profit_in"]
                 profit_currency = trade[1]["profit_currency"]
                 status = trade[1]["status"]
+                profit_perc = find_key(trade[1], "profit_perc", "int")
 
                 if status == "active" and close_order["status"] in [
                     "canceled",
@@ -483,10 +488,11 @@ class HODLv2Bot:
                             close_order["id"],
                             profit,
                             profit_currency,
+                            profit_perc,
                         )
                         self.notify.send(
                             f"""<b>Trade closed</b>
                             Id: {close_order['id']}
                             Market: {market}
-                            Profit:{profit:.8f} {profit_currency}""",
+                            Profit:{profit:.8f} {profit_currency} ({profit_perc:.2f}%)""",
                         )
