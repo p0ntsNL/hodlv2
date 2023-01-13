@@ -1,16 +1,23 @@
 # Rename or copy this configuration file to config.py
 
+# Exchange settings (required)
 EXCHANGE = "kraken"
 EXCHANGE_KEY = "key"
 EXCHANGE_SECRET = "secret"
 EXCHANGE_PASSWORD = "" # Optional for some exchanges
-PUSHOVER_USER_KEY = "key"
-PUSHOVER_APP_TOKEN = "token"
+
+# Bot settings (required)
 MARKETS = [ "BTC/USD", "DOT/USD", "EWT/USD", "LINK/USD" ]
-MAX_TRADES = 10
 SIDE = "buy"
+MAX_TRADES = 10
 TRADE_VALUE = 5
 PERC_OPEN = 1
 PERC_CLOSE = 1
 PROFIT_IN = "quote"
+
+# Pushover (optional)
+PUSHOVER_USER_KEY = "key"
+PUSHOVER_APP_TOKEN = "token"
+
+# Log level (CRITICAL/ERROR/WARNING/INFO/DEBUG)
 LOG_LEVEL = "INFO"
