@@ -297,8 +297,9 @@ class HODLv2Bot:
 
     def stringify_profit_aggregates(self):
 
-        aggregates = self.get_profit_aggregates()
-        for aggregate in aggregates:
+        aggregates = []
+        get_aggregates = self.get_profit_aggregates()
+        for aggregate in get_aggregates:
             aggregates.append(f"{aggregate['sum_val']:.8f} {aggregate['_id']}")
 
         return "\n".join(aggregates)
