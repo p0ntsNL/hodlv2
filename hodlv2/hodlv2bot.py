@@ -75,14 +75,14 @@ class HODLv2Bot:
 
         return self.ccxt.fetch_order(market, order_id)
 
-    def get_balance(self, quote):
+    def get_balance(self, market, quote):
         """
         TO DO
         """
 
         balances = self.ccxt.get_balances()
         if balances[0]:
-            logger.info("%s balance: %s", quote, balances[1]["total"][quote])
+            logger.info("%s: %s balance: %s", market, quote, balances[1]["total"][quote])
             return balances[1]["total"][quote]
 
         logger.error("%s balance set to 0.", quote)
@@ -238,22 +238,24 @@ class HODLv2Bot:
 
         return data[self.open_side]
 
-    def check_balance(self, quote, required):
+    def check_balance(self, market, quote, required):
         """
         TO DO
         """
 
-        balance = self.get_balance(quote)
+        balance = self.get_balance(market, quote)
         if float(balance) >= float(required):
             logger.info(
-                "Got enough %s balance (%s) to initiate trade.",
+                "%s: Got enough %s balance (%s) to initiate trade.",
+                market,
                 quote,
                 balance,
             )
             return True
 
         logger.warning(
-            "Not enough %s balance (%s) to initiate trade, required: %s.)",
+            "%s: Not enough %s balance (%s) to initiate trade, required: %s.)",
+            market,
             quote,
             balance,
             required,
@@ -282,7 +284,7 @@ class HODLv2Bot:
         market_data = self.get_market_data(market)
 
         # Check if balance is sufficient
-        check_balance = self.check_balance(get_quote(market), self.trade_value)
+        check_balance = self.check_balance(market, get_quote(market), self.trade_value)
 
         # Check if max trades is reached
         max_trades = self.check_max_trades(market)
@@ -302,7 +304,7 @@ class HODLv2Bot:
                 logger.info("%s: New trade required.", market)
                 return True, market_data[1]
 
-        logger.info("%s: No new trade required based on all criteria.", market)
+        logger.info("%s: No new trade required based on the criteria.", market)
         return False, {}
 
     def new_trade(self, market, market_data):
