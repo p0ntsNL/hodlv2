@@ -186,7 +186,7 @@ class HODLv2Bot:
         TO DO
         """
 
-        m_data = self.ccxt.get_market_data(market)
+        market_data = self.ccxt.get_market_data(market)
         ticker_data = self.get_ticker_data(market)
 
         if ticker_data[0]:
