@@ -34,9 +34,27 @@ class Exchange:
                 "enableRateLimit": True,
             }
         )
+        self.exchange.loadMarkets()
 
         # Notify
         self.notify = Notify(self.config)
+
+    def get_market_data(self, market):
+        """
+        TO DO
+        """
+
+        try:
+            result = self.exchange.market(market)
+            logger.info(
+                "%s: Successfully retrieved market data from the exchange.", market
+            )
+            return [True, result]
+        except Exception as error:
+            logger.debug("%s: load_markets error: %s", market, error)
+
+        logger.error("%s: Unable to retrieve market data from exchange.", market)
+        return [False, {}]
 
     def get_balances(self):
         """
@@ -47,8 +65,9 @@ class Exchange:
             result = self.exchange.fetchBalance()
             return [True, result]
         except Exception as error:
-            logger.error(f"get_balances error: {error}")
+            logger.debug("get_balances error: %s", error)
 
+        logger.error("Unable to retrieve balance data from exchange.")
         return [False, {}]
 
     def get_ticker_data(self, market):
@@ -60,8 +79,9 @@ class Exchange:
             result = self.exchange.fetchTicker(market)
             return [True, result]
         except Exception as error:
-            logger.error(f"{market}: get_ticker_data error: {error}")
+            logger.debug("%s: get_ticker_data error: %s", market, error)
 
+        logger.error("Unable to retrieve ticker data from exchange.")
         return [False, {}]
 
     def get_open_orders(self):
@@ -73,8 +93,9 @@ class Exchange:
             result = self.exchange.fetchOpenOrders()
             return [True, result]
         except Exception as error:
-            logger.error(f"get_open_orders error: {error}")
+            logger.debug("get_open_orders error: %s", error)
 
+        logger.error("Unable to retrieve open orders data from exchange.")
         return [False, {}]
 
     def get_closed_orders(self):
@@ -86,8 +107,9 @@ class Exchange:
             result = self.exchange.fetchClosedOrders()
             return [True, result]
         except Exception as error:
-            logger.error(f"get_closed_orders error: {error}")
+            logger.debug("get_closed_orders error: %s", error)
 
+        logger.error("Unable to retrieve closed orders data from exchange.")
         return [False, {}]
 
     def fetch_order(self, market, orderid):
@@ -99,8 +121,9 @@ class Exchange:
             result = self.exchange.fetchOrder(orderid, market)
             return [True, result]
         except Exception as error:
-            logger.error(f"{market}: fetch_order error: {error}")
+            logger.debug("%s: fetch_order error: %s", market, error)
 
+        logger.error("%s: Unable to retrieve order data from exchange.", market)
         return [False, {}]
 
     def create_limit_order(self, market, side, trade_value, price):
@@ -116,8 +139,9 @@ class Exchange:
             )
             return [True, result]
         except Exception as error:
-            logger.error(f"{market}: create_limit_order error: {error}")
+            logger.debug("%s: create_limit_order error: %s", market, error)
 
+        logger.error("%s: Unable to create limit order.", market)
         return [False, {}]
 
     def create_market_order(self, market, side, trade_value):
@@ -130,6 +154,7 @@ class Exchange:
             result = self.exchange.createOrder(market, "market", side, trade_value)
             return [True, result]
         except Exception as error:
-            logger.error(f"{market}: create_market_order error: {error}")
+            logger.debug("%s: create_market_order error: %s", market, error)
 
+        logger.error("%s: Unable to create market order.", market)
         return [False, {}]
