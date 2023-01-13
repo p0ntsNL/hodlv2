@@ -129,7 +129,7 @@ class HODLv2Bot:
                 return True
 
         logger.warning(
-            "%s: %s open orders found, therefore not starting a new trade.",
+            "%s: %s open orders found.",
             market,
             open_orders,
         )
@@ -142,9 +142,10 @@ class HODLv2Bot:
 
         if self.open_orders[0] and len(self.open_orders[1]) <= self.max_trades:
             logger.info(
-                "%s: The maximum amount of trades (%s) is not reached yet.",
+                "%s: The maximum amount of trades (%s) is not reached yet (%s).",
                 market,
                 self.max_trades,
+                self.open_orders[1],
             )
             return True
 
@@ -245,15 +246,14 @@ class HODLv2Bot:
         balance = self.get_balance(quote)
         if float(balance) >= float(required):
             logger.info(
-                "Got enough %s balance %s to initiate trade. (required: %s)",
+                "Got enough %s balance (%s) to initiate trade.",
                 quote,
                 balance,
-                required,
             )
             return True
 
         logger.warning(
-            "Not enough %s balance %s to initiate trade. (required: %s)",
+            "Not enough %s balance (%s) to initiate trade, required: %s.)",
             quote,
             balance,
             required,
@@ -267,7 +267,7 @@ class HODLv2Bot:
 
         data = self.backend.find_one("markets", market)
         if data[0]:
-            logger.info("%s: The next_price is %s", market, data[1]["next_price"])
+            logger.info("%s: The next_price is %s.", market, data[1]["next_price"])
             return data[1]["next_price"]
 
         logger.warning("%s: Unable to retrieve next_price from backend.", market)
