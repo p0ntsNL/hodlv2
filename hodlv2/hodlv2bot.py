@@ -296,6 +296,9 @@ class HODLv2Bot:
         return aggregates
 
     def stringify_profit_aggregates(self):
+        """
+        TO DO
+        """
 
         aggregates = []
         get_aggregates = self.get_profit_aggregates()

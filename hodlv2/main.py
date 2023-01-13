@@ -6,9 +6,9 @@ Main worker class
 
 import importlib
 import logging
-import logging.handlers as handlers
 import sys
 import time
+from logging import handlers
 
 from hodlv2.config import config
 from hodlv2.hodlv2bot import HODLv2Bot
