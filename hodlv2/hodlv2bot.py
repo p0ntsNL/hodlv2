@@ -55,11 +55,6 @@ class HODLv2Bot:
         self.open_side = self.side
         self.close_side = "sell" if self.side == "buy" else "buy"
 
-        #test = self.backend.aggregate('trades', {"$match":{"status":"finished"}}, {"$group":{"_id":"$profit_currency","sum_val":{"$sum":"$profit"}}})
-        #print (test)
-        #sys.exit()
-
-
     def open_closed_ok(self):
         """
         TO DO
@@ -283,6 +278,31 @@ class HODLv2Bot:
         logger.warning("%s: Unable to retrieve next_price from backend.", market)
         return 9999999999999
 
+    def get_profit_aggregates(self):
+        """
+        TO DO
+        """
+
+        aggregates = []
+        get_aggregates = self.backend.aggregate(
+            "trades",
+            {"$match": {"status": "finished"}},
+            {"$group": {"_id": "$profit_currency", "sum_val": {"$sum": "$profit"}}},
+        )
+        if get_aggregates[0]:
+            for aggregate in get_aggregates[1]:
+                aggregates.append(aggregate)
+
+        return aggregates
+
+    def stringify_profit_aggregates(self):
+
+        aggregates = self.get_profit_aggregates()
+        for aggregate in aggregates:
+            aggregates.append(f"{aggregate['sum_val']:.8f} {aggregate['_id']}")
+
+        return "\n".join(aggregates)
+
     def check_new_trade(self, market):
         """
         TO DO
@@ -499,5 +519,8 @@ class HODLv2Bot:
                             f"""<b>Trade closed</b>
                             Id: {close_order['id']}
                             Market: {market}
-                            Profit:{profit:.8f} {profit_currency} ({profit_perc:.2f}%)""",
+                            Profit:{profit:.8f} {profit_currency} ({profit_perc:.2f}%)
+
+                            <b>Total Profit</b>
+                            {self.stringify_profit_aggregates()}""",
                         )
