@@ -161,7 +161,7 @@ class HODLv2Bot:
         """
 
         trade_value = calculate_trade_value(
-            self.trade_value, market_data[1]["ticker"]["last"]
+            self.trade_value, market_data["ticker"]["last"]
         )
 
         if float(trade_value) >= float(market_data["min_trade_value"]):
@@ -288,7 +288,7 @@ class HODLv2Bot:
         max_trades = self.check_max_trades(market)
 
         # Check if trade value is above the minimum
-        trade_value = self.check_trade_value(market_data)
+        trade_value = self.check_trade_value(market_data[1])
 
         # If market data, balance and max trades are ok
         if market_data[0] and check_balance and max_trades and trade_value:

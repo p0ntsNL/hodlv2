@@ -41,6 +41,7 @@ class Worker:
         logger.setLevel(log_level)
 
         self.version = "HODLv2 2023.1"
+        logger.info("\n")
         logger.info("Starting %s", self.version)
         print(f"Starting {self.version}")
 
