@@ -189,17 +189,17 @@ class HODLv2Bot:
         market_data = self.ccxt.get_market_data(market)
         ticker_data = self.get_ticker_data(market)
 
-        if ticker_data[0]:
+        if market_data[0] and ticker_data[0]:
 
             logger.info("%s: Market data retrieved successfully.", market)
             return True, {
                 "market": market,
-                "base": market_data["base"],
-                "quote": market_data["quote"],
-                "maker": market_data["maker"],
-                "taker": market_data["taker"],
-                "min_trade_value": market_data["limits"]["amount"]["min"],
-                "min_price": market_data["limits"]["price"]["min"],
+                "base": market_data[1]["base"],
+                "quote": market_data[1]["quote"],
+                "maker": market_data[1]["maker"],
+                "taker": market_data[1]["taker"],
+                "min_trade_value": market_data[1]["limits"]["amount"]["min"],
+                "min_price": market_data[1]["limits"]["price"]["min"],
                 "ticker": ticker_data[1],
             }
 
