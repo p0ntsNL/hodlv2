@@ -6,6 +6,7 @@ Main worker class
 
 import importlib
 import logging
+import logging.handlers as handlers
 import sys
 import time
 
@@ -14,11 +15,14 @@ from hodlv2.hodlv2bot import HODLv2Bot
 from hodlv2.notify.notify import Notify
 
 # Logging
-logging.basicConfig(
-    filename="hodlv2/hodlv2.log",
-    format="%(asctime)s | %(levelname)s | %(message)s",
+logger = logging.getLogger("hodlv2")
+logger.setLevel(logging.INFO)
+formatter = logging.Formatter("%(asctime)s | %(levelname)s | %(message)s")
+logHandler = handlers.TimedRotatingFileHandler(
+    "hodlv2/hodlv2.log", when="midnight", interval=1, backupCount=30
 )
-logger = logging.getLogger()
+logHandler.setFormatter(formatter)
+logger.addHandler(logHandler)
 
 # check min. python version
 if sys.version_info < (3, 8):
@@ -36,9 +40,6 @@ class Worker:
         """
 
         self.config = config
-
-        log_level = logging.getLevelName(self.config.LOG_LEVEL)
-        logger.setLevel(log_level)
 
         self.version = "HODLv2 2023.1"
         logger.info("\n")
@@ -83,7 +84,14 @@ class Worker:
         TO DO
         """
 
+        iteration = 0
+
         while True:
+
+            iteration += 1
+
+            logger.info("\n")
+            logger.info("Iteration #%s", iteration)
 
             # Reset if open or closed orders are not retrieved from exchange
             if not self.bot.open_closed_ok:
