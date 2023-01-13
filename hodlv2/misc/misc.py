@@ -55,7 +55,7 @@ def calculate_profit(profit_in, open_order, close_order):
     return data[profit_in]
 
 
-def find_key(data, key, type):
+def find_key(data, key, key_type):
     """
     TO DO
     """
@@ -63,7 +63,7 @@ def find_key(data, key, type):
     if key in data:
         return data[key]
 
-    if type == "int":
+    if key_type == "int":
         return 0
 
     return None

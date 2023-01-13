@@ -49,6 +49,26 @@ class Backend:
             ]
         )
 
+    def find(self, collection, criteria, count=False):
+        """
+        Find multiple documents based on search criteria in a MongoDB collection.
+        :param collection: name of the collection to use
+        :param criteria: criteria of the documents to search for
+        :param count: count result or not
+        """
+
+        try:
+            if count:
+                find = self._db[collection].find(criteria).count()
+            else:
+                find = self._db[collection].find(criteria)
+            return True, find
+        except Exception as error:
+            logger.debug("find error: %s", error)
+
+        logger.debug("find: Unable to find %s in %s.", criteria, collection)
+        return False, {}
+
     def find_one(self, collection, _id):
         """
         Find a document by ID in a MongoDB collection.

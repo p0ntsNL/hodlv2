@@ -307,6 +307,22 @@ class HODLv2Bot:
 
         return "\n".join(aggregates)
 
+    def get_total_trades_count(self):
+        """
+        TO DO
+        """
+
+        criteria = {
+            "profit_currency": "USD",
+            "status": "finished",
+            "profit": {"$exists": 1},
+        }
+        get_total_trades = self.backend.find("trades", criteria, count=True)
+        if get_total_trades[0]:
+            return get_total_trades[1]
+
+        return "n/a"
+
     def check_new_trade(self, market):
         """
         TO DO
@@ -525,6 +541,7 @@ class HODLv2Bot:
                             Market: {market}
                             Profit:{profit:.8f} {profit_currency} ({profit_perc:.2f}%)
 
-                            <b>Total Profit</b>
+                            <b>Totals</b>
+                            Finished trades: {self.get_total_trades_count()}
                             {self.stringify_profit_aggregates()}""",
                         )
