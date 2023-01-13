@@ -128,7 +128,7 @@ class HODLv2Bot:
                 logger.info("%s: 0 open orders found.", market)
                 return True
 
-        logger.warning(
+        logger.info(
             "%s: %s open orders found.",
             market,
             open_orders,
@@ -294,13 +294,15 @@ class HODLv2Bot:
         if market_data[0] and check_balance and max_trades and trade_value:
 
             # If next price is reached or no open orders are found, give ok
-            if check_next_price(
+            if self.no_open_orders(market) or check_next_price(
                 self.open_side,
                 self.get_next_price(market),
                 market_data[1]["ticker"]["last"],
-            ) or self.no_open_orders(market):
+            ):
+                logger.info("%s: New trade required.", market)
                 return True, market_data[1]
 
+        logger.info("%s: No new trade required based on all criteria.", market)
         return False, {}
 
     def new_trade(self, market, market_data):
@@ -379,6 +381,18 @@ class HODLv2Bot:
 
         close_cost = float(limit_close_order[1]["price"]) * float(close_trade_value)
 
+        logger.info(
+            "%s: Trade opened | Id: %s | Side: %s | Price: %s %s | Amount: %s %s | Cost: %s %s",
+            market,
+            limit_close_order[1]["info"]["txid"][0],
+            self.open_side,
+            open_order_details[1]["average"],
+            get_quote(market),
+            open_order_details[1]["filled"],
+            get_base(market),
+            open_order_details[1]["cost"],
+            get_quote(market),
+        )
         self.notify.send(
             f"""<b>Trade opened</b>
             Id: {limit_close_order[1]["info"]["txid"][0]}
@@ -432,6 +446,12 @@ class HODLv2Bot:
                         False,
                     )
                     if update[0]:
+                        logger.info(
+                            "%s: Trade closed (%s) | Id: %s",
+                            market,
+                            close_order["status"],
+                            close_order["id"],
+                        )
                         self.notify.send(
                             f"""<b>Trade closed ({close_order['status']})</b>
                             Id: {close_order['id']}
@@ -455,6 +475,13 @@ class HODLv2Bot:
                     )
                     if update[0]:
 
+                        logger.info(
+                            "%s: Trade closed | Id: %s | Profit: %s %s",
+                            market,
+                            close_order["id"],
+                            profit,
+                            profit_currency,
+                        )
                         self.notify.send(
                             f"""<b>Trade closed</b>
                             Id: {close_order['id']}
