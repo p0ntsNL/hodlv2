@@ -41,8 +41,8 @@ class Worker:
         logger.setLevel(log_level)
 
         self.version = "HODLv2 2023.1"
-        logger.info(f"Starting worker {self.version}")
-        print(f"Starting worker {self.version}")
+        logger.info(f"Starting {self.version}")
+        print(f"Starting {self.version}")
 
         self.notify = Notify(self.config)
         self.bot = HODLv2Bot(self.config)
