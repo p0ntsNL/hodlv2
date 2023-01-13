@@ -6,7 +6,7 @@ Currently defaults to MongoDB which is the only backend available.
 
 import logging
 
-from pymongo import MongoClient
+import pymongo
 
 from hodlv2.notify.notify import Notify
 
@@ -27,7 +27,7 @@ class Backend:
         self.config = config
 
         # MongoDB
-        self.client = MongoClient("localhost", 27017)
+        self.client = pymongo.MongoClient("localhost", 27017)
         self._db = self.client["hodlv2"]
 
         # Notify
