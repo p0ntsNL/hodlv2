@@ -80,36 +80,3 @@ def profit_in_trade_value(profit_in, open_amount, open_cost, close_price):
     }
 
     return data[profit_in]
-
-
-def calculate_total_profit(local_data):
-    """
-    TO DO
-    """
-
-    profits = {}
-
-    for market_data in local_data["profits"].items():
-        for profit_data in market_data[1].items():
-
-            if profit_data[1]["profit_currency"] not in profits:
-                profits[profit_data[1]["profit_currency"]] = 0
-            profits[profit_data[1]["profit_currency"]] += float(
-                profit_data[1]["profit"]
-            )
-
-    return profits
-
-
-def return_total_profit(profits):
-    """
-    TO DO
-    """
-
-    msg = "<b>Total profit</b>"
-    for currency, profit in profits.items():
-
-        prof = f"<br>{profit:.8f} {currency}"
-        msg = msg + prof
-
-    return msg
