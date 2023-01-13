@@ -55,6 +55,20 @@ def calculate_profit(profit_in, open_order, close_order):
     return data[profit_in]
 
 
+def find_key(data, key, type):
+    """
+    TO DO
+    """
+
+    if key in data:
+        return data[key]
+
+    if type == "int":
+        return 0
+
+    return None
+
+
 def profit_in_trade_value(profit_in, open_amount, open_cost, close_price):
     """
     TO DO
