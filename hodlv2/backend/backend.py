@@ -45,9 +45,9 @@ class Backend:
             if not isinstance(find, type(None)):
                 return True, find
         except Exception as error:
-            logger.error(f"find_one error: {error}")
+            logger.debug("find_one error: %s", error)
 
-        logger.debug(f"find_one: Unable to find {_id} in {collection}.")
+        logger.debug("find_one: Unable to find %s in %s.", _id, collection)
         return False, {}
 
     def find_one_exists(self, collection, _id, key, exists):
@@ -64,9 +64,9 @@ class Backend:
             if not isinstance(find, type(None)):
                 return True, find
         except Exception as error:
-            logger.error(f"find_one_exists error: {error}")
+            logger.debug("find_one_exists error: %s", error)
 
-        logger.debug(f"find_one_exists: Unable to find {_id} in {collection}.")
+        logger.debug("find_one_exists: Unable to find %s in %s.", _id, collection)
         return False, {}
 
     def update_one(self, collection, _id, data, upsert):
@@ -87,11 +87,12 @@ class Backend:
             upserted_id = update.upserted_id
 
             if modified_count == 1 or not isinstance(upserted_id, type(None)):
+                logger.info("Database successfully updated.")
                 return True, {}
         except Exception as error:
-            logger.error(f"update_one error: {error}")
+            logger.debug("update_one error: %s", error)
 
-        logger.debug(f"update_one: Unable to update {_id} in {collection}.")
+        logger.debug("update_one: Unable to update %s in %s.", _id, collection)
         return False, {}
 
     def insert_one(self, collection, data):
@@ -105,9 +106,10 @@ class Backend:
             insert = self._db[collection].insert_one(data)
             inserted_id = insert.inserted_id
             if inserted_id == data["_id"]:
+                logger.info("Database successfully updated.")
                 return True, {}
         except Exception as error:
-            logger.error(f"insert_one error: {error}")
+            logger.debug("insert_one error: %s", error)
 
-        logger.debug(f"insert_one: Unable to insert trade in {collection}.")
+        logger.debug("insert_one: Unable to insert trade in %s.", collection)
         return False, {}

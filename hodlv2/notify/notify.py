@@ -4,7 +4,6 @@ TO DO
 """
 
 import logging
-import re
 
 import requests
 
@@ -26,22 +25,23 @@ class Notify:
 
         # Force pushover
         self.notifier = "pushover"
-        self.key = self.config.PUSHOVER_USER_KEY
-        self.token = self.config.PUSHOVER_APP_TOKEN
 
     def send_pushover(self, msg):
         """
         TO DO
         """
 
+        key = self.config.PUSHOVER_USER_KEY
+        token = self.config.PUSHOVER_APP_TOKEN
+
         try:
             requests.post(
                 "https://api.pushover.net/1/messages.json",
-                data={"token": self.token, "user": self.key, "message": msg, "html": 1},
+                data={"token": token, "user": key, "message": msg, "html": 1},
                 timeout=10,
             )
         except Exception as error:
-            logger.error(error)
+            logger.debug("Unable to send pushover: %s", error)
 
     def send(self, msg):
         """
