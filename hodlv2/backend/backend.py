@@ -33,6 +33,18 @@ class Backend:
         # Notify
         self.notify = Notify(self.config)
 
+        # Indexes
+        self._db["trades"].create_index([
+            ("profit_currency", pymongo.ASCENDING),
+            ("profit", pymongo.ASCENDING),
+            ("status", pymongo.ASCENDING),
+        ])
+        self._db["trades"].create_index([
+            ("profit_currency", pymongo.ASCENDING),
+            ("profit_perc", pymongo.ASCENDING),
+            ("status", pymongo.ASCENDING),
+        ])
+
     def find_one(self, collection, _id):
         """
         Find a document by ID in a MongoDB collection.
@@ -112,4 +124,30 @@ class Backend:
             logger.debug("insert_one error: %s", error)
 
         logger.debug("insert_one: Unable to insert trade in %s.", collection)
+        return False, {}
+
+    def aggregate(self, collection, match=dict(), group=dict()):
+
+        """
+        Aggregate data based on search query..
+        :param collection: name of the collection to use
+        :param match: match a certain key/value
+        :param group: group data in specific groups based on key/value
+        """
+
+        data = []
+
+        if match:
+            data.append(match)
+        if group:
+            data.append(group)
+
+        try:
+            aggregate = self._db[collection].aggregate(data)
+            if aggregate:
+                return True, aggregate
+        except Exception as error:
+            logger.debug("aggregate error: %s", error)
+
+        logger.debug("aggregate: Unable to aggregate data in %s.", collection)
         return False, {}

@@ -55,6 +55,11 @@ class HODLv2Bot:
         self.open_side = self.side
         self.close_side = "sell" if self.side == "buy" else "buy"
 
+        test = self.backend.aggregate('trades', {"$match":{"status":"finished"}}, {"$group":{"_id":"$profit_currency","sum_val":{"$sum":"$profit"}}})
+        print (test)
+        sys.exit()
+
+
     def open_closed_ok(self):
         """
         TO DO
