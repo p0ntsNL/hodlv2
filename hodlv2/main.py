@@ -91,7 +91,7 @@ class Worker:
             iteration += 1
 
             logger.info("\n")
-            logger.info("Iteration #%s", iteration)
+            logger.info("Iteration #%s started", iteration)
 
             # Reset if open or closed orders are not retrieved from exchange
             if not self.bot.open_closed_ok:
@@ -112,6 +112,7 @@ class Worker:
             self.bot.check_closed_orders()
 
             # Reset
+            logger.info("Iteration #%s finished", iteration)
             self.reset()
 
 
