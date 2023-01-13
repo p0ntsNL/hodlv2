@@ -159,7 +159,7 @@ If you want to receive trade updates through Pushover, configure your user key h
 
 If you want to receive trade updates through Pushover, configure your app token here.
 
-### Log settings (reqired)
+### Log settings (required)
 
 ##### **LOG_LEVEL**
 
