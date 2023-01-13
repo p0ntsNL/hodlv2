@@ -76,6 +76,7 @@ class Worker:
         TO DO
         """
 
+        logger.info("Sleeping for %s seconds now...", self.sleep())
         time.sleep(self.sleep())
         self.reload()
 
