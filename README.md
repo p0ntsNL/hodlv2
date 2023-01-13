@@ -82,11 +82,11 @@ Please refer to the configuration options below.
 
 ### Exchange settings (required)
 
-##### EXCHANGE
+##### **EXCHANGE**
 
 Set the desired exchange to run the bot on, check the supported exchange list [here](https://github.com/ccxt/ccxt#supported-cryptocurrency-exchange-markets).
 
-##### EXCHANGE_KEY
+##### **EXCHANGE_KEY**
 
 Set the exchange API key here.
 
@@ -96,52 +96,52 @@ Make sure to:
 - IP whitelisting is recommended if configurable.
 - Never share your API key's with anyone.
 
-##### EXCHANGE_SECRET
+##### **EXCHANGE_SECRET**
 
 Set the exchange API secret here.
 
-##### EXCHANGE_PASSWORD (optional)
+##### **EXCHANGE_PASSWORD** (optional)
 
 Some exchanges required additional authentication through a password, you can set it here.
 
 ### Bot settings
 
-##### MARKETS (required)
+##### **MARKETS** (required)
 
 Set the markets you want to run the bot on.
 
 - Required format (list): [ "BTC/USD", "DOT/USD", "EWT/USD", "LINK/USD" ]
 
-##### SIDE (required)
+##### **SIDE** (required)
 
 Set the side the bot should follow.
 
 - "buy" for LONG (HODL)
 - "sell" for SHORT (mehhh)
 
-##### MAX_TRADES (required)
+##### **MAX_TRADES** (required)
 
 Set the amount of trades (open orders) each market can keep simultaneously.
 
-##### TRADE_VALUE (required)
+##### **TRADE_VALUE** (required)
 
 Set the trade value each trade should have.
 
 - BTC/USD example: 5 = 5 USD
 
-##### PERC_OPEN (required)
+##### **PERC_OPEN** (required)
 
 How much percent should the gap be between each trade.
 
 - 1 = 1%
 
-##### PERC_CLOSE (required)
+##### **PERC_CLOSE** (required)
 
 How much percent above (long) / below (short) entry should the bot close in profit.
 
 - 1 = 1%
 
-##### PROFIT_IN (required)
+##### **PROFIT_IN** (required)
 
 Should the bot take profit in the quote or base currency.
 
@@ -151,17 +151,17 @@ Should the bot take profit in the quote or base currency.
 
 ### Pushover settings (optional)
 
-##### PUSHOVER_USER_KEY
+##### **PUSHOVER_USER_KEY**
 
 If you want to receive trade updates through Pushover, configure your user key here.
 
-##### PUSHOVER_APP_TOKEN
+##### **PUSHOVER_APP_TOKEN**
 
 If you want to receive trade updates through Pushover, configure your app token here.
 
 ### Log settings (reqired)
 
-##### LOG_LEVEL
+##### **LOG_LEVEL**
 
 Set the desired log level.
 
