@@ -121,7 +121,7 @@ Set the side the bot should follow.
 
 ##### **MAX_TRADES** (required)
 
-Set the amount of trades (open orders) each market can keep simultaneously.
+Set the amount of trades (open orders) the bot can keep simultaneously.
 
 ##### **TRADE_VALUE** (required)
 
