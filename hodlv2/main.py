@@ -77,6 +77,7 @@ class Worker:
         """
 
         logger.info("Sleeping for %s seconds now...", self.sleep())
+        logger.info("It is save to stop me during my sleep!")
         time.sleep(self.sleep())
         self.reload()
 
