@@ -483,7 +483,7 @@ class HODLv2Bot:
                     if update[0]:
 
                         logger.info(
-                            "%s: Trade closed | Id: %s | Profit: %s %s",
+                            "%s: Trade closed | Id: %s | Profit: %s %s (%s%)",
                             market,
                             close_order["id"],
                             profit,
