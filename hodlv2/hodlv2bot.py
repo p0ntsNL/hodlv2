@@ -280,17 +280,29 @@ class HODLv2Bot:
         """
         TO DO
         """
-    
+
         if self.open_side == "buy":
             if float(last_price) <= float(next_price):
-                logger.info("%s: last_price (%s) <= next_price (%s), lets start a new trade.", market, last_price, next_price)
+                logger.info(
+                    "%s: last_price (%s) <= next_price (%s), lets start a new trade.",
+                    market,
+                    last_price,
+                    next_price,
+                )
                 return True
         else:
             if float(last_price) >= float(next_price):
-                logger.info("%s: last_price (%s) >= next_price (%s), lets start a new trade.", market, last_price, next_price)
+                logger.info(
+                    "%s: last_price (%s) >= next_price (%s), lets start a new trade.",
+                    market,
+                    last_price,
+                    next_price,
+                )
                 return True
-    
-        logger.info("%s: last_price: (%s) | next_price: (%s)", market, last_price, next_price)
+
+        logger.info(
+            "%s: last_price: (%s) | next_price: (%s)", market, last_price, next_price
+        )
         return False
 
     def get_profit_aggregates(self):
@@ -407,16 +419,26 @@ class HODLv2Bot:
             )
             return
 
-        # Retrieve open order details
-        # If open order details can not be retrieved, do not proceed with the rest
-        open_order_details = self.fetch_order(
-            market, market_open_order[1]["info"]["txid"][0]
-        )
-        if not open_order_details[0]:
-            logger.error(
-                "%s: Unable to retrieve open order details, trade stopped.", market
+        # Retrieve open order details up to 5 times, otherwise do not proceed
+        for i in range(5):
+
+            open_order_details = self.fetch_order(
+                market, market_open_order[1]["info"]["txid"][0]
             )
-            return
+            if open_order_details[0]:
+                break
+
+            if i == 4:
+                logger.error(
+                    "%s: Unable to retrieve open order details, trade stopped.", market
+                )
+                return
+
+            logger.warning(
+                "%s: Unable to retrieve open order details, trying again...", market
+            )
+
+            time.sleep(15)
 
         # Calculate close price
         close_price = self.calculate_close_price(
@@ -437,17 +459,26 @@ class HODLv2Bot:
             close_price,
         )
 
-        # Create limit close order
-        limit_close_order = self.create_limit_order(
-            market,
-            close_trade_value,
-            close_price,
-        )
-        if not limit_close_order[0]:
-            logger.error(
-                "%s: Unable to create limit close order, trade stopped.", market
+        # Create limit close order up to 5 times, otherwise do not proceed
+        for i in range(5):
+
+            limit_close_order = self.create_limit_order(
+                market,
+                close_trade_value,
+                close_price,
             )
-            return
+            if limit_close_order[0]:
+                break
+
+            if i == 4:
+               logger.error(
+                    "%s: Unable to create limit close order, trade stopped.", market
+                )
+               return
+
+            logger.warning(
+                "%s: Unable to create limit close order, trying again...", market
+            )
 
         # Insert data into database
         data = {
