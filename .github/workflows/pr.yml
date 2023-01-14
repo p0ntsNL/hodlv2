@@ -13,7 +13,7 @@ jobs:
           virtual-env: "python-lint-plus"
           use-black: true
           use-isort: true
-          use-pylint: false
+          use-pylint: true
           use-yapf: false
           use-docformatter: false
           use-pycodestyle: false
