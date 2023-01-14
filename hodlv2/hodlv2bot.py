@@ -153,7 +153,7 @@ class HODLv2Bot:
             return True
 
         logger.warning(
-            "%s: The maximum amount of trades (%s) is reached, therefore not starting a new trade.",
+            "%s: The maximum amount of trades (%s) is reached, not starting a new trade.",
             market,
             self.max_trades,
         )
@@ -178,7 +178,7 @@ class HODLv2Bot:
             return True
 
         logger.warning(
-            "%s: The trade value %s is lower than the minimum %s, therefore not starting a new trade.",
+            "%s: The trade value %s is lower than the minimum %s, not starting a new trade.",
             market_data["market"],
             trade_value,
             market_data["min_trade_value"],
@@ -208,7 +208,7 @@ class HODLv2Bot:
             }
 
         logger.warning(
-            "%s: Unable to retrieve required market data, therefore not starting a new trade.",
+            "%s: Unable to retrieve required market data, not starting a new trade.",
             market,
         )
         return False, {}
@@ -549,7 +549,7 @@ class HODLv2Bot:
                     if update[0]:
 
                         logger.info(
-                            "%s: Trade closed | Id: %s | Profit: %s %s (%s%)",
+                            "%s: Trade closed | Id: %s | Profit: %s %s (%s%%)",
                             market,
                             close_order["id"],
                             profit,

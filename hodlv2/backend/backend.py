@@ -130,7 +130,7 @@ class Backend:
         logger.debug("insert_one: Unable to insert trade in %s.", collection)
         return False, {}
 
-    def aggregate(self, collection, sort={}, match={}, group={}):
+    def aggregate(self, collection, sort=None, match=None, group=None):
 
         """
         Aggregate data based on search query..
