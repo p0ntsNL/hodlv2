@@ -300,7 +300,7 @@ class HODLv2Bot:
             },
         )
 
-        if get_profit_aggregates[0] & get_profit_perc_aggregates[0]:
+        if get_profit_aggregates[0] and get_profit_perc_aggregates[0]:
             for aggregate in get_profit_aggregates[1]:
 
                 if aggregate["_id"] not in aggregates:
