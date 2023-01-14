@@ -629,4 +629,5 @@ class HODLv2Bot:
                     else:
                         logger.critical("%s: Unable to update trade details to backend.", market)
             else:
-                logger.critical("Unable to retrieve closed order details from backend.")
+                pass
+                #logger.critical("Unable to retrieve closed order details from backend.")
