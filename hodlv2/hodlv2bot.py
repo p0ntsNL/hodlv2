@@ -276,20 +276,21 @@ class HODLv2Bot:
         logger.warning("%s: Unable to retrieve next_price from backend.", market)
         return 9999999999999
 
-    def check_next_price(self, market, next_price, current_price):
+    def check_next_price(self, market, next_price, last_price):
         """
         TO DO
         """
     
         if self.open_side == "buy":
-            if float(current_price) <= float(next_price):
-                logger.info("%s: last_price <= next_price, lets start a new trade.", market)
+            if float(last_price) <= float(next_price):
+                logger.info("%s: last_price (%s) <= next_price (%s), lets start a new trade.", market, last_price, next_price)
                 return True
         else:
-            if float(current_price) >= float(next_price):
-                logger.info("%s: last_price >= next_price, lets start a new trade.", market)
+            if float(last_price) >= float(next_price):
+                logger.info("%s: last_price (%s) >= next_price (%s), lets start a new trade.", market, last_price, next_price)
                 return True
     
+        logger.info("%s: last_price: (%s) | next_price: (%s)", market, last_price, next_price)
         return False
 
     def get_profit_aggregates(self):
