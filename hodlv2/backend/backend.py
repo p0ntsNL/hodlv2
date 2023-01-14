@@ -5,6 +5,7 @@ Currently defaults to MongoDB which is the only backend available.
 """
 
 import logging
+import sys
 
 import pymongo
 
@@ -34,20 +35,24 @@ class Backend:
         self.notify = Notify(self.config)
 
         # Indexes
-        self._db["trades"].create_index(
-            [
-                ("profit_currency", pymongo.ASCENDING),
-                ("profit", pymongo.ASCENDING),
-                ("status", pymongo.ASCENDING),
-            ]
-        )
-        self._db["trades"].create_index(
-            [
-                ("profit_currency", pymongo.ASCENDING),
-                ("profit_perc", pymongo.ASCENDING),
-                ("status", pymongo.ASCENDING),
-            ]
-        )
+        try:
+            self._db["trades"].create_index(
+                [
+                    ("profit_currency", pymongo.ASCENDING),
+                    ("profit", pymongo.ASCENDING),
+                    ("status", pymongo.ASCENDING),
+                ]
+            )
+            self._db["trades"].create_index(
+                [
+                    ("profit_currency", pymongo.ASCENDING),
+                    ("profit_perc", pymongo.ASCENDING),
+                    ("status", pymongo.ASCENDING),
+                ]
+            )
+        except Exception as e:
+            logger.critical("Unable to connect to MongoDB: %s", e)
+            sys.exit()
 
     def find_one(self, collection, _id):
         """
