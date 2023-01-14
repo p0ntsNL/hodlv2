@@ -6,6 +6,7 @@ Main bot class
 
 import logging
 import sys
+import time
 
 from hodlv2.backend.backend import Backend
 from hodlv2.exchange.exchange import Exchange
@@ -371,9 +372,8 @@ class HODLv2Bot:
         count = self.backend.count_documents(collection, criteria)
         if count[0]:
             return count[1]
-        else:
-            logger.critical("Unable to retrieve document count from backend.")
 
+        logger.critical("Unable to retrieve document count from backend.")
         return "n/a"
 
     def check_new_trade(self, market):
@@ -454,9 +454,13 @@ class HODLv2Bot:
         next_price = self.calculate_next_open_price(
             open_order_details[1]["average"],
         )
-        update = self.backend.update_one("markets", market, {"next_price": next_price}, True)
+        update = self.backend.update_one(
+            "markets", market, {"next_price": next_price}, True
+        )
         if not update[0]:
-            logger.critical("%s: Unable to update next price details to backend.", market)
+            logger.critical(
+                "%s: Unable to update next price details to backend.", market
+            )
 
         # Calculate trade value
         close_trade_value = profit_in_trade_value(
@@ -586,7 +590,10 @@ class HODLv2Bot:
                             Market: {market}""",
                         )
                     else:
-                        logger.critical("%s: Unable to update closed order details to backend.", market)
+                        logger.critical(
+                            "%s: Unable to update closed order details to backend.",
+                            market,
+                        )
 
                 elif status == "active" and close_order["status"] == "closed":
 
@@ -627,7 +634,9 @@ class HODLv2Bot:
                             {self.stringify_profit_aggregates()}""",
                         )
                     else:
-                        logger.critical("%s: Unable to update trade details to backend.", market)
+                        logger.critical(
+                            "%s: Unable to update trade details to backend.", market
+                        )
             else:
                 pass
-                #logger.critical("Unable to retrieve closed order details from backend.")
+                # logger.critical("Unable to retrieve closed order details from backend.")

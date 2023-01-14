@@ -50,8 +50,8 @@ class Backend:
                     ("status", pymongo.ASCENDING),
                 ]
             )
-        except Exception as e:
-            logger.critical("Unable to connect to MongoDB: %s", e)
+        except Exception as error:
+            logger.critical("Unable to connect to MongoDB: %s", error)
             sys.exit()
 
     def find_one(self, collection, _id):
