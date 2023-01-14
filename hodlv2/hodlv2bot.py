@@ -286,13 +286,13 @@ class HODLv2Bot:
         aggregates = {}
         get_profit_aggregates = self.backend.aggregate(
             "trades",
-            {"$sort":{"profit_currency":1}},
+            {"$sort": {"profit_currency": 1}},
             {"$match": {"status": "finished"}},
             {"$group": {"_id": "$profit_currency", "sum_val": {"$sum": "$profit"}}},
         )
         get_profit_perc_aggregates = self.backend.aggregate(
             "trades",
-            {"$sort":{"profit_currency":1}},
+            {"$sort": {"profit_currency": 1}},
             {"$match": {"status": "finished"}},
             {
                 "$group": {
