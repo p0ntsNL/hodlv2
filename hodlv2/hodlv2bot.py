@@ -283,15 +283,37 @@ class HODLv2Bot:
         TO DO
         """
 
-        aggregates = []
-        get_aggregates = self.backend.aggregate(
+        aggregates = {}
+        get_profit_aggregates = self.backend.aggregate(
             "trades",
             {"$match": {"status": "finished"}},
             {"$group": {"_id": "$profit_currency", "sum_val": {"$sum": "$profit"}}},
         )
-        if get_aggregates[0]:
-            for aggregate in get_aggregates[1]:
-                aggregates.append(aggregate)
+        get_profit_perc_aggregates = self.backend.aggregate(
+            "trades",
+            {"$match": {"status": "finished"}},
+            {
+                "$group": {
+                    "_id": "$profit_currency",
+                    "sum_val": {"$sum": "$profit_perc"},
+                }
+            },
+        )
+
+        if get_profit_aggregates[0] & get_profit_perc_aggregates[0]:
+            for aggregate in get_profit_aggregates[1]:
+
+                if aggregate["_id"] not in aggregates:
+                    aggregates[aggregate["_id"]] = {}
+
+                aggregates[aggregate["_id"]]["profit"] = aggregate["sum_val"]
+
+            for aggregate in get_profit_perc_aggregates[1]:
+
+                if aggregate["_id"] not in aggregates:
+                    aggregates[aggregate["_id"]] = {}
+
+                aggregates[aggregate["_id"]]["profit_perc"] = aggregate["sum_val"]
 
         return aggregates
 
@@ -302,8 +324,10 @@ class HODLv2Bot:
 
         aggregates = []
         get_aggregates = self.get_profit_aggregates()
-        for aggregate in get_aggregates:
-            aggregates.append(f"{aggregate['sum_val']:.8f} {aggregate['_id']}")
+        for quote, data in get_aggregates.items():
+            aggregates.append(
+                f"{data['profit']:.8f} {quote} ({data['profit_perc']:.2f}%)"
+            )
 
         return "\n".join(aggregates)
 
