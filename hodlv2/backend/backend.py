@@ -49,26 +49,6 @@ class Backend:
             ]
         )
 
-    def find(self, collection, criteria, count=False):
-        """
-        Find multiple documents based on search criteria in a MongoDB collection.
-        :param collection: name of the collection to use
-        :param criteria: criteria of the documents to search for
-        :param count: count result or not
-        """
-
-        try:
-            if count:
-                find = self._db[collection].find(criteria).count()
-            else:
-                find = self._db[collection].find(criteria)
-            return True, find
-        except Exception as error:
-            logger.debug("find error: %s", error)
-
-        logger.debug("find: Unable to find %s in %s.", criteria, collection)
-        return False, {}
-
     def find_one(self, collection, _id):
         """
         Find a document by ID in a MongoDB collection.
@@ -174,4 +154,20 @@ class Backend:
             logger.debug("aggregate error: %s", error)
 
         logger.debug("aggregate: Unable to aggregate data in %s.", collection)
+        return False, {}
+
+    def count_documents(self, collection, criteria):
+        """
+        Count documents based on search criteria in a MongoDB collection.
+        :param collection: name of the collection to use
+        :param criteria: criteria of the documents to search for
+        """
+
+        try:
+            count = self._db[collection].count_documents(criteria)
+            return True, count
+        except Exception as error:
+            logger.debug("count_documents error: %s", error)
+
+        logger.debug("count_documents: Unable to find %s in %s.", criteria, collection)
         return False, {}
