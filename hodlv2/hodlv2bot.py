@@ -454,7 +454,9 @@ class HODLv2Bot:
         next_price = self.calculate_next_open_price(
             open_order_details[1]["average"],
         )
-        self.backend.update_one("markets", market, {"next_price": next_price}, True)
+        update = self.backend.update_one("markets", market, {"next_price": next_price}, True)
+        if not update[0]:
+            logger.critical("%s: Unable to update next price details to backend.", market)
 
         # Calculate trade value
         close_trade_value = profit_in_trade_value(
