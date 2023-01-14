@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# pylint: disable=import-error
+# pylint: disable=import-error,no-name-in-module
 """
 Main worker class
 """

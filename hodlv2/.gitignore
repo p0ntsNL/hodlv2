@@ -1,3 +1,5 @@
 __pycache__
 config/config.py
+config/config.yaml
+config/config.yml
 *.log
