@@ -19,21 +19,6 @@ def get_quote(market):
     return market.split("/")[1]
 
 
-def check_next_price(open_side, next_price, current_price):
-    """
-    TO DO
-    """
-
-    if open_side == "buy":
-        if float(current_price) <= float(next_price):
-            return True
-    else:
-        if float(current_price) >= float(next_price):
-            return True
-
-    return False
-
-
 def calculate_trade_value(trade_value, last_price):
     """
     TO DO

@@ -14,7 +14,6 @@ from hodlv2.notify.notify import Notify
 from hodlv2.misc.misc import (  # isort:skip
     calculate_profit,  # isort:skip
     calculate_trade_value,  # isort:skip
-    check_next_price,  # isort:skip
     get_base,  # isort:skip
     get_quote,  # isort:skip
     profit_in_trade_value,  # isort:skip
@@ -128,7 +127,7 @@ class HODLv2Bot:
                     open_orders += 1
 
             if open_orders == 0:
-                logger.info("%s: 0 open orders found.", market)
+                logger.info("%s: 0 open orders found, lets start a new trade.", market)
                 return True
 
         logger.info(
@@ -272,11 +271,26 @@ class HODLv2Bot:
 
         data = self.backend.find_one("markets", market)
         if data[0]:
-            logger.info("%s: The next_price is %s.", market, data[1]["next_price"])
             return data[1]["next_price"]
 
         logger.warning("%s: Unable to retrieve next_price from backend.", market)
         return 9999999999999
+
+    def check_next_price(self, market, next_price, current_price):
+        """
+        TO DO
+        """
+    
+        if self.open_side == "buy":
+            if float(current_price) <= float(next_price):
+                logger.info("%s: last_price <= next_price, lets start a new trade.", market)
+                return True
+        else:
+            if float(current_price) >= float(next_price):
+                logger.info("%s: last_price >= next_price, lets start a new trade.", market)
+                return True
+    
+        return False
 
     def get_profit_aggregates(self):
         """
@@ -365,8 +379,8 @@ class HODLv2Bot:
         if market_data[0] and check_balance and max_trades and trade_value:
 
             # If next price is reached or no open orders are found, give ok
-            if self.no_open_orders(market) or check_next_price(
-                self.open_side,
+            if self.no_open_orders(market) or self.check_next_price(
+                market,
                 self.get_next_price(market),
                 market_data[1]["ticker"]["last"],
             ):
