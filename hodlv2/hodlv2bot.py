@@ -273,7 +273,7 @@ class HODLv2Bot:
         if data[0]:
             return data[1]["next_price"]
 
-        logger.warning("%s: Unable to retrieve next_price from backend.", market)
+        logger.critical("%s: Unable to retrieve next_price from backend.", market)
         return 0
 
     def check_next_price(self, market, next_price, last_price):
@@ -344,6 +344,9 @@ class HODLv2Bot:
 
                 aggregates[aggregate["_id"]]["profit_perc"] = aggregate["sum_val"]
 
+        else:
+            logger.critical("%s: Unable to retrieve aggregates from backend.", market)
+
         return aggregates
 
     def stringify_profit_aggregates(self):
@@ -368,6 +371,8 @@ class HODLv2Bot:
         count = self.backend.count_documents(collection, criteria)
         if count[0]:
             return count[1]
+        else:
+            logger.critical("%s: Unable to retrieve document count from backend.", market)
 
         return "n/a"
 
@@ -471,10 +476,10 @@ class HODLv2Bot:
                 break
 
             if i == 4:
-               logger.error(
+                logger.error(
                     "%s: Unable to create limit close order, trade stopped.", market
                 )
-               return
+                return
 
             logger.warning(
                 "%s: Unable to create limit close order, trying again...", market
@@ -495,7 +500,9 @@ class HODLv2Bot:
             else get_base(market),
             "status": "active",
         }
-        self.backend.insert_one("trades", data)
+        insert = self.backend.insert_one("trades", data)
+        if not insert[0]:
+            logger.critical("%s: Unable to insert trade details to backend.", market)
 
         close_cost = float(limit_close_order[1]["price"]) * float(close_trade_value)
 
@@ -576,6 +583,8 @@ class HODLv2Bot:
                             Id: {close_order['id']}
                             Market: {market}""",
                         )
+                    else:
+                        logger.critical("%s: Unable to update closed order details to backend.", market)
 
                 elif status == "active" and close_order["status"] == "closed":
 
@@ -615,3 +624,7 @@ class HODLv2Bot:
                             <b>Total Profit</b>
                             {self.stringify_profit_aggregates()}""",
                         )
+                    else:
+                        logger.critical("%s: Unable to update trade details to backend.", market)
+            else:
+                logger.critical("%s: Unable to retrieve closed order details from backend.", market)
