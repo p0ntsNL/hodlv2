@@ -345,7 +345,7 @@ class HODLv2Bot:
                 aggregates[aggregate["_id"]]["profit_perc"] = aggregate["sum_val"]
 
         else:
-            logger.critical("%s: Unable to retrieve aggregates from backend.", market)
+            logger.critical("Unable to retrieve aggregates from backend.")
 
         return aggregates
 
@@ -372,7 +372,7 @@ class HODLv2Bot:
         if count[0]:
             return count[1]
         else:
-            logger.critical("%s: Unable to retrieve document count from backend.", market)
+            logger.critical("Unable to retrieve document count from backend.")
 
         return "n/a"
 
@@ -629,4 +629,4 @@ class HODLv2Bot:
                     else:
                         logger.critical("%s: Unable to update trade details to backend.", market)
             else:
-                logger.critical("%s: Unable to retrieve closed order details from backend.", market)
+                logger.critical("Unable to retrieve closed order details from backend.")
