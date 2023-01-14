@@ -274,7 +274,7 @@ class HODLv2Bot:
             return data[1]["next_price"]
 
         logger.warning("%s: Unable to retrieve next_price from backend.", market)
-        return 9999999999999
+        return 0
 
     def check_next_price(self, market, next_price, last_price):
         """
