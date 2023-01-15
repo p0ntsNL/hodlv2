@@ -108,7 +108,6 @@ class Backend:
             upserted_id = update.upserted_id
 
             if modified_count == 1 or not isinstance(upserted_id, type(None)):
-                logger.info("Database successfully updated.")
                 return True, {}
         except Exception as error:
             logger.debug("update_one error: %s", error)
@@ -127,7 +126,6 @@ class Backend:
             insert = self._db[collection].insert_one(data)
             inserted_id = insert.inserted_id
             if inserted_id == data["_id"]:
-                logger.info("Database successfully updated.")
                 return True, {}
         except Exception as error:
             logger.debug("insert_one error: %s", error)
