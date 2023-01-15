@@ -152,6 +152,10 @@ Should the bot take profit in the quote or base currency.
 
 ### Pushover settings (optional)
 
+##### **ENABLE_PUSHOVER**
+
+Wether or not you would like Pushover to be enabled.
+
 ##### **PUSHOVER_USER_KEY**
 
 If you want to receive trade updates through Pushover, configure your user key here.

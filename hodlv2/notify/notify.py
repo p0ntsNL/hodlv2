@@ -31,9 +31,16 @@ class Notify:
         TO DO
         """
 
+        # Variables
+        enabled = self.config.PUSHOVER_ENABLED
         key = self.config.PUSHOVER_USER_KEY
         token = self.config.PUSHOVER_APP_TOKEN
 
+        # Only send when enabled
+        if enabled != "true":
+            return
+
+        # Send pushover
         try:
             requests.post(
                 "https://api.pushover.net/1/messages.json",

@@ -16,6 +16,7 @@ PERC_CLOSE = 1
 PROFIT_IN = "quote"
 
 # Pushover (optional)
+PUSHOVER_ENABLED = "true"
 PUSHOVER_USER_KEY = "key"
 PUSHOVER_APP_TOKEN = "token"
 
