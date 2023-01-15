@@ -413,7 +413,7 @@ class HODLv2Bot:
                 else:
                     logger.error("%s: Unable to reset next trade price.", market)
             else:
-                logger.info("%s: Next trade price reset is not required, reset at %s", market, time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.localtime(reset_at)))
+                logger.info("%s: Next trade price reset is not required, reset at %s.", market, time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.localtime(reset_at)))
 
     def check_new_trade(self, market):
         """
@@ -434,6 +434,9 @@ class HODLv2Bot:
 
         # If market data, balance and max trades are ok
         if market_data[0] and check_balance and max_trades and trade_value:
+
+            # Check if next trade price should be reset
+            self.check_next_trade_price_reset(market)
 
             # If next trade price is reached or no open orders are found, give ok
             if self.no_open_orders(market) or self.check_next_trade_price(
