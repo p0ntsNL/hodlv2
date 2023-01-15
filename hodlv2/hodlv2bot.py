@@ -272,7 +272,8 @@ class HODLv2Bot:
 
         data = self.backend.find_one("markets", market)
         if data[0]:
-            return data[1]["next_trade_price"]
+            if "next_trade_price" in data[1]:
+                return data[1]["next_trade_price"]
 
         logger.critical("%s: Unable to retrieve next_trade_price from backend.", market)
         return 0
