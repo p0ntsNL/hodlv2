@@ -15,8 +15,6 @@ from hodlv2.notify.notify import Notify
 from hodlv2.misc.misc import (  # isort:skip
     calculate_profit,  # isort:skip
     calculate_trade_value,  # isort:skip
-    get_base,  # isort:skip
-    get_quote,  # isort:skip
     profit_in_trade_value,  # isort:skip
     find_key,  # isort:skip
 )  # isort:skip
@@ -50,15 +48,19 @@ class HODLv2Bot:
         TO DO
         """
 
+        self.base = market.split("/")[0]
+        self.quote = market.split("/")[1]
         self.trade_value = self.markets_data[market]["TradeValue"]
         self.side = self.markets_data[market]["Side"]
         self.max_trades = self.markets_data[market]["MaxTrades"]
         self.perc_open = self.markets_data[market]["PercOpen"]
         self.perc_close = self.markets_data[market]["PercClose"]
-        self.profit_in = self.markets_data[market]["ProfitIn"]
         self.next_trade_price_reset = self.markets_data[market]["ResetNextTradePrice"]
         self.open_side = self.side
         self.close_side = "sell" if self.side == "buy" else "buy"
+        self.profit_in = "base" if self.markets_data[market]["ProfitIn"] == self.base else "quote"
+
+        print (self.base, self.quote, self.profit_in)
 
     def open_closed_ok(self):
         """
@@ -432,7 +434,7 @@ class HODLv2Bot:
         market_data = self.get_market_data(market)
 
         # Check if balance is sufficient
-        check_balance = self.check_balance(market, get_quote(market), self.trade_value)
+        check_balance = self.check_balance(market, self.quote, self.trade_value)
 
         # Check if max trades is reached
         max_trades = self.check_max_trades(market)
@@ -555,11 +557,11 @@ class HODLv2Bot:
             "close": limit_close_order[1],
             "profit_in": self.profit_in,
             "profit_perc": self.perc_open,
-            "base": get_base(market),
-            "quote": get_quote(market),
-            "profit_currency": get_quote(market)
+            "base": self.base,
+            "quote": self.quote,
+            "profit_currency": self.quote
             if self.profit_in == "quote"
-            else get_base(market),
+            else self.base
             "status": "active",
         }
         insert = self.backend.insert_one("trades", data)
@@ -574,26 +576,26 @@ class HODLv2Bot:
             limit_close_order[1]["info"]["txid"][0],
             self.open_side,
             open_order_details[1]["average"],
-            get_quote(market),
+            self.quote,
             open_order_details[1]["filled"],
-            get_base(market),
+            self.base,
             open_order_details[1]["cost"],
-            get_quote(market),
+            self.quote,
         )
         self.notify.send(
             f"""<b>Trade opened</b>
             Id: {limit_close_order[1]["info"]["txid"][0]}
             Market: {market}
             Side: {self.open_side}
-            Price: {open_order_details[1]['average']} {get_quote(market)}
-            Amount: {open_order_details[1]['filled']} {get_base(market)}
-            Cost: {open_order_details[1]['cost']} {get_quote(market)}
+            Price: {open_order_details[1]['average']} {self.quote}
+            Amount: {open_order_details[1]['filled']} {self.base}
+            Cost: {open_order_details[1]['cost']} {self.quote}
 
             <b>Closing order</b>
             Side: {self.close_side}
-            Close price: {limit_close_order[1]['price']} {get_quote(market)}
-            Close amount: {close_trade_value} {get_base(market)}
-            Close cost: {close_cost} {get_quote(market)}""",
+            Close price: {limit_close_order[1]['price']} {self.quote}
+            Close amount: {close_trade_value} {self.base}
+            Close cost: {close_cost} {self.quote}""",
         )
 
     def check_closed_orders(self):

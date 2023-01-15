@@ -3,22 +3,6 @@ TO DO
 """
 
 
-def get_base(market):
-    """
-    TO DO
-    """
-
-    return market.split("/")[0]
-
-
-def get_quote(market):
-    """
-    TO DO
-    """
-
-    return market.split("/")[1]
-
-
 def calculate_trade_value(trade_value, last_price):
     """
     TO DO
