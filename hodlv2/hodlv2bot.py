@@ -64,18 +64,6 @@ class HODLv2Bot:
         self.open_side = self.side
         self.close_side = "sell" if self.side == "buy" else "buy"
 
-        print(
-            self.trade_value,
-            self.side,
-            self.max_trades,
-            self.perc_open,
-            self.perc_close,
-            self.profit_in,
-            self.next_trade_price_reset,
-            self.open_side,
-            self.close_side,
-        )
-
     def open_closed_ok(self):
         """
         TO DO
