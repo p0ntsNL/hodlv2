@@ -14,7 +14,7 @@ MARKETS = {
         "TradeValue": 10,
         "PercOpen": 1,
         "PercClose": 1,
-        "ProfitIn": "USD",
+        "TakeProfitIn": "USD",
         "ResetNextTradePrice": 1,
     },
     "DOT/USD": {
@@ -23,7 +23,7 @@ MARKETS = {
         "TradeValue": 10,
         "PercOpen": 1,
         "PercClose": 1,
-        "ProfitIn": "USD",
+        "TakeProfitIn": "USD",
         "ResetNextTradePrice": 1,
     },
     "EWT/USD": {
@@ -32,7 +32,7 @@ MARKETS = {
         "TradeValue": 10,
         "PercOpen": 1,
         "PercClose": 1,
-        "ProfitIn": "USD",
+        "TakeProfitIn": "USD",
         "ResetNextTradePrice": 1,
     },
     "LINK/USD": {
@@ -41,7 +41,7 @@ MARKETS = {
         "TradeValue": 10,
         "PercOpen": 1,
         "PercClose": 1,
-        "ProfitIn": "USD",
+        "TakeProfitIn": "USD",
         "ResetNextTradePrice": 1,
     },
 }

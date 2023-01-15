@@ -58,7 +58,7 @@ class HODLv2Bot:
         self.next_trade_price_reset = self.markets_data[market]["ResetNextTradePrice"]
         self.open_side = self.side
         self.close_side = "sell" if self.side == "buy" else "buy"
-        self.profit_in = "base" if self.markets_data[market]["ProfitIn"] == self.base else "quote"
+        self.profit_in = "base" if self.markets_data[market]["TakeProfitIn"] == self.base else "quote"
 
     def open_closed_ok(self):
         """
