@@ -395,18 +395,25 @@ class HODLv2Bot:
         """
 
         next_trade_price_updated_at = self.get_next_trade_price_data(market)[1]
+
         if next_trade_price_updated_at != 0:
+
             reset_at = int(next_trade_price_updated_at) + (
                 int(self.next_trade_price_reset) * 86400
             )
+
             if int(time.time()) > int(reset_at):
+
                 update_next_trade_price = self.backend.update_one(
                     "markets", market, {"next_trade_price": 999999999999}, True
                 )
+
                 if update_next_trade_price[0]:
                     logger.info("%s: Next trade price have been reset.", market)
                 else:
                     logger.error("%s: Unable to reset next trade price.", market)
+            else:
+                logger.info("%s: Next trade price reset is not required, reset at %s", market, time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.localtime(reset_at)))
 
     def check_new_trade(self, market):
         """
