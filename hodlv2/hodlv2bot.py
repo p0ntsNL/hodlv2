@@ -561,7 +561,7 @@ class HODLv2Bot:
             "quote": self.quote,
             "profit_currency": self.quote
             if self.profit_in == "quote"
-            else self.base
+            else self.base,
             "status": "active",
         }
         insert = self.backend.insert_one("trades", data)
