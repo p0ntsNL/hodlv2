@@ -46,20 +46,21 @@ class HODLv2Bot:
         self.open_orders = self.ccxt.get_open_orders()
         self.closed_orders = self.ccxt.get_closed_orders()
 
-        self.markets = self.config.MARKETS.keys()
+        self.markets_data = self.config.MARKETS
+        self.markets = self.markets_data.keys()
 
     def bot_settings(self, market):
         """
         TO DO
         """
 
-        self.trade_value = self.markets[market]["TradeValue"]
-        self.side = self.markets[market]["Side"]
-        self.max_trades = self.markets[market]["MaxTrades"]
-        self.perc_open = self.markets[market]["PercOpen"]
-        self.perc_close = self.markets[market]["PercClose"]
-        self.profit_in = self.markets[market]["ProfitIn"]
-        self.next_trade_price_reset = self.markets[market]["ResetNextTradePrice"]
+        self.trade_value = self.markets_data[market]["TradeValue"]
+        self.side = self.markets_data[market]["Side"]
+        self.max_trades = self.markets_data[market]["MaxTrades"]
+        self.perc_open = self.markets_data[market]["PercOpen"]
+        self.perc_close = self.markets_data[market]["PercClose"]
+        self.profit_in = self.markets_data[market]["ProfitIn"]
+        self.next_trade_price_reset = self.markets_data[market]["ResetNextTradePrice"]
         self.open_side = self.side
         self.close_side = "sell" if self.side == "buy" else "buy"
 
