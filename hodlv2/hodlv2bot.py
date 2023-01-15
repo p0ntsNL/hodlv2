@@ -52,6 +52,7 @@ class HODLv2Bot:
         self.perc_open = self.config.PERC_OPEN
         self.perc_close = self.config.PERC_CLOSE
         self.profit_in = self.config.PROFIT_IN
+        self.next_trade_price_reset = self.config.RESET_NEXT_TRADE_PRICE
         self.open_side = self.side
         self.close_side = "sell" if self.side == "buy" else "buy"
 
@@ -265,18 +266,26 @@ class HODLv2Bot:
         )
         return False
 
-    def get_next_trade_price(self, market):
+    def get_next_trade_price_data(self, market):
         """
         TO DO
         """
 
         data = self.backend.find_one("markets", market)
         if data[0]:
-            if "next_trade_price" in data[1]:
-                return data[1]["next_trade_price"]
+            if (
+                "next_trade_price" in data[1]
+                and "next_trade_price_updated_at" in data[1]
+            ):
+                return [
+                    data[1]["next_trade_price"],
+                    data[1]["next_trade_price_updated_at"],
+                ]
 
-        logger.critical("%s: Unable to retrieve next_trade_price from backend.", market)
-        return 0
+        logger.critical(
+            "%s: Unable to retrieve next_trade_price data from backend.", market
+        )
+        return [0, 0]
 
     def check_next_trade_price(self, market, next_trade_price, last_price):
         """
@@ -380,6 +389,25 @@ class HODLv2Bot:
         logger.critical("Unable to retrieve document count from backend.")
         return "n/a"
 
+    def check_next_trade_price_reset(self, market):
+        """
+        TO DO
+        """
+
+        next_trade_price_updated_at = self.get_next_trade_price_data(market)[1]
+        if next_trade_price_updated_at != 0:
+            reset_at = int(next_trade_price_updated_at) + (
+                int(self.next_trade_price_reset) * 86400
+            )
+            if int(time.time()) > int(reset_at):
+                update_next_trade_price = self.backend.update_one(
+                    "markets", market, {"next_trade_price": 999999999999}, True
+                )
+                if update_next_trade_price[0]:
+                    logger.info("%s: Next trade price have been reset.", market)
+                else:
+                    logger.error("%s: Unable to reset next trade price.", market)
+
     def check_new_trade(self, market):
         """
         TO DO
@@ -403,7 +431,7 @@ class HODLv2Bot:
             # If next trade price is reached or no open orders are found, give ok
             if self.no_open_orders(market) or self.check_next_trade_price(
                 market,
-                self.get_next_trade_price(market),
+                self.get_next_trade_price_data(market)[0],
                 market_data[1]["ticker"]["last"],
             ):
                 logger.info("%s: New trade required.", market)
@@ -458,10 +486,16 @@ class HODLv2Bot:
         next_trade_price = self.calculate_next_trade_price(
             open_order_details[1]["average"],
         )
-        update = self.backend.update_one(
-            "markets", market, {"next_trade_price": next_trade_price}, True
+        update_next_trade_price = self.backend.update_one(
+            "markets",
+            market,
+            {
+                "next_trade_price": next_trade_price,
+                "next_trade_price_updated_at": int(time.time()),
+            },
+            True,
         )
-        if not update[0]:
+        if not update_next_trade_price[0]:
             logger.critical(
                 "%s: Unable to update next trade price details to backend.", market
             )

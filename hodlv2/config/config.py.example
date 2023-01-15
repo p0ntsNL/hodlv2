@@ -4,19 +4,20 @@
 EXCHANGE = "kraken"
 EXCHANGE_KEY = "key"
 EXCHANGE_SECRET = "secret"
-EXCHANGE_PASSWORD = "" # Optional for some exchanges
+EXCHANGE_PASSWORD = "" # Optional
 
 # Bot settings (required)
 MARKETS = [ "BTC/USD", "DOT/USD", "EWT/USD", "LINK/USD" ]
-SIDE = "buy"
-MAX_TRADES = 10
-TRADE_VALUE = 5
-PERC_OPEN = 1
-PERC_CLOSE = 1
-PROFIT_IN = "quote"
+SIDE = "buy" # bu/sell
+MAX_TRADES = 10 # integer
+TRADE_VALUE = 5 # float
+PERC_OPEN = 1 # float
+PERC_CLOSE = 1 # float
+PROFIT_IN = "quote" # quote/base
+RESET_NEXT_TRADE_PRICE = 1 # days
 
 # Pushover (optional)
-PUSHOVER_ENABLED = "true"
+PUSHOVER_ENABLED = "true" # true/false
 PUSHOVER_USER_KEY = "key"
 PUSHOVER_APP_TOKEN = "token"
 

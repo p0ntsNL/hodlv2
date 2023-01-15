@@ -105,6 +105,9 @@ class Worker:
             # Loop markets
             for market in self.config.MARKETS:
 
+                # Check if next trade price should be reset
+                self.bot.check_next_trade_price_reset(market)
+
                 # Check if a new trade should be initiated
                 new_trade = self.bot.check_new_trade(market)
                 if new_trade[0]:
