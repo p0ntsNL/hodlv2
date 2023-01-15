@@ -52,7 +52,7 @@ class Backend:
             )
         except Exception as error:
             logger.critical("Unable to connect to MongoDB: %s", error)
-            sys.exit()
+            sys.exit("Unable to connect to MongoDB.")
 
     def find_one(self, collection, _id):
         """

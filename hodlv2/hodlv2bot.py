@@ -21,10 +21,6 @@ from hodlv2.misc.misc import (  # isort:skip
     find_key,  # isort:skip
 )  # isort:skip
 
-# check min. python version
-if sys.version_info < (3, 8):
-    sys.exit("HODLv2 requires Python version >= 3.8")
-
 logger = logging.getLogger(__name__)
 
 

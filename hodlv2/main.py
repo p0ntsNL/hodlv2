@@ -26,6 +26,7 @@ logger.addHandler(logHandler)
 
 # check min. python version
 if sys.version_info < (3, 8):
+    logger.critical("HODLv2 required Python version >= 3.8")
     sys.exit("HODLv2 requires Python version >= 3.8")
 
 
