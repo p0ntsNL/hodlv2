@@ -60,8 +60,6 @@ class HODLv2Bot:
         self.close_side = "sell" if self.side == "buy" else "buy"
         self.profit_in = "base" if self.markets_data[market]["ProfitIn"] == self.base else "quote"
 
-        print (self.base, self.quote, self.profit_in)
-
     def open_closed_ok(self):
         """
         TO DO
