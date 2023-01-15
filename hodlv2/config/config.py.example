@@ -7,14 +7,44 @@ EXCHANGE_SECRET = "secret"
 EXCHANGE_PASSWORD = "" # Optional
 
 # Bot settings (required)
-MARKETS = [ "BTC/USD", "DOT/USD", "EWT/USD", "LINK/USD" ]
-SIDE = "buy" # bu/sell
-MAX_TRADES = 10 # integer
-TRADE_VALUE = 5 # float
-PERC_OPEN = 1 # float
-PERC_CLOSE = 1 # float
-PROFIT_IN = "quote" # quote/base
-RESET_NEXT_TRADE_PRICE = 1 # days
+MARKETS = {
+    "BTC/USD": {
+        "Side":"buy",
+        "MaxTrades": 10,
+        "TradeValue": 10,
+        "PercOpen": 1,
+        "PercClose": 1,
+        "ProfitIn": "quote",
+        "ResetNextTradePrice": 1,
+    },
+    "DOT/USD": {
+        "Side":"buy",
+        "MaxTrades": 10,
+        "TradeValue": 10,
+        "PercOpen": 1,
+        "PercClose": 1,
+        "ProfitIn": "quote",
+        "ResetNextTradePrice": 1,
+    },
+    "EWT/USD": {
+        "Side":"buy",
+        "MaxTrades": 10,
+        "TradeValue": 10,
+        "PercOpen": 1,
+        "PercClose": 1,
+        "ProfitIn": "quote",
+        "ResetNextTradePrice": 1,
+    },
+    "LINK/USD": {
+        "Side":"buy",
+        "MaxTrades": 10,
+        "TradeValue": 10,
+        "PercOpen": 1,
+        "PercClose": 1,
+        "ProfitIn": "quote",
+        "ResetNextTradePrice": 1,
+    },
+}
 
 # Pushover (optional)
 PUSHOVER_ENABLED = "true" # true/false

@@ -49,6 +49,8 @@ class Worker:
         self.notify = Notify(self.config)
         self.bot = HODLv2Bot(self.config)
 
+        self.markets = self.config.MARKETS.keys()
+
     def reload(self):
         """
         TO DO
@@ -69,7 +71,7 @@ class Worker:
         TO DO
         """
 
-        return len(self.config.MARKETS) * 10
+        return len(self.markets) * 10
 
     def reset(self):
         """
@@ -103,7 +105,10 @@ class Worker:
                 continue
 
             # Loop markets
-            for market in self.config.MARKETS:
+            for market in self.markets:
+
+                # Load market settings
+                self.bot.bot_settings(market)
 
                 # Check if a new trade should be initiated
                 new_trade = self.bot.check_new_trade(market)

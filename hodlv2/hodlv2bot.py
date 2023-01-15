@@ -46,15 +46,34 @@ class HODLv2Bot:
         self.open_orders = self.ccxt.get_open_orders()
         self.closed_orders = self.ccxt.get_closed_orders()
 
-        self.trade_value = self.config.TRADE_VALUE
-        self.side = self.config.SIDE
-        self.max_trades = self.config.MAX_TRADES
-        self.perc_open = self.config.PERC_OPEN
-        self.perc_close = self.config.PERC_CLOSE
-        self.profit_in = self.config.PROFIT_IN
-        self.next_trade_price_reset = self.config.RESET_NEXT_TRADE_PRICE
+        self.markets = self.config.MARKETS.keys()
+
+    def bot_settings(self, market):
+        """
+        TO DO
+        """
+
+        self.trade_value = self.markets[market]["TradeValue"]
+        self.side = self.markets[market]["Side"]
+        self.max_trades = self.markets[market]["MaxTrades"]
+        self.perc_open = self.markets[market]["PercOpen"]
+        self.perc_close = self.markets[market]["PercClose"]
+        self.profit_in = self.markets[market]["ProfitIn"]
+        self.next_trade_price_reset = self.markets[market]["ResetNextTradePrice"]
         self.open_side = self.side
         self.close_side = "sell" if self.side == "buy" else "buy"
+
+        print(
+            self.trade_value,
+            self.side,
+            self.max_trades,
+            self.perc_open,
+            self.perc_close,
+            self.profit_in,
+            self.next_trade_price_reset,
+            self.open_side,
+            self.close_side,
+        )
 
     def open_closed_ok(self):
         """
@@ -413,7 +432,11 @@ class HODLv2Bot:
                 else:
                     logger.error("%s: Unable to reset next trade price.", market)
             else:
-                logger.info("%s: Next trade price reset is not required, next reset at %s.", market, time.strftime("%d-%m-%Y %H:%M", time.localtime(reset_at)))
+                logger.info(
+                    "%s: Next trade price reset is not required, next reset at %s.",
+                    market,
+                    time.strftime("%d-%m-%Y %H:%M", time.localtime(reset_at)),
+                )
 
     def check_new_trade(self, market):
         """
