@@ -50,6 +50,12 @@ class Backend:
                     ("status", pymongo.ASCENDING),
                 ]
             )
+            self._db["trades"].create_index(
+                [
+                    ("fees", pymongo.ASCENDING),
+                    ("status", pymongo.ASCENDING),
+                ]
+            )
         except Exception as error:
             logger.critical("Unable to connect to MongoDB: %s", error)
             sys.exit("Unable to connect to MongoDB.")
