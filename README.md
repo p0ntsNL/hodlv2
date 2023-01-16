@@ -142,11 +142,12 @@ LoggingSettings:
 
 ## Run
 
-After [configuration](#configuration)...
-From the main directory, run the following command to start the bot:
+After configuration, from the main directory, run the following command to start the bot:
 ```
 python3 hodlv2/main.py
 ```
+
+* The prefered way to run is through systemd or in a screen.
 
 If successful, you should see the current version printed in the console. Otherwise please refer to the logs.
 ```
