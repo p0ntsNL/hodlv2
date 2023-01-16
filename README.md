@@ -62,11 +62,11 @@ The bot requires Python3.8 or higher.
 
 Furtermore, a few extra libraries should be installed:
 ```
-pip3 install ccxt
-pip3 install requests
-pip3 install pymongo
-pip3 install pyyaml
-pip3 install importlib
+pip3 install ccxt       # Crypto exchange trading library
+pip3 install requests   # HTTP library
+pip3 install pymongo    # MongoDB interaction tool
+pip3 install pyyaml     # yaml framework
+pip3 install schema     # yaml config validator
 ```
 
 ### Clone
