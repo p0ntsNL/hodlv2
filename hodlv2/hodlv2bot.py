@@ -695,7 +695,7 @@ class HODLv2Bot:
                             f"""<b>Trade closed</b>
                             Id: {close_order['id']}
                             Market: {market}
-                            Profit (Ex. fee):{profit:.8f} {profit_currency} ({profit_perc:.2f}%)
+                            Profit (Ex. fees): {profit:.8f} {profit_currency} ({profit_perc:.2f}%)
                             Open fee: {open_order["fee"]["cost"]} {open_order["fee"]["currency"]}
                             Close fee: {close_order["fee"]["cost"]} {close_order["fee"]["currency"]}
 

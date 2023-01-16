@@ -17,15 +17,14 @@ def calculate_fees(open_order, close_order, profit_currency):
     TO DO
     """
 
-    fees = {}
-
-    if open_order["currency"] not in fees:
-        fees[open_order["currency"]] = 0
-    fees[open_order["currency"]] += float(open_order["cost"])
-
-    if close_order["currency"] not in fees:
-        fees[close_order["currency"]] = 0
-    fees[close_order["currency"]] += float(close_order["cost"])
+    fees = {
+        "open": {
+            open_order["currency"]: open_order["cost"],
+        },
+        "close": {
+            close_order["currency"]: close_order["cost"],
+        },
+    }
 
     return fees
 
