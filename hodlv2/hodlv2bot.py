@@ -164,7 +164,7 @@ class HODLv2Bot:
                     "%s: The maximum amount of trades (%s) is not reached yet (%s).",
                     market,
                     self.max_trades,
-                    len(self.open_orders[1]),
+                    counter,
                 )
                 return True
 
