@@ -525,9 +525,12 @@ class HODLv2Bot:
         for i in range(5):
 
             open_order_details = self.fetch_order(
-                market, market_open_order[1]["info"]["txid"][0]
+                market, market_open_order[1]["id"]
             )
             if open_order_details[0]:
+                logger.error(
+                    "%s: Open order details retrieved.", market
+                )
                 break
 
             if i == 4:
@@ -598,7 +601,7 @@ class HODLv2Bot:
 
         # Insert data into database
         data = {
-            "_id": limit_close_order[1]["info"]["txid"][0],
+            "_id": limit_close_order[1]["id"],
             "market": market,
             "open": open_order_details[1],
             "close": limit_close_order[1],
@@ -618,7 +621,7 @@ class HODLv2Bot:
         logger.info(
             "%s: Trade opened | Id: %s | Side: %s | Price: %s %s | Amount: %s %s | Cost: %s %s | Fee: %s %s",
             market,
-            limit_close_order[1]["info"]["txid"][0],
+            limit_close_order[1]["id"],
             self.open_side,
             open_order_details[1]["average"],
             self.quote,
@@ -631,7 +634,7 @@ class HODLv2Bot:
         )
         self.notify.send(
             f"""<b>Trade opened</b>
-            Id: {limit_close_order[1]["info"]["txid"][0]}
+            Id: {limit_close_order[1]["id"]}
             Market: {market}
             Side: {self.open_side}
             Price: {open_order_details[1]['average']} {self.quote}
