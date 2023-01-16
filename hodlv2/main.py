@@ -179,7 +179,6 @@ class Worker:
 
         # Bot configuration
         self.config = self.load_config()
-        self.validate_config(self.config)
 
         # Logging
         log_level = logging.getLevelName(self.config["LoggingSettings"]["LogLevel"])
@@ -220,6 +219,9 @@ class Worker:
 
             logger.info("\n")
             logger.info("Iteration #%s started", iteration)
+
+            # Validate configuration
+            self.validate_config(self.config)
 
             # Reset if open or closed orders are not retrieved from exchange
             if not self.bot.open_closed_ok:
