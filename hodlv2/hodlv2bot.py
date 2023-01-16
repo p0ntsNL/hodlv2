@@ -330,7 +330,7 @@ class HODLv2Bot:
     def get_total_fees(self):
 
         fees = {}
-        get_fees = self.backend.find({"fees":{"$exists":1 }}, { "fees":1})
+        get_fees = self.backend.find("trades", {"fees":{"$exists":1 }}, { "fees":1})
 
         if get_fees[0]:
 
