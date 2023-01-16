@@ -93,6 +93,8 @@ class Worker:
 
         iteration = 0
 
+        print (self.bot.get_total_fees())
+
         while True:
 
             iteration += 1

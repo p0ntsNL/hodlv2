@@ -53,12 +53,28 @@ class Backend:
             self._db["trades"].create_index(
                 [
                     ("fees", pymongo.ASCENDING),
-                    ("status", pymongo.ASCENDING),
                 ]
             )
         except Exception as error:
             logger.critical("Unable to connect to MongoDB: %s", error)
             sys.exit("Unable to connect to MongoDB.")
+
+    def find(self, collection, data):
+        """
+        Find a document by ID in a MongoDB collection.
+        :param collection: name of the collection to use
+        :param data: data of the documents to search for
+        """
+
+        try:
+            find = self._db[collection].find(data)
+            if not isinstance(find, type(None)):
+                return True, find
+        except Exception as error:
+            logger.debug("find error: %s", error)
+
+        logger.debug("find: Unable to find %s in %s.", _id, collection)
+        return False, {}
 
     def find_one(self, collection, _id):
         """

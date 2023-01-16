@@ -327,6 +327,23 @@ class HODLv2Bot:
         )
         return False
 
+    def get_total_fees(self):
+
+        fees = {}
+        get_fees = self.backend.find({"fees":{"$exists":1 }}, { "fees":1})
+
+        for fee in get_fees:
+            for order_type,fee_data in fee['fees'].items():
+                for currency,value in fee_data.items():
+
+                    if currency not in fees:
+                        fees[currency] = 0
+
+                    if not isinstance(value, type(None)):
+                        fees[currency] += float(value)
+
+        return fees
+
     def get_profit_aggregates(self):
         """
         TO DO
