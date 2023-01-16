@@ -65,6 +65,7 @@ Furtermore, a few extra libraries should be installed:
 pip3 install ccxt
 pip3 install requests
 pip3 install pymongo
+pip3 install pyyaml
 pip3 install importlib
 ```
 
