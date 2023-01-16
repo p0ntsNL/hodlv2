@@ -45,10 +45,6 @@ class Worker:
         self.config = self.load_config()
         self.validate_config(self.config)
 
-        # Logging
-        log_level = logging.getLevelName(self.config["LoggingSettings"]["LogLevel"])
-        logger.setLevel(log_level)
-
         self.version = "HODLv2 2023.1"
         logger.info("\n")
         logger.info("Starting %s", self.version)
