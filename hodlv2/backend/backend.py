@@ -59,7 +59,7 @@ class Backend:
             logger.critical("Unable to connect to MongoDB: %s", error)
             sys.exit("Unable to connect to MongoDB.")
 
-    def find(self, collection, data):
+    def find(self, collection, first, second):
         """
         Find a document by ID in a MongoDB collection.
         :param collection: name of the collection to use
@@ -67,7 +67,7 @@ class Backend:
         """
 
         try:
-            find = self._db[collection].find(data)
+            find = self._db[collection].find(first, second)
             if not isinstance(find, type(None)):
                 return True, find
         except Exception as error:
