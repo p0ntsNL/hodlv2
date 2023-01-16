@@ -354,7 +354,7 @@ class HODLv2Bot:
         TO DO
         """
 
-        fees = {}
+        fees = []
         get_total_fees = self.get_total_fees()
         for quote, fee in get_total_fees.items():
             fees.append(
