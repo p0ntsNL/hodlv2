@@ -12,7 +12,7 @@ def calculate_trade_value(trade_value, last_price):
     return float(trade_value) / float(last_price)
 
 
-def calculate_fees(open_order, close_order, profit_currency):
+def calculate_fees(open_order, close_order):
     """
     TO DO
     """

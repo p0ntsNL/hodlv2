@@ -25,12 +25,12 @@ class Exchange:
         # Load config
         self.config = config
 
-        exchange_class = getattr(ccxt, self.config.EXCHANGE)
+        exchange_class = getattr(ccxt, self.config["ExchangeSettings"]["Exchange"])
         self.exchange = exchange_class(
             {
-                "apiKey": self.config.EXCHANGE_KEY,
-                "secret": self.config.EXCHANGE_SECRET,
-                "password": self.config.EXCHANGE_PASSWORD,
+                "apiKey": self.config["ExchangeSettings"]["ExchangeKey"],
+                "secret": self.config["ExchangeSettings"]["ExchangeSecret"],
+                "password": self.config["ExchangeSettings"]["ExchangePassword"],
                 "enableRateLimit": True,
             }
         )

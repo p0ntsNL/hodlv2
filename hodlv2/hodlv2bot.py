@@ -40,7 +40,7 @@ class HODLv2Bot:
         self.open_orders = self.ccxt.get_open_orders()
         self.closed_orders = self.ccxt.get_closed_orders()
 
-        self.markets_data = self.config.MARKETS
+        self.markets_data = self.config["BotSettings"]
         self.markets = self.markets_data.keys()
 
     def bot_settings(self, market):
@@ -156,7 +156,7 @@ class HODLv2Bot:
 
             counter = 0
             for order in self.open_orders[1]:
-                if order['symbol'] == market:
+                if order["symbol"] == market:
                     counter += 1
 
             if int(counter) <= int(self.max_trades):
@@ -346,6 +346,7 @@ class HODLv2Bot:
 
             for fee in get_fees[1]:
                 for order_type, fee_data in fee["fees"].items():
+                    dummy = order_type
                     for currency, value in fee_data.items():
 
                         if currency not in fees:
@@ -519,18 +520,12 @@ class HODLv2Bot:
             )
             return
 
-        print(market_open_order)
-
         # Retrieve open order details up to 5 times, otherwise do not proceed
         for i in range(5):
 
-            open_order_details = self.fetch_order(
-                market, market_open_order[1]["id"]
-            )
+            open_order_details = self.fetch_order(market, market_open_order[1]["id"])
             if open_order_details[0]:
-                logger.error(
-                    "%s: Open order details retrieved.", market
-                )
+                logger.error("%s: Open order details retrieved.", market)
                 break
 
             if i == 4:
@@ -596,8 +591,6 @@ class HODLv2Bot:
             logger.warning(
                 "%s: Unable to create limit close order, trying again...", market
             )
-
-        print(limit_close_order)
 
         # Insert data into database
         data = {
@@ -707,9 +700,7 @@ class HODLv2Bot:
                 elif status == "active" and close_order["status"] == "closed":
 
                     profit = calculate_profit(profit_in, open_order, close_order)
-                    fees = calculate_fees(
-                        open_order["fee"], close_order["fee"], profit_currency
-                    )
+                    fees = calculate_fees(open_order["fee"], close_order["fee"])
 
                     # Update close order and profit to backend
                     update = self.backend.update_one(

@@ -28,7 +28,10 @@ class Backend:
         self.config = config
 
         # MongoDB
-        self.client = pymongo.MongoClient("localhost", 27017)
+        self.client = pymongo.MongoClient(
+            self.config["MongoDbSettings"]["Host"],
+            self.config["MongoDbSettings"]["Port"],
+        )
         self._db = self.client["hodlv2"]
 
         # Notify
@@ -73,7 +76,7 @@ class Backend:
         except Exception as error:
             logger.debug("find error: %s", error)
 
-        logger.debug("find: Unable to find %s in %s.", data, collection)
+        logger.debug("find: Unable to find %s and %s in %s.", first, second, collection)
         return False, {}
 
     def find_one(self, collection, _id):

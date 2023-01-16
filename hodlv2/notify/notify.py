@@ -32,9 +32,9 @@ class Notify:
         """
 
         # Variables
-        enabled = self.config.PUSHOVER_ENABLED
-        key = self.config.PUSHOVER_USER_KEY
-        token = self.config.PUSHOVER_APP_TOKEN
+        enabled = self.config["PushoverSettings"]["PushoverEnabled"]
+        key = self.config["PushoverSettings"]["PushoverUserKey"]
+        token = self.config["PushoverSettings"]["PushoverAppToken"]
 
         # Only send when enabled
         if enabled != "true":
