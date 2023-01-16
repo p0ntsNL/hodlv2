@@ -17,6 +17,7 @@ from hodlv2.notify.notify import Notify
 
 # Logging
 logger = logging.getLogger("hodlv2")
+logger.setLevel(logging.INFO)
 formatter = logging.Formatter("%(asctime)s | %(levelname)s | %(message)s")
 logHandler = handlers.TimedRotatingFileHandler(
     "hodlv2/hodlv2.log", when="midnight", interval=1, backupCount=30
