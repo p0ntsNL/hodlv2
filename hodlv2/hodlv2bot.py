@@ -356,7 +356,7 @@ class HODLv2Bot:
 
         fees = {}
         get_total_fees = self.get_total_fees()
-        for quote, fee in get_total_fees:
+        for quote, fee in get_total_fees.items():
             fees.append(
                 f"{fee} {quote}"
             )
