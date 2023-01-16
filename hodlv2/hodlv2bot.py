@@ -162,13 +162,13 @@ class HODLv2Bot:
             print (counter)
 
             if int(counter) <= int(self.max_trades):
-            logger.info(
-                "%s: The maximum amount of trades (%s) is not reached yet (%s).",
-                market,
-                self.max_trades,
-                len(self.open_orders[1]),
-            )
-            return True
+                logger.info(
+                    "%s: The maximum amount of trades (%s) is not reached yet (%s).",
+                    market,
+                    self.max_trades,
+                    len(self.open_orders[1]),
+                )
+                return True
 
         logger.warning(
             "%s: The maximum amount of trades (%s) is reached, not starting a new trade.",
