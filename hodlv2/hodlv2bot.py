@@ -680,27 +680,30 @@ class HODLv2Bot:
                     if update[0]:
 
                         logger.info(
-                            "%s: Trade closed | Id: %s | Profit: %s %s (%s%%) | Fee: %s %s",
+                            "%s: Trade closed | Id: %s | Profit: %s %s (%s%%) | Open fee: %s %s | Close fee: %s %s",
                             market,
                             close_order["id"],
                             profit,
                             profit_currency,
                             profit_perc,
-                            fees[0],
-                            fees[1],
+                            open_order["fee"]["cost"],
+                            open_order["fee"]["currency"],
+                            close_order["fee"]["cost"],
+                            close_order["fee"]["currency"],
                         )
                         self.notify.send(
                             f"""<b>Trade closed</b>
                             Id: {close_order['id']}
                             Market: {market}
-                            Profit (excl. fee):{profit:.8f} {profit_currency} ({profit_perc:.2f}%)
-                            Fee: {fees[0]} {fees[1]}
+                            Profit (Ex. fee):{profit:.8f} {profit_currency} ({profit_perc:.2f}%)
+                            Open fee: {open_order["fee"]["cost"]} {open_order["fee"]["currency"]}
+                            Close fee: {close_order["fee"]["cost"]} {close_order["fee"]["currency"]}
 
                             <b>Statistics</b>
                             Active trades: {self.get_count("trades", {"status": "active"})}
                             Finished trades: {self.get_count("trades", {"status": "finished"})}
 
-                            <b>Total Profit (excl. fees)</b>
+                            <b>Total Profit (Ex. fees)</b>
                             {self.stringify_profit_aggregates()}""",
                         )
                     else:
