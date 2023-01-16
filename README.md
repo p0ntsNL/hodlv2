@@ -53,7 +53,7 @@ Full quide can be found in the [wiki](https://github.com/p0ntsNL/hodlv2/wiki).
 
 ### Requirements 
 
-Before installing HODLv2, you are required to install some requirements:
+Before installing HODLv2, you need to install some requirements:
 
 - [Python >= 3.8.x](https://docs.python-guide.org/starting/installation/)
 - [pip](https://pip.pypa.io/en/stable/installing/)
