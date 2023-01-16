@@ -17,23 +17,17 @@ def calculate_fees(open_order, close_order, profit_currency):
     TO DO
     """
 
-    try:
-        if (
-            open_order["fee"]["currency"] == profit_currency
-            and close_order["fee"]["currency"] == profit_currency
-        ):
-            return [
-                (float(open_order["fee"]["cost"]) + float(close_order["fee"]["cost"])),
-                profit_currency,
-            ]
-    except Exception as error:
-        return [
-            0,
-            f"""Unverified exchange, verify required, please report!
-                    {error}""",
-        ]
+    fees = {}
 
-    return [0, "Unverified exchange, verify required, please report!"]
+    if open_order["currency"] not in fees:
+        fees[open_order["currency"]] = 0
+    fees[open_order["currency"]] += float(open_order["cost"])
+
+    if close_order["currency"] not in fees:
+        fees[close_order["currency"]] = 0
+    fees[close_order["currency"]] += float(close_order["cost"])
+
+    return fees
 
 
 def calculate_profit(profit_in, open_order, close_order):

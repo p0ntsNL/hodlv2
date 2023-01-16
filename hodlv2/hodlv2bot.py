@@ -663,7 +663,7 @@ class HODLv2Bot:
                 elif status == "active" and close_order["status"] == "closed":
 
                     profit = calculate_profit(profit_in, open_order, close_order)
-                    fees = calculate_fees(open_order, close_order, profit_currency)
+                    fees = calculate_fees(open_order["fee"], close_order["fee"], profit_currency)
 
                     # Update close order and profit to backend
                     update = self.backend.update_one(
