@@ -328,31 +328,40 @@ class HODLv2Bot:
         return False
 
     def get_total_fees(self):
+        """
+        TO DO
+        """
 
         fees = {}
         get_fees = self.backend.find("trades", {"fees":{"$exists":1 }}, { "fees":1})
 
         if get_fees[0]:
 
-            print ('hier')
-
             for fee in get_fees[1]:
-                print ('hier2')
                 for order_type,fee_data in fee['fees'].items():
-                    print ('hier3')
                     for currency,value in fee_data.items():
-                        print ('hier4')
 
                         if currency not in fees:
                             fees[currency] = 0
-                            print ('hier5')
 
                         if not isinstance(value, type(None)):
                             fees[currency] += float(value)
-                            print ('hier6')
-                        print ('hier7')
 
         return fees
+
+    def stringify_total_fees(self):
+        """
+        TO DO
+        """
+
+        fees = {}
+        get_total_fees = self.get_total_fees()
+        for quote, fee in get_total_fees:
+            fees.append(
+                f"{fee} {quote}"
+            )
+            
+        return "\n".join(fees)
 
     def get_profit_aggregates(self):
         """
@@ -730,8 +739,11 @@ class HODLv2Bot:
                             Active trades: {self.get_count("trades", {"status": "active"})}
                             Finished trades: {self.get_count("trades", {"status": "finished"})}
 
-                            <b>Total Profit (Ex. fees)</b>
-                            {self.stringify_profit_aggregates()}""",
+                            <b>Total profit (Ex. fees)</b>
+                            {self.stringify_profit_aggregates()}
+
+                            <b>Total fees spend</b>
+                            {self.stringify_total_fees()}""",
                         )
                     else:
                         logger.critical(
