@@ -159,8 +159,6 @@ class HODLv2Bot:
                 if order['symbol'] == market:
                     counter += 1
 
-            print (counter)
-
             if int(counter) <= int(self.max_trades):
                 logger.info(
                     "%s: The maximum amount of trades (%s) is not reached yet (%s).",
