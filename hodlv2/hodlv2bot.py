@@ -5,7 +5,6 @@ Main bot class
 """
 
 import logging
-import sys
 import time
 
 from hodlv2.backend.backend import Backend
@@ -14,6 +13,7 @@ from hodlv2.notify.notify import Notify
 
 from hodlv2.misc.misc import (  # isort:skip
     calculate_profit,  # isort:skip
+    calculate_fees,  # isort:skip
     calculate_trade_value,  # isort:skip
     profit_in_trade_value,  # isort:skip
     find_key,  # isort:skip
@@ -58,7 +58,11 @@ class HODLv2Bot:
         self.next_trade_price_reset = self.markets_data[market]["ResetNextTradePrice"]
         self.open_side = self.side
         self.close_side = "sell" if self.side == "buy" else "buy"
-        self.profit_in = "base" if self.markets_data[market]["TakeProfitIn"] == self.base else "quote"
+        self.profit_in = (
+            "base"
+            if self.markets_data[market]["TakeProfitIn"] == self.base
+            else "quote"
+        )
 
     def open_closed_ok(self):
         """
@@ -474,6 +478,8 @@ class HODLv2Bot:
             )
             return
 
+        print(market_open_order)
+
         # Retrieve open order details up to 5 times, otherwise do not proceed
         for i in range(5):
 
@@ -547,6 +553,8 @@ class HODLv2Bot:
                 "%s: Unable to create limit close order, trying again...", market
             )
 
+        print(limit_close_order)
+
         # Insert data into database
         data = {
             "_id": limit_close_order[1]["info"]["txid"][0],
@@ -557,19 +565,17 @@ class HODLv2Bot:
             "profit_perc": self.perc_open,
             "base": self.base,
             "quote": self.quote,
-            "profit_currency": self.quote
-            if self.profit_in == "quote"
-            else self.base,
+            "profit_currency": self.quote if self.profit_in == "quote" else self.base,
             "status": "active",
         }
         insert = self.backend.insert_one("trades", data)
         if not insert[0]:
             logger.critical("%s: Unable to insert trade details to backend.", market)
 
-        close_cost = float(limit_close_order[1]["price"]) * float(close_trade_value)
+        close_value = float(limit_close_order[1]["price"]) * float(close_trade_value)
 
         logger.info(
-            "%s: Trade opened | Id: %s | Side: %s | Price: %s %s | Amount: %s %s | Cost: %s %s",
+            "%s: Trade opened | Id: %s | Side: %s | Price: %s %s | Amount: %s %s | Cost: %s %s | Fee: %s %s",
             market,
             limit_close_order[1]["info"]["txid"][0],
             self.open_side,
@@ -579,6 +585,8 @@ class HODLv2Bot:
             self.base,
             open_order_details[1]["cost"],
             self.quote,
+            open_order_details[1]["fee"]["cost"],
+            open_order_details[1]["fee"]["currency"],
         )
         self.notify.send(
             f"""<b>Trade opened</b>
@@ -588,12 +596,13 @@ class HODLv2Bot:
             Price: {open_order_details[1]['average']} {self.quote}
             Amount: {open_order_details[1]['filled']} {self.base}
             Cost: {open_order_details[1]['cost']} {self.quote}
+            Fee: {open_order_details[1]["fee"]["cost"]} {open_order_details[1]["fee"]["currency"]}
 
             <b>Closing order</b>
             Side: {self.close_side}
-            Close price: {limit_close_order[1]['price']} {self.quote}
-            Close amount: {close_trade_value} {self.base}
-            Close cost: {close_cost} {self.quote}""",
+            Price: {limit_close_order[1]['price']} {self.quote}
+            Amount: {close_trade_value} {self.base}
+            Value: {close_value} {self.quote}""",
         )
 
     def check_closed_orders(self):
@@ -654,6 +663,7 @@ class HODLv2Bot:
                 elif status == "active" and close_order["status"] == "closed":
 
                     profit = calculate_profit(profit_in, open_order, close_order)
+                    fees = calculate_fees(open_order, close_order, profit_currency)
 
                     # Update close order and profit to backend
                     update = self.backend.update_one(
@@ -662,6 +672,7 @@ class HODLv2Bot:
                         {
                             "close": close_order,
                             "profit": profit,
+                            "fees": fees,
                             "status": "finished",
                         },
                         False,
@@ -669,24 +680,27 @@ class HODLv2Bot:
                     if update[0]:
 
                         logger.info(
-                            "%s: Trade closed | Id: %s | Profit: %s %s (%s%%)",
+                            "%s: Trade closed | Id: %s | Profit: %s %s (%s%%) | Fee: %s %s",
                             market,
                             close_order["id"],
                             profit,
                             profit_currency,
                             profit_perc,
+                            fees[0],
+                            fees[1],
                         )
                         self.notify.send(
                             f"""<b>Trade closed</b>
                             Id: {close_order['id']}
                             Market: {market}
-                            Profit:{profit:.8f} {profit_currency} ({profit_perc:.2f}%)
+                            Profit (excl. fee):{profit:.8f} {profit_currency} ({profit_perc:.2f}%)
+                            Fee: {fees[0]} {fees[1]}
 
                             <b>Statistics</b>
                             Active trades: {self.get_count("trades", {"status": "active"})}
                             Finished trades: {self.get_count("trades", {"status": "finished"})}
 
-                            <b>Total Profit</b>
+                            <b>Total Profit (excl. fees)</b>
                             {self.stringify_profit_aggregates()}""",
                         )
                     else:
