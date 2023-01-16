@@ -334,15 +334,23 @@ class HODLv2Bot:
 
         if get_fees[0]:
 
+            print ('hier')
+
             for fee in get_fees[1]:
+                print ('hier2')
                 for order_type,fee_data in fee['fees'].items():
+                    print ('hier3')
                     for currency,value in fee_data.items():
+                        print ('hier4')
 
                         if currency not in fees:
                             fees[currency] = 0
+                            print ('hier5')
 
                         if not isinstance(value, type(None)):
                             fees[currency] += float(value)
+                            print ('hier6')
+                        print ('hier7')
 
         return fees
 
