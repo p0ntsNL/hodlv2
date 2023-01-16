@@ -1,11 +1,11 @@
 ExchangeSettings:
   Exchange: "kraken"            # https://github.com/ccxt/ccxt#supported-cryptocurrency-exchange-markets
-  ExchangeKey: ""
-  ExchangeSecret: ""
-  ExchangePassword: ""
+  ExchangeKey: ""               # Exchange API key (balance, trade, websocket access)
+  ExchangeSecret: ""            # Exchange Secret key
+  ExchangePassword: ""          # Exchange password; optional for some exchanges
 
 BotSettings:
-  BTC/USD:                      # Only one bot per market
+  BTC/USD:                      # Market name; BASE/QUOTE
     Side: "buy"                 # buy/sell
     MaxTrades: 10               # Max open trades at a time (integer)
     TradeValue: 10.5            # Trade value per trade (float)
@@ -13,24 +13,24 @@ BotSettings:
     PercClose: 1                # 1 = 1%
     TakeProfitIn: "USD"         # BTC or USD for BTC/USD
     ResetNextTradePrice: 1      # 1 = 1 day
-  DOT/USD:                      # Only one bot per market
-    Side: "buy"                 # Only buy is supported at the moment
+  DOT/USD:                      # Market name; BASE/QUOTE
+    Side: "buy"                 # buy/sell
     MaxTrades: 10               # Max open trades at a time (integer)
     TradeValue: 20.50           # Trade value per trade (float)
     PercOpen: 2                 # 2 = 2%
     PercClose: 2.5              # 2.5 = 2.5%
     TakeProfitIn: "DOT"         # DOT or USD for DOT/USD
     ResetNextTradePrice: 2      # 2 = 2 days
-  EWT/USD:                      # Only one bot per market
-    Side: "buy"                 # Only buy is supported at the moment
+  EWT/USD:                      # Market name; BASE/QUOTE
+    Side: "sell"                # buy/sell
     MaxTrades: 10               # Max open trades at a time (integer)
     TradeValue: 101.6           # Trade value per trade (float)
     PercOpen: 2.5               # 2.5 = 2.5%
     PercClose: 2.5              # 2.5 = 2.5%
     TakeProfitIn: "USD"         # EWT or USD for EWT/USD
     ResetNextTradePrice: 3      # 3 = 3 days
-  LINK/USD:                     # Only one bot per market
-    Side: "sell"                # Only buy is supported at the moment
+  LINK/USD:                     # Market name; BASE/QUOTE
+    Side: "sell"                # buy/sell
     MaxTrades: 10               # Max open trades at a time (integer)
     TradeValue: 10.5            # Trade value per trade (float)
     PercOpen: 1.5               # 1.5 = 1.5%
@@ -44,8 +44,8 @@ MongoDbSettings:
 
 PushoverSettings:
   PushoverEnabled: "false"      # true/false
-  PushoverUserKey: ""
-  PushoverAppToken: ""
+  PushoverUserKey: ""           # Pushover User Key; optional for push notifications
+  PushoverAppToken: ""          # Pushover App Token; optional for push notifications
 
 LoggingSettings:
-  LogLevel: "INFO"              # default: INFO (CRITICAL / ERROR / WARNING / INFO / DEBUG)
+  LogLevel: "INFO"              # Log level; default: INFO (CRITICAL / ERROR / WARNING / INFO / DEBUG)
