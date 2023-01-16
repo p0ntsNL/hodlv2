@@ -68,6 +68,7 @@ class Backend:
 
         try:
             find = self._db[collection].find(data)
+            print (find)
             if not isinstance(find, type(None)):
                 return True, find
         except Exception as error:
