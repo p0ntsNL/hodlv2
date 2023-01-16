@@ -33,7 +33,7 @@ Exchanges confirmed working by the community:
 
 ## Roadmap
 
-The (short-term) HODLv2 roadmap can be found in [Projects](https://github.com/users/p0ntsNL/projects).
+The (short-term) HODLv2 roadmap can be found in [Projects](https://github.com/p0ntsNL/hodlv2/projects).
 
 ## Documentation
 
