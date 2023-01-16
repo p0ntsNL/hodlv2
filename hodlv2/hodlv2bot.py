@@ -93,11 +93,11 @@ class HODLv2Bot:
         balances = self.ccxt.get_balances()
         if balances[0]:
             logger.info(
-                "%s: %s balance: %s", market, quote, balances[1]["total"][quote]
+                "%s: Available %s balance: %s", market, quote, balances[1]["total"][quote]
             )
             return balances[1]["total"][quote]
 
-        logger.error("%s balance set to 0.", quote)
+        logger.error("%s: Available %s balance set to 0.", market, quote)
         return 0
 
     def get_ticker_data(self, market):
