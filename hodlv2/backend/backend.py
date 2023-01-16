@@ -73,7 +73,7 @@ class Backend:
         except Exception as error:
             logger.debug("find error: %s", error)
 
-        logger.debug("find: Unable to find %s in %s.", _id, collection)
+        logger.debug("find: Unable to find %s in %s.", data, collection)
         return False, {}
 
     def find_one(self, collection, _id):
