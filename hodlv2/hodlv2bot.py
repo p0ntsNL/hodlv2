@@ -332,15 +332,17 @@ class HODLv2Bot:
         fees = {}
         get_fees = self.backend.find({"fees":{"$exists":1 }}, { "fees":1})
 
-        for fee in get_fees:
-            for order_type,fee_data in fee['fees'].items():
-                for currency,value in fee_data.items():
+        if get_fees[0]:
 
-                    if currency not in fees:
-                        fees[currency] = 0
+            for fee in get_fees[1]:
+                for order_type,fee_data in fee['fees'].items():
+                    for currency,value in fee_data.items():
 
-                    if not isinstance(value, type(None)):
-                        fees[currency] += float(value)
+                        if currency not in fees:
+                            fees[currency] = 0
+
+                        if not isinstance(value, type(None)):
+                            fees[currency] += float(value)
 
         return fees
 
