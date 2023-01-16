@@ -78,101 +78,63 @@ git clone https://github.com/p0ntsnl/hodlv2.git
 
 ## Configuration
 
-Rename or copy config/config.py.example to config/config.py and populate the config options.
+Rename or copy config/config.example.yaml to config/config.yaml and populate the config options.
 
 Please refer to the configuration options below.
 
-### Exchange settings (required)
+```
+ExchangeSettings:
+  Exchange: "kraken"            # https://github.com/ccxt/ccxt#supported-cryptocurrency-exchange-markets
+  ExchangeKey: ""               # Exchange API key (balance, trade, websocket access)
+  ExchangeSecret: ""            # Exchange Secret key
+  ExchangePassword: ""          # Exchange password; optional for some exchanges
 
-##### **EXCHANGE**
+BotSettings:
+  BTC/USD:                      # Market name; BASE/QUOTE
+    Side: "buy"                 # buy/sell
+    MaxTrades: 10               # Max open trades at a time (integer)
+    TradeValue: 10.5            # Trade value per trade (float)
+    PercOpen: 1                 # 1 = 1%
+    PercClose: 1                # 1 = 1%
+    TakeProfitIn: "USD"         # BTC or USD for BTC/USD
+    ResetNextTradePrice: 1      # 1 = 1 day
+  DOT/USD:                      # Market name; BASE/QUOTE
+    Side: "buy"                 # buy/sell
+    MaxTrades: 10               # Max open trades at a time (integer)
+    TradeValue: 20.50           # Trade value per trade (float)
+    PercOpen: 2                 # 2 = 2%
+    PercClose: 2.5              # 2.5 = 2.5%
+    TakeProfitIn: "DOT"         # DOT or USD for DOT/USD
+    ResetNextTradePrice: 2      # 2 = 2 days
+  EWT/USD:                      # Market name; BASE/QUOTE
+    Side: "sell"                # buy/sell
+    MaxTrades: 10               # Max open trades at a time (integer)
+    TradeValue: 101.6           # Trade value per trade (float)
+    PercOpen: 2.5               # 2.5 = 2.5%
+    PercClose: 2.5              # 2.5 = 2.5%
+    TakeProfitIn: "USD"         # EWT or USD for EWT/USD
+    ResetNextTradePrice: 3      # 3 = 3 days
+  LINK/USD:                     # Market name; BASE/QUOTE
+    Side: "sell"                # buy/sell
+    MaxTrades: 10               # Max open trades at a time (integer)
+    TradeValue: 10.5            # Trade value per trade (float)
+    PercOpen: 1.5               # 1.5 = 1.5%
+    PercClose: 1.5              # 1.5 = 1.5%
+    TakeProfitIn: "LINK"        # LINK or USD for LINK/USD
+    ResetNextTradePrice: 4      # 4 = 4 days
 
-Set the desired exchange to run the bot on, check the supported exchange list [here](https://github.com/ccxt/ccxt#supported-cryptocurrency-exchange-markets).
+MongoDbSettings:
+  Host: "localhost"             # default: localhost
+  Port: 27017                   # default: 27017
 
-##### **EXCHANGE_KEY**
+PushoverSettings:
+  PushoverEnabled: "false"      # true/false
+  PushoverUserKey: ""           # Pushover User Key; optional for push notifications
+  PushoverAppToken: ""          # Pushover App Token; optional for push notifications
 
-Set the exchange API key here.
-
-Make sure to:
-- Add trade and balance access to the API key.
-- Do NOT enable withdrawal access.
-- IP whitelisting is recommended if configurable.
-- Never share your API key's with anyone.
-
-##### **EXCHANGE_SECRET**
-
-Set the exchange API secret here.
-
-##### **EXCHANGE_PASSWORD** (optional)
-
-Some exchanges required additional authentication through a password, you can set it here.
-
-### Bot settings
-
-##### **MARKETS** (required)
-
-Set the markets you want to run the bot on.
-
-- Required format (list): [ "BTC/USD", "DOT/USD", "EWT/USD", "LINK/USD" ]
-
-##### **SIDE** (required)
-
-Set the side the bot should follow.
-
-- "buy" for LONG (HODL)
-- "sell" for SHORT (mehhh)
-
-##### **MAX_TRADES** (required)
-
-Set the amount of trades (open orders) the bot can keep simultaneously.
-
-##### **TRADE_VALUE** (required)
-
-Set the trade value each trade should have.
-
-- BTC/USD example: 5 = 5 USD
-
-##### **PERC_OPEN** (required)
-
-How much percent should the gap be between each trade.
-
-- 1 = 1%
-
-##### **PERC_CLOSE** (required)
-
-How much percent above (long) / below (short) entry should the bot close in profit.
-
-- 1 = 1%
-
-##### **PROFIT_IN** (required)
-
-Should the bot take profit in the quote or base currency.
-
-- Base currency is the currency before the /
-- Quote currency is the currency after the /
-- BTC/USD = base/quote
-
-### Pushover settings (optional)
-
-##### **ENABLE_PUSHOVER**
-
-Wether or not you would like Pushover to be enabled.
-
-##### **PUSHOVER_USER_KEY**
-
-If you want to receive trade updates through Pushover, configure your user key here.
-
-##### **PUSHOVER_APP_TOKEN**
-
-If you want to receive trade updates through Pushover, configure your app token here.
-
-### Log settings (required)
-
-##### **LOG_LEVEL**
-
-Set the desired log level.
-
-- default: INFO
-- Logs can be found in hodlv2.log
+LoggingSettings:
+  LogLevel: "INFO"              # Log level; default: INFO (CRITICAL / ERROR / WARNING / INFO / DEBUG)
+```
 
 ## Run
 
@@ -185,4 +147,9 @@ python3 hodlv2/main.py
 If successful, you should see the current version printed in the console. Otherwise please refer to the logs.
 ```
 Starting HODLv2 2023.1
+```
+
+If not succesful, you might need to add hodlv2 to your PYTHONPATH.
+```
+export PYTHONPATH=$PYTHONPATH:/path/to/hodlv2_folder
 ```
