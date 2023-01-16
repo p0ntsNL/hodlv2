@@ -96,8 +96,6 @@ class Worker:
 
         iteration = 0
 
-        print (self.bot.stringify_total_fees())
-
         while True:
 
             iteration += 1

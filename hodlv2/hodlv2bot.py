@@ -333,13 +333,13 @@ class HODLv2Bot:
         """
 
         fees = {}
-        get_fees = self.backend.find("trades", {"fees":{"$exists":1 }}, { "fees":1})
+        get_fees = self.backend.find("trades", {"fees": {"$exists": 1}}, {"fees": 1})
 
         if get_fees[0]:
 
             for fee in get_fees[1]:
-                for order_type,fee_data in fee['fees'].items():
-                    for currency,value in fee_data.items():
+                for order_type, fee_data in fee["fees"].items():
+                    for currency, value in fee_data.items():
 
                         if currency not in fees:
                             fees[currency] = 0
@@ -357,10 +357,8 @@ class HODLv2Bot:
         fees = []
         get_total_fees = self.get_total_fees()
         for quote, fee in get_total_fees.items():
-            fees.append(
-                f"{fee} {quote}"
-            )
-            
+            fees.append(f"{fee} {quote}")
+
         return "\n".join(fees)
 
     def get_profit_aggregates(self):
@@ -699,7 +697,9 @@ class HODLv2Bot:
                 elif status == "active" and close_order["status"] == "closed":
 
                     profit = calculate_profit(profit_in, open_order, close_order)
-                    fees = calculate_fees(open_order["fee"], close_order["fee"], profit_currency)
+                    fees = calculate_fees(
+                        open_order["fee"], close_order["fee"], profit_currency
+                    )
 
                     # Update close order and profit to backend
                     update = self.backend.update_one(
