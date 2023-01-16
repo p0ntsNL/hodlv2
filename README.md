@@ -23,9 +23,7 @@ hesitate to read the source code and understand the mechanism of this bot.
 
 - [X] [Kraken](https://kraken.com/)
 
-All exchanges supported by [ccxt](https://github.com/ccxt/ccxt) should be usable, please refer to the [ccxt](https://github.com/ccxt/ccxt) repository for more information.
-
-* It could be that profit calculations are off on any but Kraken, if so please create an issue so we can update the code for this specific exchange.
+* All exchanges supported by [ccxt](https://github.com/ccxt/ccxt) should be usable, please refer to the [ccxt](https://github.com/ccxt/ccxt) repository for more information.
 
 ## Community tested
 
@@ -33,34 +31,40 @@ Exchanges confirmed working by the community:
 
 - [X] [Kraken](https://kraken.com/)
 
+## Roadmap
+
+The (short-term) HODLv2 roadmap can be found in [Projects](https://github.com/users/p0ntsNL/projects).
+
 ## Documentation
 
-Extra documentation is coming soon.
+All documentation can be found in the [wiki](https://github.com/p0ntsNL/hodlv2/wiki).
 
 ## Features
 
-- [x] **Based on Python 3.8+**: For botting on any operating system - Windows, macOS and Linux.
+- [x] **Python3.8 or higher**: For botting on any operating system - Windows, macOS and Linux.
 - [x] **Persistence**: Persistence is achieved through [MongoDB](https://mongodb.com).
 - [x] **Alerting**: Push notifications to your mobile phone through [Pushover](https://pushover.com).
 
-## Installation
+## Quick Installation
 
-A guide on how to install HODLv2.
+A quick guide on how to install HODLv2.
+
+Full quide can be found in the [wiki](https://github.com/p0ntsNL/hodlv2/wiki).
 
 ### Requirements 
 
-Before installing HODLv2, you are required to install a few things beforehand.
+Before installing HODLv2, you are required to install some requirements:
 
 - [Python >= 3.8.x](https://docs.python-guide.org/starting/installation/)
 - [pip](https://pip.pypa.io/en/stable/installing/)
 - [MongoDB](https://www.mongodb.com/docs/manual/administration/install-community/)
 - [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 
-### Python
+### Python (pip)
 
 The bot requires Python3.8 or higher.
 
-Furtermore, a few extra libraries should be installed:
+A few extra libraries should be installed through pip:
 ```
 pip3 install ccxt       # Crypto exchange trading library
 pip3 install requests   # HTTP library
@@ -149,7 +153,9 @@ If successful, you should see the current version printed in the console. Otherw
 Starting HODLv2 2023.1
 ```
 
-If not succesful, you might need to add hodlv2 to your PYTHONPATH.
+You might have to add the hodlv2 folder to your PYTHONPATH.
 ```
 export PYTHONPATH=$PYTHONPATH:/path/to/hodlv2_folder
 ```
+
+If you are unsuccessful, please refer to the [wiki](https://github.com/p0ntsNL/hodlv2/wiki) for more in-depth documentation.
