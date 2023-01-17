@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# pylint: disable=no-name-in-module
+# pylint: disable=no-name-in-module,consider-using-with,broad-except
 """
 Main worker class
 """
@@ -27,8 +27,9 @@ logger.addHandler(logHandler)
 
 # check min. python version
 if sys.version_info < (3, 8):
-    logger.critical("HODLv2 required Python version >= 3.8")
-    sys.exit("HODLv2 requires Python version >= 3.8")
+    ERROR_MSG = "Bot stopped! HODLv2 required Python version >= 3.8"
+    logger.critical(ERROR_MSG)
+    sys.exit(ERROR_MSG)
 
 
 class Worker:
@@ -63,33 +64,42 @@ class Worker:
         config_path = "hodlv2/config/config.yaml"
 
         try:
-            config_file = open(config_path, "r")
+            config_file = open(config_path, "r", encoding="utf8")
             data = yaml.load(config_file.read(), Loader=yaml.FullLoader)
             config_file.close()
             return data
         except Exception as error:
-            logger.critical(f"Unable to open {config_path}: {error}")
-            sys.exit(f"Unable to open {config_path}: {error}")
+            crit_msg = f"Bot stopped! Unable to open {config_path}: {error}"
+            logger.critical(crit_msg)
+            self.notify.send(crit_msg)
+            sys.exit(crit_msg)
 
     def validate_int(self, field):
+        """TO DO"""
         return f"The {field} field must have an integer value."
 
     def validate_int_float(self, field):
+        """TO DO"""
         return f"The {field} field must have an integer or float value."
 
     def validate_str(self, field):
+        """TO DO"""
         return f"The {field} field must have a string value."
 
     def validate_true_false(self, field):
+        """TO DO"""
         return f"The {field} field must be 'true' or 'false'."
 
     def validate_buy_sell(self, field):
+        """TO DO"""
         return f"The {field} field must be 'buy' or 'sell'."
 
     def validate_loglevel(self, field):
+        """TO DO"""
         return f"The {field} field must be 'DEBUG', 'INFO', 'WARNING', 'ERROR' or 'CRITICAL'."
 
     def validate_market(self):
+        """TO DO"""
         return "The market field must be formated like this: BTC/USD, DOT/BTC etc."
 
     def validate_config(self, configuration):
@@ -168,7 +178,9 @@ class Worker:
             for error in se_error.autos:
                 if error:
                     logger.critical(str(error))
-            sys.exit("Configuration is not valid, check the logs for more information.")
+            error_msg = "Bot stopped! Configuration not valid, check the logs for more information."
+            self.notify.send(error_msg)
+            sys.exit(error_msg)
 
         logger.info("Configuration is valid.")
 
