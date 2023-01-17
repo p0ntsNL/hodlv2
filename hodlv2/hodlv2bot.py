@@ -5,8 +5,8 @@ Main bot class
 """
 
 import logging
-import time
 import sys
+import time
 
 from hodlv2.backend.backend import Backend
 from hodlv2.exchange.exchange import Exchange
@@ -624,7 +624,9 @@ class HODLv2Bot:
             True,
         )
         if not update_next_trade_price[0]:
-            error_msg = "Bot stopped! Unable to update next trade price details to backend."
+            error_msg = (
+                "Bot stopped! Unable to update next trade price details to backend."
+            )
             logger.critical(error_msg)
             self.notify.send(error_msg)
             sys.exit(error_msg)
@@ -769,7 +771,9 @@ class HODLv2Bot:
                             {self.stringify_total_fees()}""",
                         )
                     else:
-                        error_msg = "Bot stopped! Unable to update trade details to backend."
+                        error_msg = (
+                            "Bot stopped! Unable to update trade details to backend."
+                        )
                         logger.critical(error_msg)
                         self.notify.send(error_msg)
                         sys.exit(error_msg)

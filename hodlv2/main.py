@@ -75,31 +75,31 @@ class Worker:
             sys.exit(crit_msg)
 
     def validate_int(self, field):
-        """ TO DO """
+        """TO DO"""
         return f"The {field} field must have an integer value."
 
     def validate_int_float(self, field):
-        """ TO DO """
+        """TO DO"""
         return f"The {field} field must have an integer or float value."
 
     def validate_str(self, field):
-        """ TO DO """
+        """TO DO"""
         return f"The {field} field must have a string value."
 
     def validate_true_false(self, field):
-        """ TO DO """
+        """TO DO"""
         return f"The {field} field must be 'true' or 'false'."
 
     def validate_buy_sell(self, field):
-        """ TO DO """
+        """TO DO"""
         return f"The {field} field must be 'buy' or 'sell'."
 
     def validate_loglevel(self, field):
-        """ TO DO """
+        """TO DO"""
         return f"The {field} field must be 'DEBUG', 'INFO', 'WARNING', 'ERROR' or 'CRITICAL'."
 
     def validate_market(self):
-        """ TO DO """
+        """TO DO"""
         return "The market field must be formated like this: BTC/USD, DOT/BTC etc."
 
     def validate_config(self, configuration):
