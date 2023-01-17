@@ -59,8 +59,10 @@ class Backend:
                 ]
             )
         except Exception as error:
-            logger.critical("Unable to connect to MongoDB: %s", error)
-            sys.exit("Unable to connect to MongoDB.")
+            msg = f"Bot stopped! Unable to connect to MongoDB: {error}"
+            logger.critical(msg)
+            self.notify.send(msg)
+            sys.exit(msg)
 
     def find(self, collection, first, second):
         """
@@ -90,6 +92,7 @@ class Backend:
             find = self._db[collection].find_one(_id)
             if not isinstance(find, type(None)):
                 return True, find
+            return None, {}
         except Exception as error:
             logger.debug("find_one error: %s", error)
 

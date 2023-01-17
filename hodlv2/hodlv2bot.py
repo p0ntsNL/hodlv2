@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-# pylint: disable=too-many-instance-attributes
+# pylint: disable=too-many-instance-attributes,too-many-public-methods,attribute-defined-outside-init
 """
 Main bot class
 """
 
 import logging
 import time
+import sys
 
 from hodlv2.backend.backend import Backend
 from hodlv2.exchange.exchange import Exchange
@@ -93,7 +94,10 @@ class HODLv2Bot:
         balances = self.ccxt.get_balances()
         if balances[0]:
             logger.info(
-                "%s: Available %s balance: %s", market, quote, balances[1]["total"][quote]
+                "%s: Available %s balance: %s",
+                market,
+                quote,
+                balances[1]["total"][quote],
             )
             return balances[1]["total"][quote]
 
@@ -287,6 +291,8 @@ class HODLv2Bot:
         """
 
         data = self.backend.find_one("markets", market)
+
+        # If next_trade_price can be retrieved from the backend and exists.
         if data[0]:
             if (
                 "next_trade_price" in data[1]
@@ -296,8 +302,17 @@ class HODLv2Bot:
                     data[1]["next_trade_price"],
                     data[1]["next_trade_price_updated_at"],
                 ]
+        # If next_trade_price can retrieved from backend but does not exist.
+        else:
+            if isinstance(data[0], type(None)):
+                logger.warning(
+                    "%s: next_trade_price not found yet, forcing next price to 999999999999999.",
+                    market,
+                )
+                return [999999999999999, 999999999999999]
 
-        logger.critical(
+        # If backend is not accessible.
+        logger.error(
             "%s: Unable to retrieve next_trade_price data from backend.", market
         )
         return [0, 0]
@@ -409,7 +424,7 @@ class HODLv2Bot:
                 aggregates[aggregate["_id"]]["profit_perc"] = aggregate["sum_val"]
 
         else:
-            logger.critical("Unable to retrieve aggregates from backend.")
+            logger.error("Unable to retrieve aggregates from backend.")
 
         return aggregates
 
@@ -436,7 +451,7 @@ class HODLv2Bot:
         if count[0]:
             return count[1]
 
-        logger.critical("Unable to retrieve document count from backend.")
+        logger.error("Unable to retrieve document count from backend.")
         return "n/a"
 
     def check_next_trade_price_reset(self, market):
@@ -549,19 +564,6 @@ class HODLv2Bot:
         next_trade_price = self.calculate_next_trade_price(
             open_order_details[1]["average"],
         )
-        update_next_trade_price = self.backend.update_one(
-            "markets",
-            market,
-            {
-                "next_trade_price": next_trade_price,
-                "next_trade_price_updated_at": int(time.time()),
-            },
-            True,
-        )
-        if not update_next_trade_price[0]:
-            logger.critical(
-                "%s: Unable to update next trade price details to backend.", market
-            )
 
         # Calculate trade value
         close_trade_value = profit_in_trade_value(
@@ -607,12 +609,31 @@ class HODLv2Bot:
         }
         insert = self.backend.insert_one("trades", data)
         if not insert[0]:
-            logger.critical("%s: Unable to insert trade details to backend.", market)
+            error_msg = "Bot stopped! Unable to insert trade details to backend."
+            logger.critical(error_msg)
+            self.notify.send(error_msg)
+            sys.exit(error_msg)
+
+        update_next_trade_price = self.backend.update_one(
+            "markets",
+            market,
+            {
+                "next_trade_price": next_trade_price,
+                "next_trade_price_updated_at": int(time.time()),
+            },
+            True,
+        )
+        if not update_next_trade_price[0]:
+            error_msg = "Bot stopped! Unable to update next trade price details to backend."
+            logger.critical(error_msg)
+            self.notify.send(error_msg)
+            sys.exit(error_msg)
 
         close_value = float(limit_close_order[1]["price"]) * float(close_trade_value)
 
         logger.info(
-            "%s: Trade opened | Id: %s | Side: %s | Price: %s %s | Amount: %s %s | Cost: %s %s | Fee: %s %s",
+            """%s: Trade opened
+            Id: %s | Side: %s | Price: %s %s | Amount: %s %s | Cost: %s %s | Fee: %s %s""",
             market,
             limit_close_order[1]["id"],
             self.open_side,
@@ -692,10 +713,10 @@ class HODLv2Bot:
                             Market: {market}""",
                         )
                     else:
-                        logger.critical(
-                            "%s: Unable to update closed order details to backend.",
-                            market,
-                        )
+                        error_msg = "Bot stopped! Unable to update closed order details to backend."
+                        logger.critical(error_msg)
+                        self.notify.send(error_msg)
+                        sys.exit(error_msg)
 
                 elif status == "active" and close_order["status"] == "closed":
 
@@ -717,7 +738,8 @@ class HODLv2Bot:
                     if update[0]:
 
                         logger.info(
-                            "%s: Trade closed | Id: %s | Profit: %s %s (%s%%) | Open fee: %s %s | Close fee: %s %s",
+                            """%s: Trade closed
+                            Id: %s | Profit: %s %s (%s%%) | Open fee: %s %s | Close fee: %s %s""",
                             market,
                             close_order["id"],
                             profit,
@@ -747,9 +769,7 @@ class HODLv2Bot:
                             {self.stringify_total_fees()}""",
                         )
                     else:
-                        logger.critical(
-                            "%s: Unable to update trade details to backend.", market
-                        )
-            else:
-                pass
-                # logger.critical("Unable to retrieve closed order details from backend.")
+                        error_msg = "Bot stopped! Unable to update trade details to backend."
+                        logger.critical(error_msg)
+                        self.notify.send(error_msg)
+                        sys.exit(error_msg)
