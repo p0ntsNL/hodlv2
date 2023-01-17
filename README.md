@@ -1,6 +1,7 @@
 <img src="https://user-images.githubusercontent.com/25501135/212428793-42e04984-62c2-469e-a661-5d343497c453.png" width=200 height=200>
 
-[![](https://img.shields.io/github/stars/p0ntsNL/hodlv2?style=social)]
+![](https://img.shields.io/github/stars/p0ntsNL/hodlv2?style=social)
+![](https://img.shields.io/github/forks/p0ntsNL/hodlv2?style=social)
 [![HODLv2 PR](https://github.com/p0ntsnl/hodlv2/workflows/PR/badge.svg)](https://github.com/p0ntsnl/hodlv2/actions/)
 [![HODLv2 CodeQL](https://github.com/p0ntsnl/hodlv2/workflows/CodeQL/badge.svg)](https://github.com/p0ntsnl/hodlv2/actions/)
 
