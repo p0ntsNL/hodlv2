@@ -1,6 +1,6 @@
 <img src="https://user-images.githubusercontent.com/25501135/212428793-42e04984-62c2-469e-a661-5d343497c453.png" width=200 height=200>
 
-
+https://img.shields.io/github/stars/p0ntsNL/hodlv2?style=social
 [![HODLv2 PR](https://github.com/p0ntsnl/hodlv2/workflows/PR/badge.svg)](https://github.com/p0ntsnl/hodlv2/actions/)
 [![HODLv2 CodeQL](https://github.com/p0ntsnl/hodlv2/workflows/CodeQL/badge.svg)](https://github.com/p0ntsnl/hodlv2/actions/)
 
@@ -19,11 +19,22 @@ expect.
 We strongly recommend you to have coding and Python knowledge. Do not
 hesitate to read the source code and understand the mechanism of this bot.
 
+## The story
+
+I've tried many ways to increase the balance of my crypto portfolio without too much risk for quite some time now, i've used numerous trading bots, algorithms and premium signal services... and in the end I was always on the losing side.
+Eventually I thought of a simple mechanism myself, inspired by HODL (Hold On For Dear Life).
+
+The idea is pretty simple, and you should only be asking yourself one question:
+Which cryptocurrencies do I believe in for the long term, which cryptocurrencies are or would be in my HODL portfolio anyway, regardless of the market’s state? Those cryptocurrencies are the ones you should be trading with HODLv2.
+
+You should only configure your bot with cryptocurrencies you believe in, because then you don’t mind holding this cryptocurrency in your portfolio if the market turns bearish (for a longer period of time).
+HODLing trades in loss would be exactly the same as directly adding it to your HODL portfolio and wait for the price to rise again, but then without the possibility to increase its value. Therefore, we do not use stoploss to accept losses, instead we embrace the bear market and wait for the bot to sell in profit when it can.
+
 ## Supported Exchanges
 
 - [X] [Kraken](https://kraken.com/)
 
-* All exchanges supported by [ccxt](https://github.com/ccxt/ccxt) should be usable, please refer to the [ccxt](https://github.com/ccxt/ccxt) repository for more information.
+* All [exchanges supported by ccxt](https://github.com/ccxt/ccxt/#supported-cryptocurrency-exchange-markets) should be usable, please refer to the [ccxt repository](https://github.com/ccxt/ccxt) for more information.
 
 ## Community tested
 
@@ -37,12 +48,12 @@ The (short-term) HODLv2 roadmap can be found in [Projects](https://github.com/p0
 
 ## Documentation
 
-All documentation can be found in the [wiki](https://github.com/p0ntsNL/hodlv2/wiki).
+Detailed documentation can be found in the [wiki](https://github.com/p0ntsNL/hodlv2/wiki).
 
 ## Features
 
 - [x] **Python3.8 or higher**: For botting on any operating system - Windows, macOS and Linux.
-- [x] **Persistence**: Persistence is achieved through [MongoDB](https://mongodb.com).
+- [x] **Data persistence**: Persistence is achieved through [MongoDB](https://mongodb.com).
 - [x] **Alerting**: Push notifications to your mobile phone through [Pushover](https://pushover.com).
 
 ## Quick Installation
@@ -84,7 +95,7 @@ git clone https://github.com/p0ntsnl/hodlv2.git
 
 Rename or copy config/config.example.yaml to config/config.yaml and populate the config options.
 
-Please refer to the configuration options below.
+Please refer to the configuration example below:
 
 ```
 ExchangeSettings:
@@ -146,10 +157,9 @@ After configuration, from the main directory, run the following command to start
 ```
 python3 hodlv2/main.py
 ```
-
 * The prefered way to run is through systemd or in a screen.
 
-If successful, you should see the current version printed in the console. Otherwise please refer to the logs.
+If successful, you should see the current version printed in the console and logging (hodlv2.log). Otherwise please refer to the logging (hodlv2.log) for errors.
 ```
 Starting HODLv2 2023.1
 ```
@@ -159,4 +169,4 @@ You might have to add the hodlv2 folder to your PYTHONPATH.
 export PYTHONPATH=$PYTHONPATH:/path/to/hodlv2_folder
 ```
 
-If you are unsuccessful, please refer to the [wiki](https://github.com/p0ntsNL/hodlv2/wiki) for more in-depth documentation.
+If you are unsuccessful, please refer to the [wiki](https://github.com/p0ntsNL/hodlv2/wiki) for more in-depth documentation, join [telegram](https://t.me/hodlv2) and ask your question there or [create an issue](https://github.com/p0ntsNL/hodlv2/issues) on GitHub.
