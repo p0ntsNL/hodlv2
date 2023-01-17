@@ -42,8 +42,8 @@ class Worker:
         TO DO
         """
 
-        # Bot configuration
         self.config = self.load_config()
+        self.notify = Notify(self.config)
         self.validate_config(self.config)
 
         self.version = "HODLv2 2023.1"
@@ -51,9 +51,7 @@ class Worker:
         logger.info("Starting %s", self.version)
         print(f"Starting {self.version}")
 
-        self.notify = Notify(self.config)
         self.bot = HODLv2Bot(self.config)
-
         self.markets = self.config["BotSettings"].keys()
 
     def load_config(self):
@@ -71,7 +69,6 @@ class Worker:
         except Exception as error:
             crit_msg = f"Bot stopped! Unable to open {config_path}: {error}"
             logger.critical(crit_msg)
-            self.notify.send(crit_msg)
             sys.exit(crit_msg)
 
     def validate_int(self, field):
