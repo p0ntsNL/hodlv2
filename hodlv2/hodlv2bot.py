@@ -277,7 +277,7 @@ class HODLv2Bot:
             return True
 
         logger.warning(
-            "%s: Not enough %s balance (%s) to initiate trade, required: %s.)",
+            "%s: Not enough %s balance (%s) to initiate trade, required: %s.",
             market,
             quote,
             balance,
