@@ -53,7 +53,7 @@ class Worker:
         TO DO
         """
 
-        self.version = "2023.0"
+        self.version = "2023.1"
 
         start_msg = f"Starting HODLv2 {self.version}"
         print(start_msg)
