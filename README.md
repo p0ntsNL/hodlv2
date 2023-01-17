@@ -32,6 +32,10 @@ Which cryptocurrencies do I believe in for the long term, which cryptocurrencies
 You should only configure your bot with cryptocurrencies you believe in, because then you don’t mind holding this cryptocurrency in your portfolio if the market turns bearish (for a longer period of time).
 HODLing trades in loss would be exactly the same as directly adding it to your HODL portfolio and wait for the price to rise again, but then without the possibility to increase its value. Therefore, we do not use stoploss to accept losses, instead we embrace the bear market and wait for the bot to sell in profit when it can.
 
+## How does it work?
+
+![HODLv2 flowchart](https://user-images.githubusercontent.com/25501135/212938149-fdf7da6b-4d9e-4ba0-90d7-67193b15c076.svg)
+
 ## Supported Exchanges
 
 - [X] [Kraken](https://kraken.com/)
