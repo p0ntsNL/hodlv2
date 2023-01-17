@@ -9,11 +9,11 @@ import sys
 import time
 from logging import handlers
 
+import requests
 import yaml
 from schema import Optional, Or, Regex, Schema, SchemaError
 
 from hodlv2.hodlv2bot import HODLv2Bot
-from hodlv2.notify.notify import Notify
 
 # Logging
 logger = logging.getLogger("hodlv2")
@@ -43,16 +43,41 @@ class Worker:
         """
 
         self.config = self.load_config()
-        self.notify = Notify(self.config)
         self.validate_config(self.config)
-
-        self.version = "HODLv2 2023.1"
-        logger.info("\n")
-        logger.info("Starting %s", self.version)
-        print(f"Starting {self.version}")
-
+        self.version_check()
         self.bot = HODLv2Bot(self.config)
         self.markets = self.config["BotSettings"].keys()
+
+    def version_check(self):
+        """
+        TO DO
+        """
+
+        self.version = "2023.1"
+
+        start_msg = f"Starting HODLv2 {self.version}"
+        print(start_msg)
+        logger.info("\n")
+        logger.info(start_msg)
+
+        # Check for new version
+        try:
+            url = "https://api.github.com/repos/p0ntsNL/hodlv2/releases/latest"
+            req = requests.get(url, timeout=5)
+            rtn = req.json()["tag_name"]
+        except Exception as error:
+            version_msg = (
+                f"Unable to retrieve latest HODLv2 version, please try again! {error}"
+            )
+            logger.critical(version_msg)
+            sys.exit(version_msg)
+
+        if self.version != rtn:
+            version_msg = (
+                f"A new version of HODLv2 is available, please update to version {rtn}."
+            )
+            logger.critical(version_msg)
+            sys.exit(version_msg)
 
     def load_config(self):
         """
@@ -176,7 +201,6 @@ class Worker:
                 if error:
                     logger.critical(str(error))
             error_msg = "Bot stopped! Configuration not valid, check the logs for more information."
-            self.notify.send(error_msg)
             sys.exit(error_msg)
 
         logger.info("Configuration is valid.")
