@@ -99,9 +99,9 @@ git clone https://github.com/p0ntsnl/hodlv2.git
 
 ## Configuration
 
-Rename or copy config/config.example.yaml to config/config.yaml and populate the config options.
+More detailed configuration documentation can be found [here](https://github.com/p0ntsNL/hodlv2/wiki/Configuration).
 
-Please refer to the configuration example below:
+Rename or copy config/config.example.yaml to config/config.yaml and populate the config options.
 
 ```
 ExchangeSettings:
