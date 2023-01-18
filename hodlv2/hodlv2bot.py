@@ -305,7 +305,7 @@ class HODLv2Bot:
         # If next_trade_price can retrieved from backend but does not exist.
         else:
             if isinstance(data[0], type(None)):
-                logger.warning(
+                logger.info(
                     "%s: next_trade_price not found yet, forcing next price to 999999999999999.",
                     market,
                 )
@@ -635,7 +635,10 @@ class HODLv2Bot:
 
         logger.info(
             """%s: Trade opened
-            Id: %s | Side: %s | Price: %s %s | Amount: %s %s | Cost: %s %s | Fee: %s %s""",
+Id: %s | Side: %s | Price: %s %s | Amount: %s %s | Cost: %s %s | Fee: %s %s
+
+Closing order
+Side: %s | Price: %s %s | Amount: %s %s | Value: %s %s""",
             market,
             limit_close_order[1]["id"],
             self.open_side,
@@ -647,6 +650,13 @@ class HODLv2Bot:
             self.quote,
             open_order_details[1]["fee"]["cost"],
             open_order_details[1]["fee"]["currency"],
+            self.close_side,
+            limit_close_order[1]["price"],
+            self.quote,
+            close_trade_value,
+            self.base,
+            close_value,
+            self.quote,
         )
         self.notify.send(
             f"""<b>Trade opened</b>
@@ -741,7 +751,12 @@ class HODLv2Bot:
 
                         logger.info(
                             """%s: Trade closed
-                            Id: %s | Profit: %s %s (%s%%) | Open fee: %s %s | Close fee: %s %s""",
+Id: %s | Profit: %s %s (%s%%) | Open fee: %s %s | Close fee: %s %s
+
+Statistics
+Active trades: %s | Finished trades: %s
+Total profit (Ex. fees): %s
+Total fees spend: %s""",
                             market,
                             close_order["id"],
                             profit,
@@ -751,6 +766,10 @@ class HODLv2Bot:
                             open_order["fee"]["currency"],
                             close_order["fee"]["cost"],
                             close_order["fee"]["currency"],
+                            self.get_count("trades", {"status": "active"}),
+                            self.get_count("trades", {"status": "finished"}),
+                            self.stringify_profit_aggregates(),
+                            self.stringify_total_fees(),
                         )
                         self.notify.send(
                             f"""<b>Trade closed</b>
