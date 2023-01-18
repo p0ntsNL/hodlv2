@@ -101,7 +101,7 @@ class HODLv2Bot:
             )
             return balances[1]["total"][quote]
 
-        logger.error("%s | Available %s balance set to 0.", market, quote)
+        logger.error("%s | Balance data unavailable, available %s balance set to 0.", market, quote)
         return 0
 
     def get_ticker_data(self, market):
