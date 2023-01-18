@@ -212,6 +212,7 @@ class Worker:
 
         # Bot configuration
         self.config = self.load_config()
+        self.validate_config(self.config)
 
         # Logging
         log_level = logging.getLevelName(self.config["LoggingSettings"]["LogLevel"])
