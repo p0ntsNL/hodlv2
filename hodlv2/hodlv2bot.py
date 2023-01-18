@@ -146,7 +146,7 @@ class HODLv2Bot:
 
         if open_orders == "n/a":
             logger.info(
-                "%s | FAIL: %s open orders found.",
+                "%s | NOT OK: %s open orders found.",
                 market,
                 open_orders,
             )
@@ -180,7 +180,7 @@ class HODLv2Bot:
                 return True
 
         logger.info(
-            "%s | FAIL: The max amount of trades (%s) is reached.",
+            "%s | NOT OK: The max amount of trades (%s) is reached.",
             market,
             self.max_trades,
         )
@@ -205,7 +205,7 @@ class HODLv2Bot:
             return True
 
         logger.info(
-            "%s | FAIL: The trade value %s is lower than the minimum %s.",
+            "%s | NOT OK: The trade value %s is lower than the minimum %s.",
             market_data["market"],
             trade_value,
             market_data["min_trade_value"],
@@ -235,7 +235,7 @@ class HODLv2Bot:
             }
 
         logger.info(
-            "%s | FAIL: Unable to retrieve required market data, trying again...",
+            "%s | NOT OK: Unable to retrieve required market data, trying again...",
             market,
         )
         return False, {}
@@ -284,7 +284,7 @@ class HODLv2Bot:
             return True
 
         logger.info(
-            "%s | FAIL: Not enough %s balance (%s), required: %s.",
+            "%s | NOT OK: Not enough %s balance (%s), required: %s.",
             market,
             quote,
             balance,
@@ -349,7 +349,7 @@ class HODLv2Bot:
                 return True
 
         logger.info(
-            "%s | FAIL: next_trade_price (%s) is not reached yet, the current price is %s.",
+            "%s | NOT OK: next_trade_price (%s) is not reached yet, the current price is %s.",
             market,
             next_trade_price,
             last_price,
@@ -484,7 +484,7 @@ class HODLv2Bot:
                     logger.info("%s | OK: Next trade price have been reset.", market)
                 else:
                     logger.error(
-                        "%s | FAIL: Unable to reset next trade price.", market
+                        "%s | NOT OK: Unable to reset next trade price.", market
                     )
             else:
                 logger.info(
