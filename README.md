@@ -66,7 +66,7 @@ Detailed documentation can be found in the [wiki](https://github.com/p0ntsNL/hod
 
 A quick guide on how to install HODLv2.
 
-Full quide can be found in the [wiki](https://github.com/p0ntsNL/hodlv2/wiki).
+A more detailed installation guide can be found in the [wiki](https://github.com/p0ntsNL/hodlv2/wiki/Install).
 
 ### Requirements 
 
@@ -99,7 +99,7 @@ git clone https://github.com/p0ntsnl/hodlv2.git
 
 ## Configuration
 
-More detailed configuration documentation can be found [here](https://github.com/p0ntsNL/hodlv2/wiki/Configuration).
+A more detailed configuration guide can be found in the [wiki](https://github.com/p0ntsNL/hodlv2/wiki/Configuration).
 
 Rename or copy config/config.example.yaml to config/config.yaml and populate the config options.
 
