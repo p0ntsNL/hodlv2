@@ -8,7 +8,7 @@
 
 Free and open-source self-hosted automated crypto trading bot written in Python with the HODL strategy in mind.
 
-### [Documentation](https://github.com/p0ntsNL/hodlv2/wiki) · [Install](https://github.com/p0ntsNL/hodlv2/wiki/Install) · [Configuration](https://github.com/p0ntsNL/hodlv2/wiki/Configuration)
+### [Documentation](https://github.com/p0ntsNL/hodlv2/wiki) · [Installation](https://github.com/p0ntsNL/hodlv2/wiki/Install) · [Configuration](https://github.com/p0ntsNL/hodlv2/wiki/Configuration)
 
 ## Disclaimer
 
