@@ -540,7 +540,7 @@ class HODLv2Bot:
 
             open_order_details = self.fetch_order(market, market_open_order[1]["id"])
             if open_order_details[0]:
-                logger.error("%s: Open order details retrieved.", market)
+                logger.info("%s: Open order details retrieved.", market)
                 break
 
             if i == 4:
