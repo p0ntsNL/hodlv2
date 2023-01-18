@@ -34,7 +34,7 @@ HODLing trades in loss would be exactly the same as directly adding it to your H
 
 ## How does it work?
 
-![HODLv2 flowchart](https://user-images.githubusercontent.com/25501135/212938149-fdf7da6b-4d9e-4ba0-90d7-67193b15c076.svg)
+![HODLv2 flowchart](https://user-images.githubusercontent.com/25501135/213145451-2a446a40-5ea4-4064-975a-7436abf7425f.svg)
 
 ## Supported Exchanges
 
