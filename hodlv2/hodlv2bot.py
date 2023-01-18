@@ -146,7 +146,7 @@ class HODLv2Bot:
 
         if open_orders == "n/a":
             logger.info(
-                "%s | NOT OK: %s open orders found.",
+                "%s | FAIL: %s open orders found.",
                 market,
                 open_orders,
             )
@@ -180,7 +180,7 @@ class HODLv2Bot:
                 return True
 
         logger.info(
-            "%s | NOT OK: The max amount of trades (%s) is reached.",
+            "%s | FAIL: The max amount of trades (%s) is reached.",
             market,
             self.max_trades,
         )
@@ -205,7 +205,7 @@ class HODLv2Bot:
             return True
 
         logger.info(
-            "%s | NOT OK: The trade value %s is lower than the minimum %s.",
+            "%s | FAIL: The trade value %s is lower than the minimum %s.",
             market_data["market"],
             trade_value,
             market_data["min_trade_value"],
@@ -235,7 +235,7 @@ class HODLv2Bot:
             }
 
         logger.info(
-            "%s | NOT OK: Unable to retrieve required market data, trying again...",
+            "%s | FAIL: Unable to retrieve required market data, trying again...",
             market,
         )
         return False, {}
@@ -284,7 +284,7 @@ class HODLv2Bot:
             return True
 
         logger.info(
-            "%s | NOT OK: Not enough %s balance (%s), required: %s.",
+            "%s | FAIL: Not enough %s balance (%s), required: %s.",
             market,
             quote,
             balance,
@@ -332,7 +332,7 @@ class HODLv2Bot:
         if self.open_side == "buy":
             if float(last_price) <= float(next_trade_price):
                 logger.info(
-                    "%s | OK: last_price (%s) <= next_trade_price (%s).",
+                    "%s | OK: last_price (%s) is lower than next_trade_price (%s).",
                     market,
                     last_price,
                     next_trade_price,
@@ -341,7 +341,7 @@ class HODLv2Bot:
         else:
             if float(last_price) >= float(next_trade_price):
                 logger.info(
-                    "%s | OK: last_price (%s) >= next_trade_price (%s).",
+                    "%s | OK: last_price (%s) is higher than next_trade_price (%s).",
                     market,
                     last_price,
                     next_trade_price,
@@ -349,10 +349,10 @@ class HODLv2Bot:
                 return True
 
         logger.info(
-            "%s | NOT OK: last_price: (%s) | next_trade_price: (%s).",
+            "%s | FAIL: next_trade_price (%s) is not reached yet, the current price is %s.",
             market,
-            last_price,
             next_trade_price,
+            last_price,
         )
         return False
 
@@ -484,7 +484,7 @@ class HODLv2Bot:
                     logger.info("%s | OK: Next trade price have been reset.", market)
                 else:
                     logger.error(
-                        "%s | NOT OK: Unable to reset next trade price.", market
+                        "%s | FAIL: Unable to reset next trade price.", market
                     )
             else:
                 logger.info(
@@ -524,12 +524,12 @@ class HODLv2Bot:
                 # If market data, balance and max trades are ok
                 if check_balance and max_trades and trade_value:
                     logger.info(
-                        "%s | New trade required based on the criteria, lets go!",
+                        "%s | FINAL: New trade required based on the criteria, lets go!",
                         market,
                     )
                     return True, market_data[1]
 
-        logger.info("%s | No new trade required based on the criteria.", market)
+        logger.info("%s | FINAL: No new trade required based on the criteria.", market)
         return False, {}
 
     def new_trade(self, market, market_data):
