@@ -40,9 +40,7 @@ HODLing trades in loss would be exactly the same as directly adding it to your H
 
 ## Supported Exchanges
 
-- [X] [Kraken](https://kraken.com/)
-
-* All [exchanges supported by ccxt](https://github.com/ccxt/ccxt/#supported-cryptocurrency-exchange-markets) should be usable, please refer to the [ccxt repository](https://github.com/ccxt/ccxt) for more information.
+All [exchanges supported by ccxt](https://github.com/ccxt/ccxt/#supported-cryptocurrency-exchange-markets) should be usable, please refer to the [ccxt repository](https://github.com/ccxt/ccxt) for more information.
 
 ## Community tested
 
