@@ -44,9 +44,9 @@ class Worker:
         """
 
         self.config = self.load_config()
+        self.backend = Backend(self.config)
         self.validate_config(self.config)
         self.version_check()
-        self.backend = Backend(self.config)
         self.bot = HODLv2Bot(self.config)
         self.markets = self.config["BotSettings"].keys()
 
