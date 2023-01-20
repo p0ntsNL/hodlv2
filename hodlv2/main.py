@@ -316,8 +316,11 @@ class Worker:
 if __name__ == "__main__":
 
     worker = Worker()
-    threading.Thread(target=worker.flaskThread(), daemon=True).start()
-    threading.Thread(target=worker.worker(), daemon=True).start()
+    worker.worker()
 
-    while True:
-        time.sleep(1)
+    # Threading
+    #threading.Thread(target=worker.flaskThread()).start()
+    #threading.Thread(target=worker.worker(), daemon=True).start()
+
+    #while True:
+    #    time.sleep(1)
