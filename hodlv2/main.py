@@ -14,6 +14,7 @@ import yaml
 from schema import Optional, Or, Regex, Schema, SchemaError
 
 from hodlv2.hodlv2bot import HODLv2Bot
+from hodlv2.backend.backend import Backend
 
 # Logging
 logger = logging.getLogger("hodlv2")
@@ -45,6 +46,7 @@ class Worker:
         self.config = self.load_config()
         self.validate_config(self.config)
         self.version_check()
+        self.backend = Backend(self.config)
         self.bot = HODLv2Bot(self.config)
         self.markets = self.config["BotSettings"].keys()
 
@@ -190,6 +192,7 @@ class Worker:
             }
         )
 
+        # Validate
         try:
             config_schema.validate(configuration)
         except SchemaError as se_error:
@@ -204,6 +207,11 @@ class Worker:
             sys.exit(error_msg)
 
         logger.info("Configuration is valid.")
+
+        # Send to MongoDB
+        self.backend.update_one(
+            "configuration", "configuration", configuration, True
+        )
 
     def reload(self):
         """

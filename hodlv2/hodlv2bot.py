@@ -520,6 +520,11 @@ class HODLv2Bot:
         market_data = self.get_market_data(market)
         if market_data[0]:
 
+            # Last price to mongoDB for future reference
+            self.backend.update_one(
+                "markets", market, {"last": market_data[1]["ticker"]["last"]}, True
+            )
+
             # Check if next trade price should be reset
             self.check_next_trade_price_reset(market)
 
