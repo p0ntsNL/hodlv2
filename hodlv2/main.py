@@ -7,7 +7,9 @@ Main worker class
 import logging
 import sys
 import time
+import threading
 from logging import handlers
+from flask import Flask
 
 import requests
 import yaml
@@ -16,6 +18,11 @@ from schema import Optional, Or, Regex, Schema, SchemaError
 
 from hodlv2.backend.backend import Backend
 from hodlv2.hodlv2bot import HODLv2Bot
+
+# Flask
+app = Flask(__name__)
+
+from views import *
 
 # Logging
 logger = logging.getLogger("hodlv2")
@@ -299,8 +306,12 @@ class Worker:
             logger.info("Iteration #%s finished", iteration)
             self.reset()
 
+    def flaskThread(self):
+        app.run(host="0.0.0.0", port="8080", debug="true", use_reloader=False)
+
 
 if __name__ == "__main__":
 
     worker = Worker()
+    threading.Thread(target=worker.flaskThread(), daemon=True).start()
     worker.worker()
