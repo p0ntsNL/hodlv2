@@ -148,7 +148,7 @@
                   <h6 class="m-0 font-weight-bold text-primary">Logging</h6>
                 </div>
                 <div class="card-body">
-                  <table class="table index-table" style="width:100%">
+                  <table class="table logging-table" style="width:100%">
                     <thead>
                         <tr>
                             <th>Date</th>
@@ -199,6 +199,9 @@
   <script>
     $(document).ready(function () {
 	    $('.index-table').DataTable({searching: false, info:false});
+    });
+    $(document).ready(function () {
+            $('.logging-table').DataTable({searching: false, info:false, order: [[ 0, "desc" ]]});
     });
   </script>
 
