@@ -195,22 +195,36 @@ class HODLv2Bot:
             self.trade_value, market_data["ticker"]["last"]
         )
 
-        if float(trade_value) >= float(market_data["min_trade_value"]):
-            logger.info(
-                "%s | OK: The trade value %s is higher than the minimum %s.",
+        # If min_trade_value exists
+        if not isinstance(market_data["min_trade_value"], type(None)):
+
+            # If trade_value is higher than min_trade_value
+            if float(trade_value) >= float(market_data["min_trade_value"]):
+                logger.info(
+                    "%s: The trade value %s is higher than the minimum %s.",
+                    market_data["market"],
+                    trade_value,
+                    market_data["min_trade_value"],
+                )
+                return True
+
+            # If trade_value is lower than min_trade_value.
+            logger.warning(
+                "%s: The trade value %s is lower than the minimum %s, not starting a new trade.",
                 market_data["market"],
                 trade_value,
                 market_data["min_trade_value"],
             )
-            return True
+            return False
 
+        # If min_trade_value does not exist, force ok.
         logger.info(
-            "%s | NOT OK: The trade value %s is lower than the minimum %s.",
+            "%s: The trade value %s is higher than the minimum %s.",
             market_data["market"],
             trade_value,
             market_data["min_trade_value"],
         )
-        return False
+        return True
 
     def get_market_data(self, market):
         """
