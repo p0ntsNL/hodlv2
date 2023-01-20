@@ -307,11 +307,17 @@ class Worker:
             self.reset()
 
     def flaskThread(self):
-        app.run(host="0.0.0.0", port="8080", debug="true", use_reloader=False)
+        host = 0.0.0.0
+        port = 8080
+        logger.info(f"Starting webinterface on {host}:{port}")
+        app.run(host=host, port=port, debug="true", use_reloader=False)
 
 
 if __name__ == "__main__":
 
     worker = Worker()
     threading.Thread(target=worker.flaskThread(), daemon=True).start()
-    worker.worker()
+    threading.Thread(target=worker.worker(), daemon=True).start()
+
+    while True:
+        time.sleep(1)
