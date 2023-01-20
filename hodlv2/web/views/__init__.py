@@ -11,6 +11,7 @@ def home():
             active_trades=get_active_trades(),
             profits=get_profits(),
             finished_trades=get_finished_trades(),
+            logging=get_logging(),
             username=finduser()[1],
         )
     else:

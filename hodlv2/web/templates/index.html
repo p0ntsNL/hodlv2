@@ -46,7 +46,7 @@
                   <h6 class="m-0 font-weight-bold text-primary">Active trades</h6>
                 </div>
                 <div class="card-body">
-                  <table id="active_trades_table" class="table" style="width:100%">
+                  <table class="table index-table" style="width:100%">
                     <thead>
                         <tr>
                             <th>Market</th>
@@ -55,16 +55,16 @@
                         </tr>
 		    </thead>
                     <tbody>
-                        {%for i in active_trades[0]%}
+                        {%for t in active_trades[0]%}
 			  <tr>
 			    <td>
 			      <div class="parent">
-			        <img class="base" src="https://coinicons-api.vercel.app/api/icon/{{i['market'].split('/')[0].lower()}}" height="32px">
-			        <img class="quote" src="https://coinicons-api.vercel.app/api/icon/{{i['market'].split('/')[1].lower()}}" height="32px">
+			        <img class="base" src="https://coinicons-api.vercel.app/api/icon/{{t['market'].split('/')[0].lower()}}" height="32px">
+			        <img class="quote" src="https://coinicons-api.vercel.app/api/icon/{{t['market'].split('/')[1].lower()}}" height="32px">
 			      </div>
 			    </td>
-			    <td>{{i['open']['average']}} {{i['market'].split('/')[1]}}<br>{{i['open']['amount']}} {{i['market'].split('/')[0]}}</td>
-			    <td>{{i['close']['price']}} {{i['market'].split('/')[1]}}<br><span class="text-success font-weight-bold">+{{'%0.2f' % ((i['close']['price'] - i['last'])/i['last'] * 100)}}</span></td>
+			    <td>{{t['open']['average']}} {{t['market'].split('/')[1]}}<br>{{t['open']['amount']}} {{t['market'].split('/')[0]}}</td>
+			    <td>{{t['close']['price']}} {{t['market'].split('/')[1]}}<br><span class="text-success font-weight-bold">+{{'%0.2f' % ((t['close']['price'] - t['last'])/t['last'] * 100)}}</span></td>
 		          </tr>
                         {%endfor%}
                     </tbody>
@@ -79,7 +79,7 @@
                   <h6 class="m-0 font-weight-bold text-primary">Profit (ex. fees)</h6>
                 </div>
                 <div class="card-body">
-                  <table id="active_trades_table" class="table" style="width:100%">
+                  <table class="table index-table" style="width:100%">
                     <thead>
                         <tr>
                             <th>Currency</th>
@@ -111,7 +111,7 @@
                   <h6 class="m-0 font-weight-bold text-primary">Finished trades</h6>
                 </div>
                 <div class="card-body">
-                  <table id="active_trades_table" class="table" style="width:100%">
+                  <table class="table index-table" style="width:100%">
                     <thead>
                         <tr>
                             <th>Market</th>
@@ -121,17 +121,17 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {%for i in finished_trades[0]%}
+                        {%for t in finished_trades[0]%}
                           <tr>
                             <td>
                               <div class="parent">
-                                <img class="base" src="https://coinicons-api.vercel.app/api/icon/{{i['market'].split('/')[0].lower()}}" height="32px">
-                                <img class="quote" src="https://coinicons-api.vercel.app/api/icon/{{i['market'].split('/')[1].lower()}}" height="32px">
+                                <img class="base" src="https://coinicons-api.vercel.app/api/icon/{{t['market'].split('/')[0].lower()}}" height="32px">
+                                <img class="quote" src="https://coinicons-api.vercel.app/api/icon/{{t['market'].split('/')[1].lower()}}" height="32px">
                               </div>
                             </td>
-                            <td>{{i['open']['average']}} {{i['market'].split('/')[1]}}<br>{{i['open']['amount']}} {{i['market'].split('/')[0]}}</td>
-                            <td>{{i['close']['price']}} {{i['market'].split('/')[1]}}</td>
-			    <td><span class="text-success font-weight-bold">{{'%0.6f' % i['profit']}} {{i['profit_currency']}}</span></td>
+                            <td>{{t['open']['average']}} {{t['market'].split('/')[1]}}<br>{{t['open']['amount']}} {{t['market'].split('/')[0]}}</td>
+                            <td>{{t['close']['price']}} {{t['market'].split('/')[1]}}</td>
+			    <td><span class="text-success font-weight-bold">{{'%0.6f' % t['profit']}} {{t['profit_currency']}}</span></td>
                           </tr>
                         {%endfor%}
                     </tbody>
@@ -148,6 +148,24 @@
                   <h6 class="m-0 font-weight-bold text-primary">Logging</h6>
                 </div>
                 <div class="card-body">
+                  <table class="table index-table" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Loglevel</th>
+                            <th>Message</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {%for l in logging%}
+                          <tr>
+			      <td>{{l['timestamp']}}</td>
+			      <td>{{l['level']}}</td>
+			      <td>{{l['message']}}</td>
+                          </tr>
+                        {%endfor%}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>
@@ -180,7 +198,7 @@
 
   <script>
     $(document).ready(function () {
-	    $('#active_trades_table').DataTable({searching: false, info:false});
+	    $('.index-table').DataTable({searching: false, info:false});
     });
   </script>
 

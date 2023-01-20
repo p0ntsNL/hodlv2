@@ -62,25 +62,22 @@ def get_active_trades():
     active_trades = db.trades.find({"status": "active"}).sort(
         "open.info.opentm", 1
     )
-    count = len(list(active_trades))
     trades = []
     for t in active_trades:
-        print (t)
         get_last = db.markets.find_one({"_id": t["market"]})
         t["last"] = get_last["last"]
         trades.append(t)
-    return trades, count
+    return trades, len(trades)
 
 
 def get_finished_trades():
     finished_trades = db.trades.find({"status": "finished"}).sort(
         "close.info.closetm", -1
     )
-    count = len(list(finished_trades))
     trades = []
     for t in finished_trades:
         trades.append(t)
-    return trades, count
+    return trades, len(trades)
 
 
 def get_profits():
@@ -90,6 +87,12 @@ def get_profits():
             {"$match": {"status": "finished"}},
             {"$group": {"_id": "$profit_currency", "sum_val": {"$sum": "$profit"}}},
         ]
+    )
+
+
+def get_logging():
+    return db.logs.find().sort(
+        "timestamp", -1
     )
 
 
