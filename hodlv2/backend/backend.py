@@ -69,16 +69,6 @@ class Backend:
             self.notify.send(msg)
             sys.exit(msg)
 
-        # Logging collection capped
-        try:
-            if not self._db["logs"].isCapped():
-                self._db.runCommand({"convertToCapped": "logs", "size": 5000})
-        except Exception as error:
-            msg = f"Bot stopped! Unable to connect to MongoDB: {error}"
-            logger.critical(msg)
-            self.notify.send(msg)
-            sys.exit(msg)
-
     def find(self, collection, first, second):
         """
         Find a document by ID in a MongoDB collection.
