@@ -8,7 +8,7 @@ def home():
     if "username" in session:
         return render_template(
             "index.html",
-            active_trades=mongodb_find({"status": "active"}),
+            active_trades=mongodb_find("trades", {"status": "active"}),
             finished_trades=mongodb_count_documents("trades", {"status": "finished"}),
             username=finduser()[1],
         )
