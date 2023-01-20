@@ -1,0 +1,145 @@
+{% include 'layout.html' %}
+
+        <div class="container-fluid">
+          <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+          </div>
+
+          <div class="row">
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Active trades</div>
+		      <div class="h5 mb-0 font-weight-bold text-gray-800">{{active_trades[0]}}</div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-chart-line fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Finished trades</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800">{{finished_trades}}</div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-flag-checkered fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-xl-9 col-lg-8">
+              <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                  <h6 class="m-0 font-weight-bold text-primary">Active trades</h6>
+                </div>
+                <div class="card-body">
+                  <table id="active_trades_table" class="table" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Market</th>
+                            <th>Entry</th>
+                            <th>Target</th>
+                        </tr>
+		    </thead>
+                    <tbody>
+                        {%for i in active_trades[1]%}
+			  <tr>
+			    <td>
+			      <div class="parent">
+			        <img class="base" src="https://coinicons-api.vercel.app/api/icon/{{i['market'].split('/')[0].lower()}}" height="32px">
+			        <img class="quote" src="https://coinicons-api.vercel.app/api/icon/{{i['market'].split('/')[1].lower()}}" height="32px">
+			      </div>
+			    </td>
+			    <td>{{i['open']['average']}} {{i['market'].split('/')[1]}}<br>{{i['open']['amount']}} {{i['market'].split('/')[0]}}</td>
+                            <td>{{i['close']['price']}} {{i['market'].split('/')[1]}}</td>
+		          </tr>
+                        {%endfor%}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-xl-3 col-lg-4">
+              <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                  <h6 class="m-0 font-weight-bold text-primary">Profits</h6>
+                </div>
+                <div class="card-body">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-12">
+              <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                  <h6 class="m-0 font-weight-bold text-primary">Finished trades</h6>
+                </div>
+                <div class="card-body">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-12">
+              <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                  <h6 class="m-0 font-weight-bold text-primary">Logging</h6>
+                </div>
+                <div class="card-body">
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <footer class="sticky-footer bg-white">
+        <div class="container my-auto">
+          <div class="copyright text-center my-auto">
+            <span>Copyright &copy; HODLv2 2023</span>
+          </div>
+        </div>
+      </footer>
+
+    </div>
+
+  </div>
+
+  <a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+  <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap4.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+  <script src="static/js/hodlv2-admin.min.js"></script>
+
+  <script>
+    $(document).ready(function () {
+	    $('#active_trades_table').DataTable({searching: false, info:false, bLengthChange: false,pageLength:20});
+    });
+  </script>
+
+</body>
+
+</html>
