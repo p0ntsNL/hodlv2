@@ -6,6 +6,7 @@ TO DO
 import logging
 
 import ccxt
+
 from hodlv2.notify.notify import Notify
 
 logger = logging.getLogger(__name__)
