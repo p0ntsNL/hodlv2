@@ -49,7 +49,7 @@ def registerUser():
     user_data = json.loads(json_util.dumps(data))
     user_data["password"] = getHashed(user_data["password"])
     user_data["confirmpassword"] = getHashed(user_data["confirmpassword"])
-    db.users.insert(user_data)
+    db.users.insert_one(user_data)
 
 
 def count_documents(collection, criteria):
