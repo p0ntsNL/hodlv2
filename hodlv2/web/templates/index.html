@@ -46,7 +46,7 @@
                   <h6 class="m-0 font-weight-bold text-primary">Active trades</h6>
                 </div>
                 <div class="card-body">
-                  <table class="table index-table" style="width:100%">
+                  <table class="table index-table table-sm" style="width:100%">
                     <thead>
                         <tr>
                             <th>Market</th>
@@ -79,7 +79,7 @@
                   <h6 class="m-0 font-weight-bold text-primary">Profit (ex. fees)</h6>
                 </div>
                 <div class="card-body">
-                  <table class="table index-table" style="width:100%">
+                  <table class="table index-table table-sm" style="width:100%">
                     <thead>
                         <tr>
                             <th>Currency</th>
@@ -111,7 +111,7 @@
                   <h6 class="m-0 font-weight-bold text-primary">Finished trades</h6>
                 </div>
                 <div class="card-body">
-                  <table class="table index-table" style="width:100%">
+                  <table class="table index-table table-sm" style="width:100%">
                     <thead>
                         <tr>
                             <th>Market</th>
@@ -148,7 +148,7 @@
                   <h6 class="m-0 font-weight-bold text-primary">Logging</h6>
                 </div>
                 <div class="card-body">
-                  <table class="table logging-table" style="width:100%">
+                  <table class="table logging-table table-sm" style="width:100%">
                     <thead>
                         <tr>
                             <th>Date</th>
@@ -200,10 +200,10 @@
 
   <script>
     $(document).ready(function () {
-	    $('.index-table').DataTable({searching: false, info:false});
+	    $('.index-table').DataTable({searching: false, info:false, sDom: '<"row view-filter"<"col-sm-12"<"pull-left"l><"pull-right"f><"clearfix">>>t<"row view-pager"<"col-sm-12"<"text-center"ip>>>'});
     });
     $(document).ready(function () {
-            $('.logging-table').DataTable({searching: false, info:false, order: [[ 0, "desc" ]]});
+            $('.logging-table').DataTable({searching: false, info:false, sDom: '<"row view-filter"<"col-sm-12"<"pull-left"l><"pull-right"f><"clearfix">>>t<"row view-pager"<"col-sm-12"<"text-center"ip>>>', order: [[ 0, "desc" ]]});
     });
   </script>
 
