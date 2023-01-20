@@ -28,7 +28,7 @@
                   <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                       <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Finished trades</div>
-                      <div class="h5 mb-0 font-weight-bold text-gray-800">{{finished_trades}}</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800">{{finished_trades[1]}}</div>
                     </div>
                     <div class="col-auto">
                       <i class="fas fa-flag-checkered fa-2x text-gray-300"></i>
@@ -64,7 +64,7 @@
 			      </div>
 			    </td>
 			    <td>{{i['open']['average']}} {{i['market'].split('/')[1]}}<br>{{i['open']['amount']}} {{i['market'].split('/')[0]}}</td>
-                            <td>{{i['close']['price']}} {{i['market'].split('/')[1]}}</td>
+			    <td>{{i['close']['price']}} {{i['market'].split('/')[1]}}<br><span class="text-success font-weight-bold">+{{'%0.2f' % ((i['close']['price'] - i['last'])/i['last'] * 100)}}</span></td>
 		          </tr>
                         {%endfor%}
                     </tbody>
@@ -76,9 +76,29 @@
             <div class="col-xl-3 col-lg-4">
               <div class="card shadow mb-4">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                  <h6 class="m-0 font-weight-bold text-primary">Profits</h6>
+                  <h6 class="m-0 font-weight-bold text-primary">Profit (ex. fees)</h6>
                 </div>
                 <div class="card-body">
+                  <table id="active_trades_table" class="table" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Currency</th>
+                            <th>Profit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {%for p in profits%}
+                          <tr>
+                            <td>
+                                <img src="https://coinicons-api.vercel.app/api/icon/{{p['_id'].lower()}}" height="32px">
+                            </td>
+                            <td>
+                                {{'%0.8f' % p['sum_val'] }}
+                            </td>
+                          </tr>
+                        {%endfor%}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>
@@ -91,6 +111,31 @@
                   <h6 class="m-0 font-weight-bold text-primary">Finished trades</h6>
                 </div>
                 <div class="card-body">
+                  <table id="active_trades_table" class="table" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Market</th>
+                            <th>Entry</th>
+                            <th>Target</th>
+                            <th>Profit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {%for i in finished_trades[0]%}
+                          <tr>
+                            <td>
+                              <div class="parent">
+                                <img class="base" src="https://coinicons-api.vercel.app/api/icon/{{i['market'].split('/')[0].lower()}}" height="32px">
+                                <img class="quote" src="https://coinicons-api.vercel.app/api/icon/{{i['market'].split('/')[1].lower()}}" height="32px">
+                              </div>
+                            </td>
+                            <td>{{i['open']['average']}} {{i['market'].split('/')[1]}}<br>{{i['open']['amount']}} {{i['market'].split('/')[0]}}</td>
+                            <td>{{i['close']['price']}} {{i['market'].split('/')[1]}}</td>
+			    <td><span class="text-success font-weight-bold">{{'%0.6f' % i['profit']}} {{i['profit_currency']}}</span></td>
+                          </tr>
+                        {%endfor%}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>
@@ -129,14 +174,20 @@
 
   <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
   <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
-  <script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap4.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
   <script src="static/js/hodlv2-admin.min.js"></script>
 
   <script>
     $(document).ready(function () {
-	    $('#active_trades_table').DataTable({searching: false, info:false, bLengthChange: false,pageLength:20});
+	    $('#active_trades_table').DataTable({searching: false, info:false});
+    });
+  </script>
+
+  <script>
+    $('.nav-item').click(function(){
+        $('.active').removeClass('active');
+        $(this).addClass('active');
     });
   </script>
 

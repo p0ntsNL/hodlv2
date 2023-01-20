@@ -8,8 +8,26 @@ def home():
     if "username" in session:
         return render_template(
             "index.html",
-            active_trades=mongodb_find("trades", {"status": "active"}),
-            finished_trades=mongodb_count_documents("trades", {"status": "finished"}),
+            active_trades=get_active_trades(),
+            profits=get_profits(),
+            finished_trades=get_finished_trades(),
+            username=finduser()[1],
+        )
+    else:
+        if finduser()[0]:
+            return redirect(url_for("login"))
+            return render_template("login.html")
+        else:
+            return redirect(url_for("register"))
+            return render_template("register.html")
+
+
+@app.route("/configuration", methods=["GET"])
+def configuration():
+    if "username" in session:
+        return render_template(
+            "configuration.html",
+            configuration=get_configuration(),
             username=finduser()[1],
         )
     else:

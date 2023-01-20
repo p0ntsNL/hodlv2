@@ -11,10 +11,11 @@ from logging import handlers
 
 import requests
 import yaml
+from log4mongo.handlers import BufferedMongoHandler
 from schema import Optional, Or, Regex, Schema, SchemaError
 
-from hodlv2.hodlv2bot import HODLv2Bot
 from hodlv2.backend.backend import Backend
+from hodlv2.hodlv2bot import HODLv2Bot
 
 # Logging
 logger = logging.getLogger("hodlv2")
@@ -49,6 +50,18 @@ class Worker:
         self.version_check()
         self.bot = HODLv2Bot(self.config)
         self.markets = self.config["BotSettings"].keys()
+
+        # Log4Mongo
+        logger.addHandler(
+            BufferedMongoHandler(
+                host=self.config["MongoDbSettings"]["Host"],
+                port=self.config["MongoDbSettings"]["Port"],
+                database_name="hodlv2",
+                capped=True,
+                buffer_size=50,
+                buffer_periodical_flush_timing=10.0,
+            )
+        )
 
     def version_check(self):
         """
@@ -209,9 +222,7 @@ class Worker:
         logger.info("Configuration is valid.")
 
         # Send to MongoDB
-        self.backend.update_one(
-            "configuration", "configuration", configuration, True
-        )
+        self.backend.update_one("configuration", "configuration", configuration, True)
 
     def reload(self):
         """

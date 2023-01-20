@@ -58,6 +58,21 @@ class Backend:
                     ("fees", pymongo.ASCENDING),
                 ]
             )
+            self._db["trades"].create_index(
+                [
+                    ("status", pymongo.ASCENDING),
+                ]
+            )
+        except Exception as error:
+            msg = f"Bot stopped! Unable to connect to MongoDB: {error}"
+            logger.critical(msg)
+            self.notify.send(msg)
+            sys.exit(msg)
+
+        # Logging collection capped
+        try:
+            if not self._db["logs"].isCapped():
+                self._db.runCommand({"convertToCapped": "logs", "size": 5000})
         except Exception as error:
             msg = f"Bot stopped! Unable to connect to MongoDB: {error}"
             logger.critical(msg)

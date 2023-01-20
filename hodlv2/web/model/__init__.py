@@ -1,5 +1,7 @@
 import json
+from pprint import pprint
 
+import yaml
 from app import app
 from bson import ObjectId, json_util
 from flask import request, session
@@ -54,3 +56,43 @@ def mongodb_find(collection, criteria):
 
 def mongodb_count_documents(collection, criteria):
     return db[collection].count_documents(criteria)
+
+
+def get_active_trades():
+    active_trades = db.trades.find(filter={"status": "active"}).sort(
+        "open.info.opentm", 1
+    )
+    count = active_trades.count()
+    trades = []
+    for t in active_trades:
+        get_last = db.markets.find_one({"_id": t["market"]})
+        t["last"] = get_last["last"]
+        trades.append(t)
+    return trades, count
+
+
+def get_finished_trades():
+    finished_trades = db.trades.find(filter={"status": "finished"}).sort(
+        "close.info.closetm", -1
+    )
+    count = finished_trades.count()
+    trades = []
+    for t in finished_trades:
+        trades.append(t)
+    return trades, count
+
+
+def get_profits():
+    return db.trades.aggregate(
+        [
+            {"$sort": {"profit_currency": 1}},
+            {"$match": {"status": "finished"}},
+            {"$group": {"_id": "$profit_currency", "sum_val": {"$sum": "$profit"}}},
+        ]
+    )
+
+
+def get_configuration():
+    data = db.configuration.find_one({"_id": "configuration"})
+    del data["_id"]
+    return yaml.dump(data)
