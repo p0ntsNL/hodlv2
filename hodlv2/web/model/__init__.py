@@ -59,12 +59,13 @@ def mongodb_count_documents(collection, criteria):
 
 
 def get_active_trades():
-    active_trades = db.trades.find(filter={"status": "active"}).sort(
+    active_trades = db.trades.find({"status": "active"}).sort(
         "open.info.opentm", 1
     )
-    count = active_trades.count()
+    count = len(list(active_trades))
     trades = []
     for t in active_trades:
+        print (t)
         get_last = db.markets.find_one({"_id": t["market"]})
         t["last"] = get_last["last"]
         trades.append(t)
@@ -72,10 +73,10 @@ def get_active_trades():
 
 
 def get_finished_trades():
-    finished_trades = db.trades.find(filter={"status": "finished"}).sort(
+    finished_trades = db.trades.find({"status": "finished"}).sort(
         "close.info.closetm", -1
     )
-    count = finished_trades.count()
+    count = len(list(finished_trades))
     trades = []
     for t in finished_trades:
         trades.append(t)
