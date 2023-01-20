@@ -1,9 +1,11 @@
+import json
+
 from app import app
+from bson import ObjectId, json_util
 from flask import request, session
 from helpers.database import *
 from helpers.hashpass import *
-from bson import json_util, ObjectId
-import json
+
 
 def checkloginusername():
     username = request.form["username"]
@@ -12,6 +14,7 @@ def checkloginusername():
         return "No User"
     else:
         return "User exists"
+
 
 def checkloginpassword():
     username = request.form["username"]
@@ -24,20 +27,23 @@ def checkloginpassword():
     else:
         return "wrong"
 
+
 def find_trades(criteria):
     trades = db.trades.find(criteria)
     return trades.count(), trades
+
 
 def finduser():
     find = db.users.find()
     if find:
         for u in find:
-            if 'username' in u:
-                return True, u['username']
-    return False, 'HODLv2'
+            if "username" in u:
+                return True, u["username"]
+    return False, "HODLv2"
+
 
 def registerUser():
-    fields = [k for k in request.form]                                      
+    fields = [k for k in request.form]
     values = [request.form[k] for k in request.form]
     data = dict(zip(fields, values))
     user_data = json.loads(json_util.dumps(data))
@@ -45,6 +51,6 @@ def registerUser():
     user_data["confirmpassword"] = getHashed(user_data["confirmpassword"])
     db.users.insert(user_data)
 
+
 def count_documents(collection, criteria):
     return db[collection].count_documents(criteria)
-
