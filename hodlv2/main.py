@@ -307,7 +307,7 @@ class Worker:
             self.reset()
 
     def flaskThread(self):
-        host = 0.0.0.0
+        host = "0.0.0.0"
         port = 8080
         logger.info(f"Starting webinterface on {host}:{port}")
         app.run(host=host, port=port, debug="true", use_reloader=False)
