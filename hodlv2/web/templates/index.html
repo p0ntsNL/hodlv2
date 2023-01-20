@@ -59,8 +59,8 @@
 			  <tr>
 			    <td>
 			      <div class="parent">
-			        <img class="base" src="static/img/cryptocurrency/32/color/{{i['market'].split('/')[0]}}.png" height="32px">
-			        <img class="quote" src="static/img/cryptocurrency/32/color/{{i['market'].split('/')[1]}}.png" height="32px">
+			        <img class="base" src="https://coinicons-api.vercel.app/api/icon/{{i['market'].split('/')[0]}}" height="32px">
+			        <img class="quote" src="https://coinicons-api.vercel.app/api/icon/{{i['market'].split('/')[1]}}" height="32px">
 			      </div>
 			    </td>
 			    <td>{{i['open']['average']}} {{i['market'].split('/')[1]}}<br>{{i['open']['amount']}} {{i['market'].split('/')[0]}}</td>
