@@ -93,8 +93,22 @@ pip3 install schema     # yaml config validator
 ### Clone
 
 You can now clone HODLv2 into your desired project directory from the [hodlv2 GitHub repository](https://github.com/p0ntsnl/hodlv2):
+
+Normal:
 ```
+git clone -b main https://github.com/p0ntsnl/hodlv2.git
+```
+
+Advanced:
+```
+# Download `develop` branch of HODLv2 repository
 git clone https://github.com/p0ntsnl/hodlv2.git
+
+# Stable
+git checkout main
+
+# Develop
+git checkout develop
 ```
 
 ## Configuration
