@@ -49,7 +49,7 @@ def registerUser():
 
 def mongodb_find(collection, criteria):
     data = db[collection].find(criteria)
-    return data, data.count()
+    return list(data), len(list(data))
 
 
 def mongodb_count_documents(collection, criteria):
