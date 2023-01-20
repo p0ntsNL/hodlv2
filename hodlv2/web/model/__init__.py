@@ -28,11 +28,6 @@ def checkloginpassword():
         return "wrong"
 
 
-def find_trades(criteria):
-    trades = db.trades.find(criteria)
-    return trades.count(), trades
-
-
 def finduser():
     find = db.users.find()
     if find:
@@ -52,5 +47,10 @@ def registerUser():
     db.users.insert_one(user_data)
 
 
-def count_documents(collection, criteria):
+def mongodb_find(collection, criteria):
+    data = db[collection].find(criteria)
+    return data, data.count_documents()
+
+
+def mongodb_count_documents(collection, criteria):
     return db[collection].count_documents(criteria)

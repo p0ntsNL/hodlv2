@@ -12,7 +12,7 @@
                   <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                       <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Active trades</div>
-		      <div class="h5 mb-0 font-weight-bold text-gray-800">{{active_trades[0]}}</div>
+		      <div class="h5 mb-0 font-weight-bold text-gray-800">{{active_trades[1]}}</div>
                     </div>
                     <div class="col-auto">
                       <i class="fas fa-chart-line fa-2x text-gray-300"></i>
@@ -55,7 +55,7 @@
                         </tr>
 		    </thead>
                     <tbody>
-                        {%for i in active_trades[1]%}
+                        {%for i in active_trades[0]%}
 			  <tr>
 			    <td>
 			      <div class="parent">
