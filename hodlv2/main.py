@@ -11,9 +11,8 @@ from logging import handlers
 
 import requests
 import yaml
-from schema import Optional, Or, Regex, Schema, SchemaError
-
 from hodlv2.hodlv2bot import HODLv2Bot
+from schema import Optional, Or, Regex, Schema, SchemaError
 
 # Logging
 logger = logging.getLogger("hodlv2")
