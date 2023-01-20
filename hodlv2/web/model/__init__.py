@@ -92,7 +92,7 @@ def get_profits():
 
 def get_logging():
     return db.logs.find().sort(
-        "timestamp", -1
+        "timestamp", 1
     )
 
 
