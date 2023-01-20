@@ -23,6 +23,14 @@ expect.
 We strongly recommend you to have coding and Python knowledge. Do not
 hesitate to read the source code and understand the mechanism of this bot.
 
+## Donations
+
+**This is all voluntary work**, so if you want to support my efforts please donate.
+
+**BTC**: 3NmtbaPxJNTbMtj85WESzaCnkQcgkP4eP6
+
+**ETH**: 0x65496ff94588e8418bb461ac9b7e96681db1dff3
+
 ## The story
 
 I've tried many ways to increase the balance of my crypto portfolio without too much risk for quite some time now, i've used numerous trading bots, algorithms and premium signal services... and in the end I was always on the losing side.
