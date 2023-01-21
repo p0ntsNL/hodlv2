@@ -1,0 +1,14 @@
+# This example service file has hodlv2 installed in /opt.
+# Set WorkingDirectory and Environment to your paths accordingly.
+
+[Unit]
+Description=HODLv2 Bot
+After=network.target mongodb.service
+[Service]
+Type=simple
+Restart=always
+WorkingDirectory=/opt/hodlv2
+ExecStart=/usr/bin/python3 hodlv2/main.py
+Environment="PYTHONPATH=$PYTHONPATH:/opt/hodlv2"
+[Install]
+WantedBy=multi-user.target
