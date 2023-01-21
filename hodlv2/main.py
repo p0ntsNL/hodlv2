@@ -7,11 +7,11 @@ Main worker class
 import logging
 import sys
 import time
-import threading
 from logging import handlers
 from flask import Flask
 
 import requests
+from multiprocessing import Process
 import yaml
 from log4mongo.handlers import BufferedMongoHandler
 from schema import Optional, Or, Regex, Schema, SchemaError
@@ -29,7 +29,7 @@ logger = logging.getLogger("hodlv2")
 logger.setLevel(logging.INFO)
 formatter = logging.Formatter("%(asctime)s | %(levelname)s | %(message)s")
 logHandler = handlers.TimedRotatingFileHandler(
-    "hodlv2/hodlv2.log", when="midnight", interval=1, backupCount=30
+    "hodlv2/logs/hodlv2.log", when="midnight", interval=1, backupCount=30
 )
 logHandler.setFormatter(formatter)
 logger.addHandler(logHandler)
@@ -268,7 +268,7 @@ class Worker:
         time.sleep(self.sleep())
         self.reload()
 
-    def worker(self):
+    def bot(self):
         """
         TO DO
         """
@@ -306,21 +306,22 @@ class Worker:
             logger.info("Iteration #%s finished", iteration)
             self.reset()
 
-    def flaskThread(self):
+    def web(self):
         host = "0.0.0.0"
         port = 8080
         logger.info(f"Starting webinterface on {host}:{port}")
-        app.run(host=host, port=port, debug="true", use_reloader=False)
+        app.run(host=host, port=port, debug=True, use_reloader=False)
+
+    def run(self):
+
+        p = Process(target=self.bot)
+        p.start()
+        print ('hier')
+        p = Process(target=self.web)
+        p.start()
 
 
 if __name__ == "__main__":
 
-    worker = Worker()
-    worker.worker()
-
-    # Threading
-    #threading.Thread(target=worker.flaskThread()).start()
-    #threading.Thread(target=worker.worker(), daemon=True).start()
-
-    #while True:
-    #    time.sleep(1)
+    w = Worker()
+    w.run()
