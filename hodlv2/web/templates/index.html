@@ -79,7 +79,7 @@
                   <h6 class="m-0 font-weight-bold text-primary">Profit (ex. fees)</h6>
                 </div>
                 <div class="card-body">
-                  <table class="table index-table table-sm" style="width:100%">
+                  <table class="table index-table-small table-sm" style="width:100%">
                     <thead>
                         <tr>
                             <th>Currency</th>
@@ -199,7 +199,10 @@
 
   <script>
     $(document).ready(function () {
-	    $('.index-table').DataTable({search:false});
+	    $('.index-table').DataTable();
+    });
+    $(document).ready(function () {
+	    $('.index-table-small').DataTable({searching:false, info: false});
     });
   </script>
 
