@@ -1,6 +1,9 @@
-from app import app
+# pylint: disable-all
+import json
+
 from flask import redirect, render_template, request, session, url_for
 from model import *
+from run import app
 
 
 @app.route("/", methods=["GET"])
@@ -17,10 +20,8 @@ def home():
     else:
         if finduser()[0]:
             return redirect(url_for("login"))
-            return render_template("login.html")
         else:
             return redirect(url_for("register"))
-            return render_template("register.html")
 
 
 @app.route("/configuration", methods=["GET"])
@@ -28,16 +29,14 @@ def configuration():
     if "username" in session:
         return render_template(
             "configuration.html",
-            configuration=get_configuration(),
+            configuration=json.dumps(get_configuration(), indent=2),
             username=finduser()[1],
         )
     else:
         if finduser()[0]:
             return redirect(url_for("login"))
-            return render_template("login.html")
         else:
             return redirect(url_for("register"))
-            return render_template("register.html")
 
 
 @app.route("/register", methods=["GET", "POST"])

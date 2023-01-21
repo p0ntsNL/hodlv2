@@ -8,21 +8,14 @@ import logging
 import sys
 import time
 from logging import handlers
-from flask import Flask
 
 import requests
-from multiprocessing import Process
 import yaml
 from log4mongo.handlers import BufferedMongoHandler
 from schema import Optional, Or, Regex, Schema, SchemaError
 
 from hodlv2.backend.backend import Backend
 from hodlv2.hodlv2bot import HODLv2Bot
-
-# Flask
-app = Flask(__name__)
-
-from views import *
 
 # Logging
 logger = logging.getLogger("hodlv2")
@@ -268,7 +261,7 @@ class Worker:
         time.sleep(self.sleep())
         self.reload()
 
-    def bot(self):
+    def worker(self):
         """
         TO DO
         """
@@ -306,22 +299,8 @@ class Worker:
             logger.info("Iteration #%s finished", iteration)
             self.reset()
 
-    def web(self):
-        host = "0.0.0.0"
-        port = 8080
-        logger.info(f"Starting webinterface on {host}:{port}")
-        app.run(host=host, port=port, debug=True, use_reloader=False)
-
-    def run(self):
-
-        p = Process(target=self.bot)
-        p.start()
-        print ('hier')
-        p = Process(target=self.web)
-        p.start()
-
 
 if __name__ == "__main__":
 
-    w = Worker()
-    w.run()
+    worker = Worker()
+    worker.worker()

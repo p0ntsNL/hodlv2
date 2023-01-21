@@ -1,12 +1,19 @@
+# pylint: disable-all
+import hashlib
 import json
-from pprint import pprint
 
 import yaml
-from app import app
 from bson import ObjectId, json_util
 from flask import request, session
-from helpers.database import *
-from helpers.hashpass import *
+from run import app, db
+
+
+def getHashed(text):
+    salt = "7be8c273dc1f90da9e765526"
+    hashed = text + salt
+    hashed = hashlib.md5(hashed.encode())
+    hashed = hashed.hexdigest()
+    return
 
 
 def checkloginusername():
@@ -59,9 +66,7 @@ def mongodb_count_documents(collection, criteria):
 
 
 def get_active_trades():
-    active_trades = db.trades.find({"status": "active"}).sort(
-        "open.info.opentm", 1
-    )
+    active_trades = db.trades.find({"status": "active"}).sort("open.info.opentm", 1)
     trades = []
     for t in active_trades:
         get_last = db.markets.find_one({"_id": t["market"]})
@@ -91,12 +96,13 @@ def get_profits():
 
 
 def get_logging():
-    return db.logs.find().sort(
-        "timestamp", 1
-    )
+    return db.logs.find().sort("timestamp", 1)
 
 
 def get_configuration():
     data = db.configuration.find_one({"_id": "configuration"})
     del data["_id"]
-    return yaml.dump(data)
+    data["ExchangeSettings"]["ExchangeSecret"] = "***"
+    data["ExchangeSettings"]["ExchangePassword"] = "***"
+    data["PushoverSettings"]["PushoverAppToken"] = "***"
+    return data
