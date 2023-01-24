@@ -122,7 +122,7 @@ def checkconfig():
             if k not in bot_markets:
                 del config["BotSettings"][k]
 
-        # Remove MongoDb Host and Port if others exist
+        # Remove unwanted items from config
         if "Host" in config["MongoDbSettings"] and "MongoDbHost" in config["MongoDbSettings"]:
             del config["MongoDbSettings"]["Host"]
         if "Port" in config["MongoDbSettings"] and "MongoDbPort" in config["MongoDbSettings"]:
