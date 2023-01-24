@@ -128,6 +128,16 @@ def checkconfig():
         if "Port" in config["MongoDbSettings"] and "MongoDbPort" in config["MongoDbSettings"]:
             del config["MongoDbSettings"]["Port"]
 
+        # Force int
+        try:
+            config["MongoDbSettings"]["Port"] = int(config["MongoDbSettings"]["Port"])
+        except:
+            pass
+        try:
+            config["MongoDbSettings"]["MongoDbPort"] = int(config["MongoDbSettings"]["MongoDbPort"])
+        except:
+            pass
+
         db.configuration.update_one({"_id": "configuration"}, {"$set":config})
         return "ok"
     except Exception as error:
