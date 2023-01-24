@@ -123,9 +123,9 @@ def checkconfig():
                 del config["BotSettings"][k]
 
         # Remove MongoDb Host and Port if others exist
-        if "MongoDbHost" in config["MongoDbSettings"]:
+        if "Host" in config["MongoDbSettings"] and "MongoDbHost" in config["MongoDbSettings"]:
             del config["MongoDbSettings"]["Host"]
-        if "MongoDbPort" in config["MongoDbSettings"]:
+        if "Port" in config["MongoDbSettings"] and "MongoDbPort" in config["MongoDbSettings"]:
             del config["MongoDbSettings"]["Port"]
 
         db.configuration.update_one({"_id": "configuration"}, {"$set":config})
@@ -136,8 +136,6 @@ def checkconfig():
         print(exc_type, fname, exc_tb.tb_lineno)
         print (error)
         return f"Unable to verify configuration: {error}"
-
-    return "nope, foutje"
 
 
 def get_active_trades():
