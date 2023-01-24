@@ -102,6 +102,14 @@ def checkconfig():
                 bot_v = v
                 bot_market = bot_sync[bot_id]
 
+                # Force int
+                if bot_k in [ "MaxTrades", "ResetNextTradePrice" ]:
+                    bot_v = int(bot_v)
+
+                # Force float
+                if bot_k in [ "TradeValue", "PercOpen", "PercClose" ]:
+                    bot_v = float(bot_v)
+
                 if bot_market not in config["BotSettings"]:
                     config["BotSettings"][bot_market] = {}
                 config["BotSettings"][bot_market][bot_k] = bot_v
