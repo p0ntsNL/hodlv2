@@ -185,6 +185,9 @@ class Worker:
                         "ResetNextTradePrice": Or(
                             int, error=self.validate_int("ResetNextTradePrice")
                         ),
+                        Optional("Market"): Or(
+                            str, error=self.validate_str("Market")
+                        ),
                     },
                 },
                 "MongoDbSettings": {
