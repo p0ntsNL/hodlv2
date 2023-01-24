@@ -171,13 +171,13 @@ class Worker:
                 "BotSettings": {
                     Optional(Regex(r"^\S+/\S+$")): {
                         "Side": Or("buy", "sell", error=self.validate_buy_sell("Side")),
-                        "MaxTrades": Or(int, error=self.validate_int("MaxTrades")),
+                        "MaxTrades": Or(int, error=self.validate_int_float("MaxTrades")),
                         "TradeValue": Or(
-                            int, float, error=self.validate_int("TradeValue")
+                            int, float, error=self.validate_int_float("TradeValue")
                         ),
-                        "PercOpen": Or(int, float, error=self.validate_int("PercOpen")),
+                        "PercOpen": Or(int, float, error=self.validate_int_float("PercOpen")),
                         "PercClose": Or(
-                            int, float, error=self.validate_int("PercClose")
+                            int, float, error=self.validate_int_float("PercClose")
                         ),
                         "TakeProfitIn": Or(
                             str, error=self.validate_str("TakeProfitIn")
