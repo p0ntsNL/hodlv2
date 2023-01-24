@@ -40,7 +40,7 @@
                     <div class="card-body">
                       <div class="mb-2">
                           <label for="MongoDbHost" class="form-label">Host</label>
-                          <input type="text" class="form-control" name="MongoDbHost" value="{{configuration.MongoDbSettings.Host}}">
+                          <input type="text" class="form-control" name="MongoDbHost" value="{{ configuration.MongoDbSettings.MongoDbHost if configuration.MongoDbSettings.MongoDbHost else configuration.MongoDbSettings.Host }}">
                       </div>
                       <div class="mb-2">
 			      <label for="MongoDbPort" class="form-label">Port</label>
