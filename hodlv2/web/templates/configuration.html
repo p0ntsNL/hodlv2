@@ -44,7 +44,7 @@
                       </div>
                       <div class="mb-2">
 			      <label for="MongoDbPort" class="form-label">Port</label>
-                          <input type="number" class="form-control" name="MongoDbPort" value="{{configuration.MongoDbSettings.Port}}">
+                          <input type="number" class="form-control" name="MongoDbPort" value="{{ configuration.MongoDbSettings.MongoDbPort if configuration.MongoDbSettings.MongoDbPort else configuration.MongoDbSettings.Port }}">
                           <span class="help-block"><small>Default: 27017</small></span>
                       </div>
                     </div>
