@@ -39,7 +39,7 @@ BotSettings:
     ResetNextTradePrice: 4      # 4 = 4 days
 
 MongoDbSettings:
-  Host: "127.0.0.1"             # default: localhost
+  Host: "127.0.0.1"             # default: 127.0.0.1
   Port: 27017                   # default: 27017
 
 PushoverSettings:
