@@ -108,14 +108,13 @@ class Worker:
             # Load from backend
             get_config = self.backend.find_one("configuration", "configuration")
             if get_config[0]:
-                print (get_config[1])
+                return get_config[1]
 
             # Otherwise from file
             config_file = open(config_path, "r", encoding="utf8")
             data = yaml.load(config_file.read(), Loader=yaml.FullLoader)
             config_file.close()
             logger.info('from config file')
-            print (data)
             return data
         except Exception as error:
             crit_msg = f"Bot stopped! Unable to open {config_path}: {error}"
