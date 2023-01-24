@@ -39,12 +39,12 @@
                     </div>
                     <div class="card-body">
                       <div class="mb-2">
-                          <label for="MongoDbHost" class="form-label">Host</label>
-                          <input type="text" class="form-control" name="MongoDbHost" value="{{ configuration.MongoDbSettings.MongoDbHost if configuration.MongoDbSettings.MongoDbHost else configuration.MongoDbSettings.Host }}">
+                          <label for="Host" class="form-label">Host</label>
+                          <input type="text" class="form-control" name="Host" value="{{ configuration.MongoDbSettings.Host }}">
                       </div>
                       <div class="mb-2">
-			      <label for="MongoDbPort" class="form-label">Port</label>
-                          <input type="number" class="form-control" name="MongoDbPort" value="{{ configuration.MongoDbSettings.MongoDbPort if configuration.MongoDbSettings.MongoDbPort else configuration.MongoDbSettings.Port }}">
+			      <label for="Port" class="form-label">Port</label>
+                          <input type="number" class="form-control" name="Port" value="{{ configuration.MongoDbSettings.Port }}">
                           <span class="help-block"><small>Default: 27017</small></span>
                       </div>
                     </div>

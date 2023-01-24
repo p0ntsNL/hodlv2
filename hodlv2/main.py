@@ -191,8 +191,8 @@ class Worker:
                     },
                 },
                 "MongoDbSettings": {
-                    Or("Host","MongoDbHost"): Or(str, error=self.validate_str("Host")),
-                    Or("Port","MongoDbPort"): Or(int, error=self.validate_int("Port")),
+                    "Host": Or(str, error=self.validate_str("Host")),
+                    "Port": Or(int, error=self.validate_int("Port")),
                 },
                 "PushoverSettings": {
                     "PushoverEnabled": Or(

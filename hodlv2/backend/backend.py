@@ -26,15 +26,10 @@ class Backend:
 
         # Load config
         self.config = config
-
         if self.config:
 
-            if "MongoDbHost" in self.config["MongoDbSettings"]:
-                self.host = self.config["MongoDbSettings"]["MongoDbHost"]
-                self.port = int(self.config["MongoDbSettings"]["MongoDbPort"])
-            else:
-                self.host = self.config["MongoDbSettings"]["Host"]
-                self.port = int(self.config["MongoDbSettings"]["Port"])
+            self.host = self.config["MongoDbSettings"]["Host"]
+            self.port = int(self.config["MongoDbSettings"]["Port"])
 
         else:
             self.host = '127.0.0.1'
