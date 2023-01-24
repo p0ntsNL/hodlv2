@@ -99,12 +99,20 @@ class Worker:
         TO DO
         """
 
-        config_path = "hodlv2/config/config.yaml"
 
         try:
+
+            # Load from backend
+            get_config = self.backend.find_one("configuration", "configuration")
+            if get_config[0]:
+                print ('from db')
+
+            # Otherwise from file
+            config_path = "hodlv2/config/config.yaml"
             config_file = open(config_path, "r", encoding="utf8")
             data = yaml.load(config_file.read(), Loader=yaml.FullLoader)
             config_file.close()
+            print ('from config file')
             return data
         except Exception as error:
             crit_msg = f"Bot stopped! Unable to open {config_path}: {error}"

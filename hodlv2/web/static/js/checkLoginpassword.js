@@ -13,7 +13,7 @@ $("#login").submit(function () {
     type: "POST",
     success: function (response) {
       $("#img").hide()
-      if (response === "correct") {
+      if (response === "ok") {
         setTimeout(loginSuccess, 5000)
         swal
           .fire({
@@ -23,7 +23,7 @@ $("#login").submit(function () {
           .then((result) => {
             window.location.href = "/"
           })
-      } else if (response === "wrong") {
+      } else {
         swal
           .fire({
             icon: "error",

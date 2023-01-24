@@ -29,7 +29,7 @@ def configuration():
     if "username" in session:
         return render_template(
             "configuration.html",
-            configuration=json.dumps(get_configuration(), indent=2),
+            configuration=get_configuration(),
             username=finduser()[1],
         )
     else:
@@ -73,6 +73,10 @@ def checkUserlogin():
 @app.route("/checkloginpassword", methods=["POST"])
 def checkUserpassword():
     return checkloginpassword()
+
+@app.route("/checkconfig", methods=["POST"])
+def checkConfig():
+    return checkconfig()
 
 
 @app.route("/logout", methods=["GET"])
