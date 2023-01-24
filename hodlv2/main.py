@@ -44,6 +44,7 @@ class Worker:
         TO DO
         """
 
+        self.backend = Backend()
         self.config = self.load_config()
         self.backend = Backend(self.config)
         self.validate_config(self.config)
@@ -99,6 +100,8 @@ class Worker:
         TO DO
         """
 
+        # To be removed
+        config_path = "hodlv2/config/config.yaml"
 
         try:
 
@@ -108,7 +111,6 @@ class Worker:
                 logger.info('from db')
 
             # Otherwise from file
-            config_path = "hodlv2/config/config.yaml"
             config_file = open(config_path, "r", encoding="utf8")
             data = yaml.load(config_file.read(), Loader=yaml.FullLoader)
             config_file.close()

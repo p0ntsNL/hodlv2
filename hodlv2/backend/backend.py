@@ -19,7 +19,7 @@ class Backend:
     Backend class
     """
 
-    def __init__(self, config):
+    def __init__(self, config=None):
         """
         Init all variables and objects the class needs to work
         """
@@ -27,10 +27,17 @@ class Backend:
         # Load config
         self.config = config
 
+        if self.config:
+            self.host = self.config["MongoDbSettings"]["Host"]
+            self.port = self.config["MongoDbSettings"]["Port"]
+        else:
+            self.host = '127.0.0.1'
+            self.port = 27017
+
         # MongoDB
         self.client = pymongo.MongoClient(
-            self.config["MongoDbSettings"]["Host"],
-            self.config["MongoDbSettings"]["Port"],
+            self.host,
+            self.port,
         )
         self._db = self.client["hodlv2"]
 
