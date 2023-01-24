@@ -114,6 +114,12 @@ def checkconfig():
             if k not in bot_markets:
                 del config["BotSettings"][k]
 
+        # Remove MongoDb Host and Port if others exist
+        if "MongoDbHost" in config["MongoDbSettings"]:
+            del config["MongoDbSettings"]["Host"]
+        if "MongoDbPort" in config["MongoDbSettings"]:
+            del config["MongoDbSettings"]["Port"]
+
         db.configuration.update_one({"_id": "configuration"}, {"$set":config})
         return "ok"
     except Exception as error:

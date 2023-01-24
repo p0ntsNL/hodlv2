@@ -109,6 +109,7 @@ class Worker:
             get_config = self.backend.find_one("configuration", "configuration")
             if get_config[0]:
                 logger.info('Loading config from backend.')
+                del get_config[1]['_id']
                 return get_config[1]
 
             # Otherwise from file
@@ -187,8 +188,8 @@ class Worker:
                     },
                 },
                 "MongoDbSettings": {
-                    "Host": Or(str, error=self.validate_str("Host")),
-                    "Port": Or(int, error=self.validate_int("Port")),
+                    Or("Host","MongoDbHost"): Or(str, error=self.validate_str("Host")),
+                    Or("Port","MongoDbPort"): Or(int, error=self.validate_int("Port")),
                 },
                 "PushoverSettings": {
                     "PushoverEnabled": Or(
