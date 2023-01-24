@@ -31,27 +31,27 @@ class Backend:
 
             if "MongoDbHost" in self.config["MongoDbSettings"]:
                 self.host = self.config["MongoDbSettings"]["MongoDbHost"]
-                self.port = self.config["MongoDbSettings"]["MongoDbPort"]
+                self.port = int(self.config["MongoDbSettings"]["MongoDbPort"])
             else:
                 self.host = self.config["MongoDbSettings"]["Host"]
-                self.port = self.config["MongoDbSettings"]["Port"]
+                self.port = int(self.config["MongoDbSettings"]["Port"])
 
         else:
             self.host = '127.0.0.1'
             self.port = 27017
 
-        # MongoDB
-        self.client = pymongo.MongoClient(
-            self.host,
-            self.port,
-        )
-        self._db = self.client["hodlv2"]
-
-        # Notify
-        self.notify = Notify(self.config)
-
-        # Indexes
         try:
+            # MongoDB
+            self.client = pymongo.MongoClient(
+                self.host,
+                self.port,
+            )
+            self._db = self.client["hodlv2"]
+
+            # Notify
+            self.notify = Notify(self.config)
+
+            # Indexes
             self._db["trades"].create_index(
                 [
                     ("profit_currency", pymongo.ASCENDING),

@@ -51,12 +51,12 @@ class HODLv2Bot:
 
         self.base = market.split("/")[0]
         self.quote = market.split("/")[1]
-        self.trade_value = self.markets_data[market]["TradeValue"]
+        self.trade_value = float(self.markets_data[market]["TradeValue"])
         self.side = self.markets_data[market]["Side"]
-        self.max_trades = self.markets_data[market]["MaxTrades"]
-        self.perc_open = self.markets_data[market]["PercOpen"]
-        self.perc_close = self.markets_data[market]["PercClose"]
-        self.next_trade_price_reset = self.markets_data[market]["ResetNextTradePrice"]
+        self.max_trades = int(self.markets_data[market]["MaxTrades"])
+        self.perc_open = float(self.markets_data[market]["PercOpen"])
+        self.perc_close = float(self.markets_data[market]["PercClose"])
+        self.next_trade_price_reset = int(self.markets_data[market]["ResetNextTradePrice"])
         self.open_side = self.side
         self.close_side = "sell" if self.side == "buy" else "buy"
         self.profit_in = (
