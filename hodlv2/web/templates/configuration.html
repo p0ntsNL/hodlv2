@@ -77,8 +77,8 @@
                     </div>
                     <div class="card-body">
                       <div class="mb-2">
-                        <label for="LoggingLogLevel" class="form-label">Log level</label>
-		        <select class="form-control" name="LoggingLogLevel">
+                        <label for="LogLevel" class="form-label">Log level</label>
+		        <select class="form-control" name="LogLevel">
                             <option {% if configuration.LoggingSettings.LogLevel == 'DEBUG' %} selected="selected" {% endif %}>DEBUG</option>
                             <option {% if configuration.LoggingSettings.LogLevel == 'INFO' %} selected="selected" {% endif %}>INFO</option>
                             <option {% if configuration.LoggingSettings.LogLevel == 'WARNING' %} selected="selected" {% endif %}>WARNING</option>
