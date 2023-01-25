@@ -158,36 +158,6 @@
             </div>
           </div>
 
-          <div class="row">
-            <div class="col-12">
-              <div class="card shadow mb-4">
-                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                  <h6 class="m-0 font-weight-bold text-primary">Logging</h6>
-                </div>
-                <div class="card-body">
-                  <table class="table index-table table-sm" style="width:100%">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Loglevel</th>
-                            <th>Message</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {%for l in logging%}
-                          <tr>
-			      <td>{{l['timestamp']}}</td>
-			      <td>{{l['level']}}</td>
-			      <td>{{l['message']}}</td>
-                          </tr>
-                        {%endfor%}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-
         </div>
       </div>
 

@@ -14,7 +14,6 @@ def home():
             active_trades=get_active_trades(),
             profits=get_profits(),
             finished_trades=get_finished_trades(),
-            logging=get_logging(),
             username=finduser()[1],
         )
     else:
@@ -30,6 +29,21 @@ def configuration():
         return render_template(
             "configuration.html",
             configuration=get_configuration(),
+            username=finduser()[1],
+        )
+    else:
+        if finduser()[0]:
+            return redirect(url_for("login"))
+        else:
+            return redirect(url_for("register"))
+
+
+@app.route("/logging", methods=["GET"])
+def logging():
+    if "username" in session:
+        return render_template(
+            "logging.html",
+            logging=get_logging(),
             username=finduser()[1],
         )
     else:
