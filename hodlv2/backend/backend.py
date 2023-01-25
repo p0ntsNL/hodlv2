@@ -24,13 +24,11 @@ class Backend:
         Init all variables and objects the class needs to work
         """
 
-        # Load config
+        # Set default vaules if none existent
         self.config = config
         if self.config:
-
             self.host = self.config["MongoDbSettings"]["Host"]
             self.port = int(self.config["MongoDbSettings"]["Port"])
-
         else:
             self.host = '127.0.0.1'
             self.port = 27017

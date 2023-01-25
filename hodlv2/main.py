@@ -81,19 +81,16 @@ class Worker:
             url = "https://api.github.com/repos/p0ntsNL/hodlv2/releases/latest"
             req = requests.get(url, timeout=5)
             rtn = req.json()["tag_name"]
+            if self.version != rtn:
+                version_msg = (
+                    f"A new version of HODLv2 is available, please update to version {rtn}."
+                )
+                logger.warning(version_msg)
         except Exception as error:
             version_msg = (
-                f"Unable to retrieve latest HODLv2 version, please try again! {error}"
+                f"Unable to retrieve latest HODLv2 version from GitHub! {error}"
             )
-            logger.critical(version_msg)
-            sys.exit(version_msg)
-
-        if self.version != rtn:
-            version_msg = (
-                f"A new version of HODLv2 is available, please update to version {rtn}."
-            )
-            logger.critical(version_msg)
-            sys.exit(version_msg)
+            logger.warning(version_msg)
 
     def load_config(self):
         """
@@ -254,8 +251,11 @@ class Worker:
         log_level = logging.getLevelName(self.config["LoggingSettings"]["LogLevel"])
         logger.setLevel(log_level)
 
-        # Init bot
+        # Re-init bot
         self.bot = HODLv2Bot(self.config)
+
+        # Reload bot markets
+        self.markets = self.config["BotSettings"].keys()
 
     def sleep(self):
         """
