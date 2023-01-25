@@ -63,7 +63,9 @@
 
   <script>
     $(document).ready(function () {
-	    $('.index-table').DataTable();
+      $('.index-table').DataTable({
+        order: [[0, 'desc']],
+      });
     });
   </script>
 
