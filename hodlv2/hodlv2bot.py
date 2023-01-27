@@ -506,13 +506,8 @@ class HODLv2Bot:
                 update_next_trade_price = self.backend.update_one(
                     "markets", market, {"next_trade_price": 999999999999}, True
                 )
-
                 if update_next_trade_price[0]:
                     logger.info("%s | OK: Next trade price have been reset.", market)
-                else:
-                    logger.error(
-                        "%s | NOT OK: Unable to reset next trade price.", market
-                    )
             else:
                 logger.info(
                     "%s | OK: Next trade price reset is not required, next reset at %s.",
