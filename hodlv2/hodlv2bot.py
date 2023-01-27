@@ -33,18 +33,27 @@ class HODLv2Bot:
         TO DO
         """
 
+        self.health = True
+
         self.config = config
         self.ccxt = Exchange(self.config)
         self.notify = Notify(self.config)
-        self.backend = Backend(self.config)
-
-        self.open_orders = self.ccxt.get_open_orders()
-        self.closed_orders = self.ccxt.get_closed_orders()
+        self.backend = Backend()
 
         self.markets_data = self.config["BotSettings"]
         self.markets = self.markets_data.keys()
 
-    def bot_settings(self, market):
+        self.open_orders = self.ccxt.get_open_orders()
+        self.closed_orders = self.ccxt.get_closed_orders()
+
+        # Set health
+        if not self.backend.healthcheck() or not self.ccxt.healthcheck():
+            self.health = False
+
+    def healthcheck(self):
+        return self.health
+
+    def bot_init(self, market):
         """
         TO DO
         """

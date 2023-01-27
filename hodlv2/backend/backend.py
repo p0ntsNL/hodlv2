@@ -5,11 +5,10 @@ Currently defaults to MongoDB which is the only backend available.
 """
 
 import logging
-import sys
 
 import pymongo
-
-from hodlv2.notify.notify import Notify
+from hodlv2.config import MONGODB_HOST
+from hodlv2.config import MONGODB_PORT
 
 logger = logging.getLogger(__name__)
 
@@ -19,30 +18,22 @@ class Backend:
     Backend class
     """
 
-    def __init__(self, config=None):
+    def __init__(self):
         """
         Init all variables and objects the class needs to work
         """
 
-        # Set default vaules if none existent
-        self.config = config
-        if self.config:
-            self.host = self.config["MongoDbSettings"]["Host"]
-            self.port = int(self.config["MongoDbSettings"]["Port"])
-        else:
-            self.host = '127.0.0.1'
-            self.port = 27017
+        self.health = True
 
+        # MongoDB
         try:
-            # MongoDB
+            self.host = MONGODB_HOST
+            self.port = MONGODB_PORT
             self.client = pymongo.MongoClient(
                 self.host,
                 self.port,
             )
             self._db = self.client["hodlv2"]
-
-            # Notify
-            self.notify = Notify(self.config)
 
             # Indexes
             self._db["trades"].create_index(
@@ -70,10 +61,12 @@ class Backend:
                 ]
             )
         except Exception as error:
-            msg = f"Bot stopped! Unable to connect to MongoDB: {error}"
+            msg = f"Unable to connect to MongoDB: {error}"
             logger.critical(msg)
-            self.notify.send(msg)
-            sys.exit(msg)
+            self.health = False
+
+    def healthcheck(self):
+        return self.health
 
     def find(self, collection, first, second):
         """

@@ -4,22 +4,27 @@
 Main worker class
 """
 
+import os
 import logging
 import sys
 import time
 from logging import handlers
 
+from hodlv2.config import MONGODB_HOST
+from hodlv2.config import MONGODB_PORT
+from hodlv2.config import LOGLEVEL
+
 import requests
 import yaml
-from log4mongo.handlers import BufferedMongoHandler
-from schema import Optional, Or, Regex, Schema, SchemaError
+from log4mongo.handlers import MongoHandler
 
 from hodlv2.backend.backend import Backend
 from hodlv2.hodlv2bot import HODLv2Bot
 
 # Logging
 logger = logging.getLogger("hodlv2")
-logger.setLevel(logging.INFO)
+log_level = logging.getLevelName(LOGLEVEL)
+logger.setLevel(log_level)
 formatter = logging.Formatter("%(asctime)s | %(levelname)s | %(message)s")
 logHandler = handlers.TimedRotatingFileHandler(
     "hodlv2/logs/hodlv2.log", when="midnight", interval=1, backupCount=30
@@ -44,37 +49,31 @@ class Worker:
         TO DO
         """
 
-        self.backend = Backend()
-        self.config = self.load_config()
-        self.backend = Backend(self.config)
-        self.validate_config(self.config)
+        # Version check
+        self.version = "2023.1"
+        logger.info("")
+        start_msg = f"Starting HODLv2 {self.version}"
+        logger.info(start_msg)
         self.version_check()
-        self.bot = HODLv2Bot(self.config)
-        self.markets = self.config["BotSettings"].keys()
+        print(start_msg)
 
         # Log4Mongo
         logger.addHandler(
-            BufferedMongoHandler(
-                host=self.config["MongoDbSettings"]["Host"],
-                port=self.config["MongoDbSettings"]["Port"],
+            MongoHandler(
+                host=MONGODB_HOST,
+                port=MONGODB_PORT,
                 database_name="hodlv2",
                 capped=True,
-                buffer_size=50,
-                buffer_periodical_flush_timing=10.0,
             )
         )
+
+    def healthcheck(self):
+        return self.health
 
     def version_check(self):
         """
         TO DO
         """
-
-        self.version = "2023.1"
-
-        start_msg = f"Starting HODLv2 {self.version}"
-        print(start_msg)
-        logger.info("\n")
-        logger.info(start_msg)
 
         # Check for new version
         try:
@@ -90,172 +89,71 @@ class Worker:
             version_msg = (
                 f"Unable to retrieve latest HODLv2 version from GitHub! {error}"
             )
-            logger.warning(version_msg)
+            logger.error(version_msg)
 
     def load_config(self):
         """
         TO DO
         """
 
-        # To be removed
-        config_path = "hodlv2/config/config.yaml"
-
+        # Load v2023.1 config file if it exists and push to backend
         try:
+            config_dir = "hodlv2/config"
+            config_path = f"{config_dir}/config.yaml"
+            if os.path.exists(config_path):
+                config_file = open(config_path, "r", encoding="utf8")
+                configuration = yaml.load(config_file.read(), Loader=yaml.FullLoader)
+                config_file.close()
+                logger.info('Loading config from config.yaml.')
 
-            # Load from backend
+                # Send config to backend and remove it afterwards
+                update = self.backend.update_one("configuration", "configuration", configuration, True)
+                if update[0]:
+                    logger.info('Saved config to backend.')
+                    if os.path.exists(config_path):
+                        os.remove(config_path)
+                        os.rmdir(config_dir)
+        except Exception as error:
+            crit_msg = f"Unable to load config from {config_path}: {error}"
+            logger.critical(crit_msg)
+
+        # Load v2023.2+ config from backend
+        try:
             get_config = self.backend.find_one("configuration", "configuration")
             if get_config[0]:
                 logger.info('Loading config from backend.')
                 del get_config[1]['_id']
+                self.config_health = True
                 return get_config[1]
-
-            # Otherwise from file
-            config_file = open(config_path, "r", encoding="utf8")
-            data = yaml.load(config_file.read(), Loader=yaml.FullLoader)
-            config_file.close()
-            logger.info('Loading config from config.yaml.')
-            return data
-        except Exception as error:
-            crit_msg = f"Bot stopped! Unable to open {config_path}: {error}"
+        except Exception as e:
+            crit_msg = f"Unable to load config from backend: {error}"
             logger.critical(crit_msg)
-            sys.exit(crit_msg)
 
-    def validate_int(self, field):
-        """TO DO"""
-        return f"The {field} field must have an integer value."
+        self.config_health = False
 
-    def validate_int_float(self, field):
-        """TO DO"""
-        return f"The {field} field must have an integer or float value."
-
-    def validate_str(self, field):
-        """TO DO"""
-        return f"The {field} field must have a string value."
-
-    def validate_true_false(self, field):
-        """TO DO"""
-        return f"The {field} field must be 'true' or 'false'."
-
-    def validate_buy_sell(self, field):
-        """TO DO"""
-        return f"The {field} field must be 'buy' or 'sell'."
-
-    def validate_loglevel(self, field):
-        """TO DO"""
-        return f"The {field} field must be 'DEBUG', 'INFO', 'WARNING', 'ERROR' or 'CRITICAL'."
-
-    def validate_market(self):
-        """TO DO"""
-        return "The market field must be formated like this: BTC/USD, DOT/BTC etc."
-
-    def validate_config(self, configuration):
+    def load(self):
         """
         TO DO
         """
 
-        config_schema = Schema(
-            {
-                "ExchangeSettings": {
-                    "Exchange": Or(str, error=self.validate_str("Exchange")),
-                    "ExchangeKey": Or(str, error=self.validate_str("ExchangeKey")),
-                    "ExchangeSecret": Or(
-                        str, error=self.validate_str("ExchangeSecret")
-                    ),
-                    "ExchangePassword": Or(
-                        str, error=self.validate_str("ExchangePassword")
-                    ),
-                },
-                "BotSettings": {
-                    Optional(Regex(r"^\S+/\S+$")): {
-                        "Side": Or("buy", "sell", error=self.validate_buy_sell("Side")),
-                        "MaxTrades": Or(int, error=self.validate_int_float("MaxTrades")),
-                        "TradeValue": Or(
-                            int, float, error=self.validate_int_float("TradeValue")
-                        ),
-                        "PercOpen": Or(int, float, error=self.validate_int_float("PercOpen")),
-                        "PercClose": Or(
-                            int, float, error=self.validate_int_float("PercClose")
-                        ),
-                        "TakeProfitIn": Or(
-                            str, error=self.validate_str("TakeProfitIn")
-                        ),
-                        "ResetNextTradePrice": Or(
-                            int, error=self.validate_int("ResetNextTradePrice")
-                        ),
-                        Optional("Market"): Or(
-                            str, error=self.validate_str("Market")
-                        ),
-                    },
-                },
-                "MongoDbSettings": {
-                    "Host": Or(str, error=self.validate_str("Host")),
-                    "Port": Or(int, error=self.validate_int("Port")),
-                },
-                "PushoverSettings": {
-                    "PushoverEnabled": Or(
-                        "true",
-                        "false",
-                        error=self.validate_true_false("PushoverEnabled"),
-                    ),
-                    "PushoverUserKey": Or(
-                        str, error=self.validate_str("PushoverUserKey")
-                    ),
-                    "PushoverAppToken": Or(
-                        str, error=self.validate_str("PushoverAppToken")
-                    ),
-                },
-                "LoggingSettings": {
-                    "LogLevel": Or(
-                        "CRITICAL",
-                        "ERROR",
-                        "WARNING",
-                        "INFO",
-                        "DEBUG",
-                        self.validate_loglevel("LogLevel"),
-                    )
-                },
-            }
-        )
-
-        # Validate
-        try:
-            config_schema.validate(configuration)
-        except SchemaError as se_error:
-            logger.critical("Configuration is not valid.")
-            for error in se_error.errors:
-                if error:
-                    logger.critical(str(error))
-            for error in se_error.autos:
-                if error:
-                    logger.critical(str(error))
-            error_msg = "Bot stopped! Configuration not valid, check the logs for more information."
-            sys.exit(error_msg)
-
-        logger.info("Configuration is valid.")
-
-        # Send to MongoDB
-        self.backend.update_one("configuration", "configuration", configuration, True)
-
-    def reload(self):
-        """
-        TO DO
-        """
-
-        logger.info("\n")
-
-        # Bot configuration
+        # Load
+        self.backend = Backend()
         self.config = self.load_config()
-        self.validate_config(self.config)
+        self.bot = HODLv2Bot(self.config)
+        self.markets = self.config["BotSettings"].keys()
 
         # Logging
-        log_level = logging.getLevelName(self.config["LoggingSettings"]["LogLevel"])
+        log_level = logging.getLevelName(LOGLEVEL)
         logger.setLevel(log_level)
 
-        # Re-init bot
-        self.bot = HODLv2Bot(self.config)
-
-        # Reload bot markets
-        self.markets = self.config["BotSettings"].keys()
+        # healthcheck
+        self.health = True
+        self.b_h = self.backend.healthcheck()
+        self.e_h = self.bot.healthcheck()
+        self.c_h = self.config_health
+        if not self.backend.healthcheck() or not self.bot.healthcheck() or not self.config_health:
+            self.health = False
+            self.health_status = f"Backend:{self.b_h} | Exchange: {self.e_h} | Config: {self.c_h}"
 
     def sleep(self):
         """
@@ -274,7 +172,6 @@ class Worker:
             self.sleep(),
         )
         time.sleep(self.sleep())
-        self.reload()
 
     def worker(self):
         """
@@ -287,28 +184,41 @@ class Worker:
 
             iteration += 1
 
+            logger.info("")
             logger.info("Iteration #%s started", iteration)
 
-            # Reset if open or closed orders are not retrieved from exchange
-            if not self.bot.open_closed_ok:
-                self.reset()
-                continue
+            # Load
+            self.load()
 
-            # Loop markets
-            for market in self.markets:
+            # If healthy
+            if self.health:
 
-                # Load market settings
-                self.bot.bot_settings(market)
+                # Reset if open or closed orders are not retrieved from exchange
+                if not self.bot.open_closed_ok:
+                    self.reset()
+                    continue
+                logger.info("Open and closed order data retrieved successfully.")
 
-                # Check if a new trade should be initiated
-                new_trade = self.bot.check_new_trade(market)
-                if new_trade[0]:
+                # Loop markets
+                for market in self.markets:
 
-                    # Initiate new trade
-                    self.bot.new_trade(market, new_trade[1])
+                    # Load market settings
+                    self.bot.bot_init(market)
 
-            # Check closed orders for profit
-            self.bot.check_closed_orders()
+                    # Check if a new trade should be initiated
+                    new_trade = self.bot.check_new_trade(market)
+                    if new_trade[0]:
+
+                        # Initiate new trade
+                        self.bot.new_trade(market, new_trade[1])
+
+                # Check closed orders for profit
+                self.bot.check_closed_orders()
+
+            # If unhealthy
+            else:
+                logger.error("Health check failure!")
+                logger.error(self.health_status)
 
             # Reset
             logger.info("Iteration #%s finished", iteration)

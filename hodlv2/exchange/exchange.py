@@ -22,22 +22,30 @@ class Exchange:
         TO DO
         """
 
-        # Load config
+        self.health = True
+
+        # Load
         self.config = config
-
-        exchange_class = getattr(ccxt, self.config["ExchangeSettings"]["Exchange"])
-        self.exchange = exchange_class(
-            {
-                "apiKey": self.config["ExchangeSettings"]["ExchangeKey"],
-                "secret": self.config["ExchangeSettings"]["ExchangeSecret"],
-                "password": self.config["ExchangeSettings"]["ExchangePassword"],
-                "enableRateLimit": True,
-            }
-        )
-        self.exchange.loadMarkets()
-
-        # Notify
         self.notify = Notify(self.config)
+
+        try:
+            exchange_class = getattr(ccxt, self.config["ExchangeSettings"]["Exchange"])
+            self.exchange = exchange_class(
+                {
+                    "apiKey": self.config["ExchangeSettings"]["ExchangeKey"],
+                    "secret": self.config["ExchangeSettings"]["ExchangeSecret"],
+                    "password": self.config["ExchangeSettings"]["ExchangePassword"],
+                    "enableRateLimit": True,
+                }
+            )
+            self.exchange.loadMarkets()
+        except Exception as error:
+            msg = f"Unable to connect to {self.config['ExchangeSettings']['Exchange']}: {error}"
+            logger.critical(msg)
+            self.health = False
+
+    def healthcheck(self):
+        return self.health
 
     def get_market_data(self, market):
         """
@@ -93,6 +101,7 @@ class Exchange:
             logger.debug("get_open_orders error: %s", error)
 
         logger.error("Unable to retrieve open orders data from exchange.")
+        self.health = False
         return [False, {}]
 
     def get_closed_orders(self):
@@ -107,6 +116,7 @@ class Exchange:
             logger.debug("get_closed_orders error: %s", error)
 
         logger.error("Unable to retrieve closed orders data from exchange.")
+        self.health = False
         return [False, {}]
 
     def fetch_order(self, market, orderid):
