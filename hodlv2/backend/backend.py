@@ -36,30 +36,36 @@ class Backend:
             self._db = self.client["hodlv2"]
 
             # Indexes
-            self._db["trades"].create_index(
-                [
-                    ("profit_currency", pymongo.ASCENDING),
-                    ("profit", pymongo.ASCENDING),
-                    ("status", pymongo.ASCENDING),
-                ]
-            )
-            self._db["trades"].create_index(
-                [
-                    ("profit_currency", pymongo.ASCENDING),
-                    ("profit_perc", pymongo.ASCENDING),
-                    ("status", pymongo.ASCENDING),
-                ]
-            )
-            self._db["trades"].create_index(
-                [
-                    ("fees", pymongo.ASCENDING),
-                ]
-            )
-            self._db["trades"].create_index(
-                [
-                    ("status", pymongo.ASCENDING),
-                ]
-            )
+            indexes = self._db["trades"].index_information()
+            if 'profit_currency_1_profit_1_status_1' not in indexes:
+                print ('hier')
+                self._db["trades"].create_index(
+                    [
+                        ("profit_currency", pymongo.ASCENDING),
+                        ("profit", pymongo.ASCENDING),
+                        ("status", pymongo.ASCENDING),
+                    ]
+                )
+            if 'profit_currency_1_profit_perc_1_status_1' not in indexes:
+                self._db["trades"].create_index(
+                    [
+                        ("profit_currency", pymongo.ASCENDING),
+                        ("profit_perc", pymongo.ASCENDING),
+                        ("status", pymongo.ASCENDING),
+                    ]
+                )
+            if 'trades_1' not in indexes:
+                self._db["trades"].create_index(
+                    [
+                        ("fees", pymongo.ASCENDING),
+                    ]
+                )
+            if 'status_1' not in indexes:
+                self._db["trades"].create_index(
+                    [
+                        ("status", pymongo.ASCENDING),
+                    ]
+                )
         except Exception as error:
             msg = f"Unable to connect to MongoDB: {error}"
             logger.critical(msg)
