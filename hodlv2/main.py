@@ -134,7 +134,7 @@ class Worker:
     def update_health(self):
 
         # Send config to backend and remove it afterwards
-        update = self.backend.update_one("health", "health", configuration, True)
+        update = self.backend.update_one("health", "health", self.health_status, True)
         if not update[0]:
             logger.info('Unable to save health data to backend.')
 
