@@ -1,5 +1,5 @@
 __pycache__/
-config/config.yaml
+config/
 *.log*
 *.py[cod]
 *$py.class
