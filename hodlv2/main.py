@@ -131,6 +131,13 @@ class Worker:
 
         self.config_health = False
 
+    def update_health(self):
+
+        # Send config to backend and remove it afterwards
+        update = self.backend.update_one("health", "health", configuration, True)
+        if not update[0]:
+            logger.info('Unable to save health data to backend.')
+
     def load(self):
         """
         TO DO
@@ -153,7 +160,14 @@ class Worker:
         self.c_h = self.config_health
         if not self.backend.healthcheck() or not self.bot.healthcheck() or not self.config_health:
             self.health = False
-            self.health_status = f"Backend:{self.b_h} | Exchange: {self.e_h} | Config: {self.c_h}"
+
+        self.health_status = {
+            "health": self.health,
+            "backend": self.b_h,
+            "exchange": self.e_h,
+            "config": self.c_h,
+        }
+        self.update_health()
 
     def sleep(self):
         """
@@ -218,7 +232,7 @@ class Worker:
             # If unhealthy
             else:
                 logger.error("Health check failure!")
-                logger.error(self.health_status)
+                logger.error(str(self.health_status))
 
             # Reset
             logger.info("Iteration #%s finished", iteration)

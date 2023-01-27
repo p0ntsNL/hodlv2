@@ -639,6 +639,8 @@ class HODLv2Bot:
                 "%s | Unable to create limit close order, trying again...", market
             )
 
+            time.sleep(15)
+
         # Insert data into database
         data = {
             "_id": limit_close_order[1]["id"],
@@ -654,10 +656,10 @@ class HODLv2Bot:
         }
         insert = self.backend.insert_one("trades", data)
         if not insert[0]:
-            error_msg = "Bot stopped! Unable to insert trade details to backend."
+            error_msg = "Unable to insert trade details to backend."
             logger.critical(error_msg)
             self.notify.send(error_msg)
-            sys.exit(error_msg)
+            return
 
         update_next_trade_price = self.backend.update_one(
             "markets",
@@ -670,11 +672,11 @@ class HODLv2Bot:
         )
         if not update_next_trade_price[0]:
             error_msg = (
-                "Bot stopped! Unable to update next trade price details to backend."
+                "Unable to update next trade price details to backend."
             )
             logger.critical(error_msg)
             self.notify.send(error_msg)
-            sys.exit(error_msg)
+                return
 
         close_value = float(limit_close_order[1]["price"]) * float(close_trade_value)
 
@@ -770,10 +772,9 @@ Side: %s | Price: %s %s | Amount: %s %s | Value: %s %s""",
                             Market: {market}""",
                         )
                     else:
-                        error_msg = "Bot stopped! Unable to update closed order details to backend."
+                        error_msg = "Unable to update closed order details to backend."
                         logger.critical(error_msg)
                         self.notify.send(error_msg)
-                        sys.exit(error_msg)
 
                 elif status == "active" and close_order["status"] == "closed":
 
@@ -836,8 +837,7 @@ Total fees spend: %s""",
                         )
                     else:
                         error_msg = (
-                            "Bot stopped! Unable to update trade details to backend."
+                            "Unable to update trade details to backend."
                         )
                         logger.critical(error_msg)
                         self.notify.send(error_msg)
-                        sys.exit(error_msg)
