@@ -676,7 +676,7 @@ class HODLv2Bot:
             )
             logger.critical(error_msg)
             self.notify.send(error_msg)
-                return
+            return
 
         close_value = float(limit_close_order[1]["price"]) * float(close_trade_value)
 
