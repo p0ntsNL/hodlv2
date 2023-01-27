@@ -9,11 +9,15 @@ from flask import Flask
 
 app = Flask(__name__)
 
+from config import MONGODB_HOST
+from config import MONGODB_PORT
+from config import WEB_HOST
+from config import WEB_PORT
 from views import *
 
-client = pymongo.MongoClient("127.0.0.1", 27017)
+client = pymongo.MongoClient(MONGODB_HOST, MONGODB_PORT)
 db = client["hodlv2"]
 
 if __name__ == "__main__":
     app.secret_key = "d07651a4be534b30c6b844705020f1c5"
-    app.run(host="0.0.0.0", port=8080, debug=True, use_reloader=False)
+    app.run(host=WEB_HOST, port=WEB_PORT, debug=True, use_reloader=False)

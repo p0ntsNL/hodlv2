@@ -14,6 +14,7 @@ def home():
             active_trades=get_active_trades(),
             profits=get_profits(),
             finished_trades=get_finished_trades(),
+            health=get_health(),
             username=finduser()[1],
         )
     else:

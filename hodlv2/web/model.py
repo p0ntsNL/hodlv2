@@ -77,10 +77,6 @@ def checkconfig():
 
             if k.startswith('Exchange'):
                 config["ExchangeSettings"][k] = v
-            if k.startswith('MongoDb'):
-                config["MongoDbSettings"][k] = v
-            if k.startswith('Logging'):
-                config["LoggingSettings"][k] = v
             if k.startswith('Pushover'):
                 config["PushoverSettings"][k] = v
 
@@ -122,18 +118,24 @@ def checkconfig():
             if k not in bot_markets:
                 del config["BotSettings"][k]
 
-        # Force int
-        config["MongoDbSettings"]["Port"] = int(config["MongoDbSettings"]["Port"])
-
-        db.configuration.update_one({"_id": "configuration"}, {"$set":config})
         return "ok"
+
     except Exception as error:
-        exc_type, exc_obj, exc_tb = sys.exc_info()
-        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-        print(exc_type, fname, exc_tb.tb_lineno)
-        print (error)
         return f"Unable to verify configuration: {error}"
 
+def get_health():
+
+    health = {
+        "health": False,
+        "backend": False,
+        "config": False,
+        "exchange": False,
+    }
+
+    try:
+        return db.health.find_one({"_id":"health"})
+    except Exception as error:
+        return health
 
 def get_active_trades():
 
