@@ -3,3 +3,4 @@ config/
 *.log*
 *.py[cod]
 *$py.class
+test.py

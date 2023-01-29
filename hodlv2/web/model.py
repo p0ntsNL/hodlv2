@@ -79,7 +79,6 @@ def checkconfig():
                 config["ExchangeSettings"][k] = v
             if k.startswith('Pushover'):
                 config["PushoverSettings"][k] = v
-
             if k.startswith('Bot'):
                 bot_id = k.split('_')[1]
                 bot_k = k.split('_')[2]
@@ -118,10 +117,10 @@ def checkconfig():
             if k not in bot_markets:
                 del config["BotSettings"][k]
 
+        db.configuration.update_one({"_id":"configuration"}, {"$set": config}, upsert=True)
         return "ok"
-
     except Exception as error:
-        return f"Unable to verify configuration: {error}"
+        return f"Unable to verify and save configuration: {error}"
 
 def get_health():
 
@@ -135,7 +134,9 @@ def get_health():
     try:
         return db.health.find_one({"_id":"health"})
     except Exception as error:
-        return health
+        pass
+
+    return health
 
 def get_active_trades():
 

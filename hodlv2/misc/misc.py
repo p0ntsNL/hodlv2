@@ -4,35 +4,6 @@ TO DO
 """
 
 
-def default_config():
-    """
-    TO DO
-    """
-
-    return {
-        "BotSettings": {
-        },
-        "ExchangeSettings": {
-          "Exchange": "",
-          "ExchangeKey": "",
-          "ExchangeSecret": "",
-          "ExchangePassword": ""
-        },
-        "LoggingSettings": {
-          "LogLevel": "INFO"
-        },
-        "MongoDbSettings": {
-          "Host": "127.0.0.1",
-          "Port": 27017
-        },
-        "PushoverSettings": {
-          "PushoverEnabled": "false",
-          "PushoverUserKey": "",
-          "PushoverAppToken": ""
-        }
-    }
-
-
 def calculate_trade_value(trade_value, last_price):
     """
     TO DO
