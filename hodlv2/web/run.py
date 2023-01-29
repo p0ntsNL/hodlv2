@@ -11,7 +11,13 @@ app = Flask(__name__)
 
 from views import *
 
-from hodlv2.config import MONGODB_HOST, MONGODB_PORT, WEB_HOST, WEB_PORT, WEB_FLASK_SECRET
+from hodlv2.config import (
+    MONGODB_HOST,
+    MONGODB_PORT,
+    WEB_FLASK_SECRET,
+    WEB_HOST,
+    WEB_PORT,
+)
 
 client = pymongo.MongoClient(MONGODB_HOST, MONGODB_PORT)
 db = client["hodlv2"]

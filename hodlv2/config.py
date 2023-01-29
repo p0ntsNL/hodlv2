@@ -1,5 +1,6 @@
 """
-To do
+Default configuration file for the database, webinterface and logging.
+Updating this configuration file is for advanced users only.
 """
 
 # MongoDB host settings  (default: 127.0.0.1:27017)
