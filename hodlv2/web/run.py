@@ -9,11 +9,9 @@ from flask import Flask
 
 app = Flask(__name__)
 
-from config import MONGODB_HOST
-from config import MONGODB_PORT
-from config import WEB_HOST
-from config import WEB_PORT
 from views import *
+
+from hodlv2.config import MONGODB_HOST, MONGODB_PORT, WEB_HOST, WEB_PORT
 
 client = pymongo.MongoClient(MONGODB_HOST, MONGODB_PORT)
 db = client["hodlv2"]

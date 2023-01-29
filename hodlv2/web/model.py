@@ -1,6 +1,7 @@
 # pylint: disable-all
-import sys
 import os
+import sys
+
 import bcrypt
 import yaml
 from flask import request, session
@@ -8,7 +9,7 @@ from run import app, db
 
 
 def getHashed(pwd):
-    pwd = pwd.encode('utf-8')
+    pwd = pwd.encode("utf-8")
     mySalt = bcrypt.gensalt()
     pwd_hash = bcrypt.hashpw(pwd, mySalt)
     return pwd_hash
@@ -27,7 +28,7 @@ def checkloginpassword():
     username = request.form["username"]
     check = db.users.find_one({"username": username})
     password = request.form["password"]
-    password = password.encode('utf-8')
+    password = password.encode("utf-8")
     if bcrypt.checkpw(password, check["password"]):
         session["username"] = username
         return "ok"
@@ -59,7 +60,7 @@ def finduser():
 def checkconfig():
 
     try:
-        config = db.configuration.find_one({"_id":"configuration"})
+        config = db.configuration.find_one({"_id": "configuration"})
         data = request.form.to_dict()
 
         # Remove ExchangeSecret from data if it is empty
@@ -73,36 +74,36 @@ def checkconfig():
         # Loop through form fields
         bot_sync = {}
         bot_markets = []
-        for k,v in data.items():
+        for k, v in data.items():
 
-            if k.startswith('Exchange'):
+            if k.startswith("Exchange"):
                 config["ExchangeSettings"][k] = v
-            if k.startswith('Pushover'):
+            if k.startswith("Pushover"):
                 config["PushoverSettings"][k] = v
-            if k.startswith('Bot'):
-                bot_id = k.split('_')[1]
-                bot_k = k.split('_')[2]
+            if k.startswith("Bot"):
+                bot_id = k.split("_")[1]
+                bot_k = k.split("_")[2]
                 bot_v = v
 
-                if bot_k == 'Market':
+                if bot_k == "Market":
                     bot_sync[bot_id] = bot_v
                     bot_markets.append(bot_v)
 
         # Create BotSettings
-        for k,v in data.items():
+        for k, v in data.items():
 
-            if k.startswith('Bot'):
-                bot_id = k.split('_')[1]
-                bot_k = k.split('_')[2]
+            if k.startswith("Bot"):
+                bot_id = k.split("_")[1]
+                bot_k = k.split("_")[2]
                 bot_v = v
                 bot_market = bot_sync[bot_id]
 
                 # Force int
-                if bot_k in [ "MaxTrades", "ResetNextTradePrice" ]:
+                if bot_k in ["MaxTrades", "ResetNextTradePrice"]:
                     bot_v = int(bot_v)
 
                 # Force float
-                if bot_k in [ "TradeValue", "PercOpen", "PercClose" ]:
+                if bot_k in ["TradeValue", "PercOpen", "PercClose"]:
                     bot_v = float(bot_v)
 
                 if bot_market not in config["BotSettings"]:
@@ -111,16 +112,19 @@ def checkconfig():
 
         # Remove deleted markets
         active_markets = []
-        for k,v in config["BotSettings"].items():
+        for k, v in config["BotSettings"].items():
             active_markets.append(k)
         for k in active_markets:
             if k not in bot_markets:
                 del config["BotSettings"][k]
 
-        db.configuration.update_one({"_id":"configuration"}, {"$set": config}, upsert=True)
+        db.configuration.update_one(
+            {"_id": "configuration"}, {"$set": config}, upsert=True
+        )
         return "ok"
     except Exception as error:
         return f"Unable to verify and save configuration: {error}"
+
 
 def get_health():
 
@@ -132,11 +136,12 @@ def get_health():
     }
 
     try:
-        return db.health.find_one({"_id":"health"})
+        return db.health.find_one({"_id": "health"})
     except Exception as error:
         pass
 
     return health
+
 
 def get_active_trades():
 
@@ -214,4 +219,4 @@ def get_configuration():
         data["ExchangeSettings"]["ExchangePassword"] = ""
         return data
     except Exception as error:
-        return 'Unable to retrieve configuration from database.'
+        return "Unable to retrieve configuration from database."

@@ -1,24 +1,21 @@
 #!/usr/bin/env python3
-# pylint: disable=no-name-in-module,consider-using-with,broad-except
+# pylint: disable=no-name-in-module,consider-using-with,broad-except,attribute-defined-outside-init,too-many-instance-attributes,useless-return,inconsistent-return-statements
 """
 Main worker class
 """
 
-import os
 import logging
+import os
 import sys
 import time
 from logging import handlers
-
-from hodlv2.config import MONGODB_HOST
-from hodlv2.config import MONGODB_PORT
-from hodlv2.config import LOGLEVEL
 
 import requests
 import yaml
 from log4mongo.handlers import MongoHandler
 
 from hodlv2.backend.backend import Backend
+from hodlv2.config import LOGLEVEL, MONGODB_HOST, MONGODB_PORT
 from hodlv2.hodlv2bot import HODLv2Bot
 
 # Logging
@@ -68,6 +65,9 @@ class Worker:
         )
 
     def healthcheck(self):
+        """
+        Return self.health
+        """
         return self.health
 
     def version_check(self):
@@ -81,15 +81,15 @@ class Worker:
             req = requests.get(url, timeout=5)
             rtn = req.json()["tag_name"]
             if self.version != rtn:
-                version_msg = (
-                    f"A new version of HODLv2 is available, please update to version {rtn}."
-                )
+                version_msg = f"A new version of HODLv2 is available, plz update to version {rtn}."
                 logger.warning(version_msg)
         except Exception as error:
             version_msg = (
                 f"Unable to retrieve latest HODLv2 version from GitHub! {error}"
             )
             logger.error(version_msg)
+
+        return
 
     def load_config(self):
         """
@@ -104,12 +104,14 @@ class Worker:
                 config_file = open(config_path, "r", encoding="utf8")
                 configuration = yaml.load(config_file.read(), Loader=yaml.FullLoader)
                 config_file.close()
-                logger.info('Loading config from config.yaml.')
+                logger.info("Loading config from config.yaml.")
 
                 # Send config to backend and remove it afterwards
-                update = self.backend.update_one("configuration", "configuration", configuration, True)
+                update = self.backend.update_one(
+                    "configuration", "configuration", configuration, True
+                )
                 if update[0]:
-                    logger.info('Saved config to backend.')
+                    logger.info("Saved config to backend.")
                     if os.path.exists(config_path):
                         os.remove(config_path)
                         os.rmdir(config_dir)
@@ -121,22 +123,25 @@ class Worker:
         try:
             get_config = self.backend.find_one("configuration", "configuration")
             if get_config[0]:
-                logger.info('Loading config from backend.')
-                del get_config[1]['_id']
+                logger.info("Loading config from backend.")
                 self.config_health = True
                 return get_config[1]
-        except Exception as e:
+        except Exception as error:
             crit_msg = f"Unable to load config from backend: {error}"
             logger.critical(crit_msg)
 
         self.config_health = False
+        return
 
     def update_health(self):
+        """
+        TO DO
+        """
 
         # Send config to backend and remove it afterwards
         update = self.backend.update_one("health", "health", self.health_status, True)
         if update[0]:
-            logger.info('Health data saved to backend.')
+            logger.info("Health data saved to backend.")
 
     def load(self):
         """
@@ -150,15 +155,19 @@ class Worker:
         self.markets = self.config["BotSettings"].keys()
 
         # Logging
-        log_level = logging.getLevelName(LOGLEVEL)
-        logger.setLevel(log_level)
+        loglevel = logging.getLevelName(LOGLEVEL)
+        logger.setLevel(loglevel)
 
         # healthcheck
         self.health = True
         self.b_h = self.backend.healthcheck()
         self.e_h = self.bot.healthcheck()
         self.c_h = self.config_health
-        if not self.backend.healthcheck() or not self.bot.healthcheck() or not self.config_health:
+        if (
+            not self.backend.healthcheck()
+            or not self.bot.healthcheck()
+            or not self.config_health
+        ):
             self.health = False
 
         self.health_status = {
@@ -234,8 +243,9 @@ class Worker:
                 logger.error("Health check failure!")
                 logger.error(str(self.health_status))
 
-            # Reset
             logger.info("Iteration #%s finished", iteration)
+
+            # Reset
             self.reset()
 
 

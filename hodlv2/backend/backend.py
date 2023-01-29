@@ -7,8 +7,8 @@ Currently defaults to MongoDB which is the only backend available.
 import logging
 
 import pymongo
-from hodlv2.config import MONGODB_HOST
-from hodlv2.config import MONGODB_PORT
+
+from hodlv2.config import MONGODB_HOST, MONGODB_PORT
 
 logger = logging.getLogger(__name__)
 
@@ -37,8 +37,8 @@ class Backend:
 
             # Indexes
             indexes = self._db["trades"].index_information()
-            if 'profit_currency_1_profit_1_status_1' not in indexes:
-                print ('hier')
+            if "profit_currency_1_profit_1_status_1" not in indexes:
+                print("hier")
                 self._db["trades"].create_index(
                     [
                         ("profit_currency", pymongo.ASCENDING),
@@ -46,7 +46,7 @@ class Backend:
                         ("status", pymongo.ASCENDING),
                     ]
                 )
-            if 'profit_currency_1_profit_perc_1_status_1' not in indexes:
+            if "profit_currency_1_profit_perc_1_status_1" not in indexes:
                 self._db["trades"].create_index(
                     [
                         ("profit_currency", pymongo.ASCENDING),
@@ -54,13 +54,13 @@ class Backend:
                         ("status", pymongo.ASCENDING),
                     ]
                 )
-            if 'trades_1' not in indexes:
+            if "trades_1" not in indexes:
                 self._db["trades"].create_index(
                     [
                         ("fees", pymongo.ASCENDING),
                     ]
                 )
-            if 'status_1' not in indexes:
+            if "status_1" not in indexes:
                 self._db["trades"].create_index(
                     [
                         ("status", pymongo.ASCENDING),
@@ -72,6 +72,9 @@ class Backend:
             self.health = False
 
     def healthcheck(self):
+        """
+        Return self.health
+        """
         return self.health
 
     def find(self, collection, first, second):

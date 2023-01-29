@@ -45,6 +45,9 @@ class Exchange:
             self.health = False
 
     def healthcheck(self):
+        """
+        Return self.health
+        """
         return self.health
 
     def get_market_data(self, market):

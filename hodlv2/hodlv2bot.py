@@ -5,7 +5,6 @@ Main bot class
 """
 
 import logging
-import sys
 import time
 
 from hodlv2.backend.backend import Backend
@@ -51,6 +50,9 @@ class HODLv2Bot:
             self.health = False
 
     def healthcheck(self):
+        """
+        Return self.health
+        """
         return self.health
 
     def bot_init(self, market):
@@ -65,7 +67,9 @@ class HODLv2Bot:
         self.max_trades = int(self.markets_data[market]["MaxTrades"])
         self.perc_open = float(self.markets_data[market]["PercOpen"])
         self.perc_close = float(self.markets_data[market]["PercClose"])
-        self.next_trade_price_reset = int(self.markets_data[market]["ResetNextTradePrice"])
+        self.next_trade_price_reset = int(
+            self.markets_data[market]["ResetNextTradePrice"]
+        )
         self.open_side = self.side
         self.close_side = "sell" if self.side == "buy" else "buy"
         self.profit_in = (
@@ -666,9 +670,7 @@ class HODLv2Bot:
             True,
         )
         if not update_next_trade_price[0]:
-            error_msg = (
-                "Unable to update next trade price details to backend."
-            )
+            error_msg = "Unable to update next trade price details to backend."
             logger.critical(error_msg)
             self.notify.send(error_msg)
             return
@@ -831,8 +833,6 @@ Total fees spend: %s""",
                             {self.stringify_total_fees()}""",
                         )
                     else:
-                        error_msg = (
-                            "Unable to update trade details to backend."
-                        )
+                        error_msg = "Unable to update trade details to backend."
                         logger.critical(error_msg)
                         self.notify.send(error_msg)

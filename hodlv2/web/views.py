@@ -89,6 +89,7 @@ def checkUserlogin():
 def checkUserpassword():
     return checkloginpassword()
 
+
 @app.route("/checkconfig", methods=["POST"])
 def checkConfig():
     return checkconfig()
