@@ -46,6 +46,10 @@ HODLing trades in loss would be exactly the same as directly adding it to your H
 
 ![HODLv2 flowchart](https://user-images.githubusercontent.com/25501135/213145451-2a446a40-5ea4-4064-975a-7436abf7425f.svg)
 
+# How does it look?
+
+![<img src="https://user-images.githubusercontent.com/25501135/215349078-61e46196-ecf3-464f-80ee-530f95148513.png">](https://user-images.githubusercontent.com/25501135/215349078-61e46196-ecf3-464f-80ee-530f95148513.png)
+
 ## Supported Exchanges
 
 All [exchanges supported by ccxt](https://github.com/ccxt/ccxt/#supported-cryptocurrency-exchange-markets) should be usable, please refer to the [ccxt repository](https://github.com/ccxt/ccxt) for more information.
