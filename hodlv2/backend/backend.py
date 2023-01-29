@@ -5,11 +5,10 @@ Currently defaults to MongoDB which is the only backend available.
 """
 
 import logging
-import sys
 
 import pymongo
 
-from hodlv2.notify.notify import Notify
+from hodlv2.config import MONGODB_HOST, MONGODB_PORT
 
 logger = logging.getLogger(__name__)
 
@@ -19,48 +18,64 @@ class Backend:
     Backend class
     """
 
-    def __init__(self, config):
+    def __init__(self):
         """
         Init all variables and objects the class needs to work
         """
 
-        # Load config
-        self.config = config
+        self.health = True
 
         # MongoDB
-        self.client = pymongo.MongoClient(
-            self.config["MongoDbSettings"]["Host"],
-            self.config["MongoDbSettings"]["Port"],
-        )
-        self._db = self.client["hodlv2"]
-
-        # Notify
-        self.notify = Notify(self.config)
-
-        # Indexes
         try:
-            self._db["trades"].create_index(
-                [
-                    ("profit_currency", pymongo.ASCENDING),
-                    ("profit", pymongo.ASCENDING),
-                    ("status", pymongo.ASCENDING),
-                ]
+            self.host = MONGODB_HOST
+            self.port = MONGODB_PORT
+            self.client = pymongo.MongoClient(
+                self.host,
+                self.port,
             )
-            self._db["trades"].create_index(
-                [
-                    ("profit_currency", pymongo.ASCENDING),
-                    ("profit_perc", pymongo.ASCENDING),
-                    ("status", pymongo.ASCENDING),
-                ]
-            )
-            self._db["trades"].create_index(
-                [
-                    ("fees", pymongo.ASCENDING),
-                ]
-            )
+            self._db = self.client["hodlv2"]
+
+            # Indexes
+            indexes = self._db["trades"].index_information()
+            if "profit_currency_1_profit_1_status_1" not in indexes:
+                print("hier")
+                self._db["trades"].create_index(
+                    [
+                        ("profit_currency", pymongo.ASCENDING),
+                        ("profit", pymongo.ASCENDING),
+                        ("status", pymongo.ASCENDING),
+                    ]
+                )
+            if "profit_currency_1_profit_perc_1_status_1" not in indexes:
+                self._db["trades"].create_index(
+                    [
+                        ("profit_currency", pymongo.ASCENDING),
+                        ("profit_perc", pymongo.ASCENDING),
+                        ("status", pymongo.ASCENDING),
+                    ]
+                )
+            if "trades_1" not in indexes:
+                self._db["trades"].create_index(
+                    [
+                        ("fees", pymongo.ASCENDING),
+                    ]
+                )
+            if "status_1" not in indexes:
+                self._db["trades"].create_index(
+                    [
+                        ("status", pymongo.ASCENDING),
+                    ]
+                )
         except Exception as error:
-            logger.critical("Unable to connect to MongoDB: %s", error)
-            sys.exit("Unable to connect to MongoDB.")
+            msg = f"Unable to connect to MongoDB: {error}"
+            logger.critical(msg)
+            self.health = False
+
+    def healthcheck(self):
+        """
+        Return self.health
+        """
+        return self.health
 
     def find(self, collection, first, second):
         """
@@ -90,6 +105,7 @@ class Backend:
             find = self._db[collection].find_one(_id)
             if not isinstance(find, type(None)):
                 return True, find
+            return None, {}
         except Exception as error:
             logger.debug("find_one error: %s", error)
 

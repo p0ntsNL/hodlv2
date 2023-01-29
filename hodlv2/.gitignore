@@ -1,3 +1,6 @@
-__pycache__
-config/config.yaml
+__pycache__/
+config/
 *.log*
+*.py[cod]
+*$py.class
+test.py

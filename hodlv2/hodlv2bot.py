@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# pylint: disable=too-many-instance-attributes
+# pylint: disable=too-many-instance-attributes,too-many-public-methods,attribute-defined-outside-init
 """
 Main bot class
 """
@@ -32,30 +32,44 @@ class HODLv2Bot:
         TO DO
         """
 
+        self.health = True
+
         self.config = config
         self.ccxt = Exchange(self.config)
         self.notify = Notify(self.config)
-        self.backend = Backend(self.config)
-
-        self.open_orders = self.ccxt.get_open_orders()
-        self.closed_orders = self.ccxt.get_closed_orders()
+        self.backend = Backend()
 
         self.markets_data = self.config["BotSettings"]
         self.markets = self.markets_data.keys()
 
-    def bot_settings(self, market):
+        self.open_orders = self.ccxt.get_open_orders()
+        self.closed_orders = self.ccxt.get_closed_orders()
+
+        # Set health
+        if not self.backend.healthcheck() or not self.ccxt.healthcheck():
+            self.health = False
+
+    def healthcheck(self):
+        """
+        Return self.health
+        """
+        return self.health
+
+    def bot_init(self, market):
         """
         TO DO
         """
 
         self.base = market.split("/")[0]
         self.quote = market.split("/")[1]
-        self.trade_value = self.markets_data[market]["TradeValue"]
+        self.trade_value = float(self.markets_data[market]["TradeValue"])
         self.side = self.markets_data[market]["Side"]
-        self.max_trades = self.markets_data[market]["MaxTrades"]
-        self.perc_open = self.markets_data[market]["PercOpen"]
-        self.perc_close = self.markets_data[market]["PercClose"]
-        self.next_trade_price_reset = self.markets_data[market]["ResetNextTradePrice"]
+        self.max_trades = int(self.markets_data[market]["MaxTrades"])
+        self.perc_open = float(self.markets_data[market]["PercOpen"])
+        self.perc_close = float(self.markets_data[market]["PercClose"])
+        self.next_trade_price_reset = int(
+            self.markets_data[market]["ResetNextTradePrice"]
+        )
         self.open_side = self.side
         self.close_side = "sell" if self.side == "buy" else "buy"
         self.profit_in = (
@@ -93,11 +107,18 @@ class HODLv2Bot:
         balances = self.ccxt.get_balances()
         if balances[0]:
             logger.info(
-                "%s: Available %s balance: %s", market, quote, balances[1]["total"][quote]
+                "%s | Available %s balance: %s",
+                market,
+                quote,
+                balances[1]["total"][quote],
             )
             return balances[1]["total"][quote]
 
-        logger.error("%s: Available %s balance set to 0.", market, quote)
+        logger.error(
+            "%s | Balance data unavailable, available %s balance set to 0.",
+            market,
+            quote,
+        )
         return 0
 
     def get_ticker_data(self, market):
@@ -137,14 +158,21 @@ class HODLv2Bot:
                     open_orders += 1
 
             if open_orders == 0:
-                logger.info("%s: 0 open orders found, lets start a new trade.", market)
+                logger.info("%s | OK: 0 open orders found.", market)
                 return True
 
-        logger.info(
-            "%s: %s open orders found.",
-            market,
-            open_orders,
-        )
+        if open_orders == "n/a":
+            logger.info(
+                "%s | NOT OK: %s open orders found.",
+                market,
+                open_orders,
+            )
+        else:
+            logger.info(
+                "%s | OK: %s open orders found.",
+                market,
+                open_orders,
+            )
         return False
 
     def check_max_trades(self, market):
@@ -159,17 +187,17 @@ class HODLv2Bot:
                 if order["symbol"] == market:
                     counter += 1
 
-            if int(counter) <= int(self.max_trades):
+            if int(counter) < int(self.max_trades):
                 logger.info(
-                    "%s: The maximum amount of trades (%s) is not reached yet (%s).",
+                    "%s | OK: The maximum amount of trades (%s) is not reached yet (%s).",
                     market,
                     self.max_trades,
                     counter,
                 )
                 return True
 
-        logger.warning(
-            "%s: The maximum amount of trades (%s) is reached, not starting a new trade.",
+        logger.info(
+            "%s | NOT OK: The max amount of trades (%s) is reached.",
             market,
             self.max_trades,
         )
@@ -184,22 +212,36 @@ class HODLv2Bot:
             self.trade_value, market_data["ticker"]["last"]
         )
 
-        if float(trade_value) >= float(market_data["min_trade_value"]):
-            logger.info(
-                "%s: The trade value %s is higher than the minimum %s.",
+        # If min_trade_value exists
+        if not isinstance(market_data["min_trade_value"], type(None)):
+
+            # If trade_value is higher than min_trade_value
+            if float(trade_value) >= float(market_data["min_trade_value"]):
+                logger.info(
+                    "%s: The trade value %s is higher than the minimum %s.",
+                    market_data["market"],
+                    trade_value,
+                    market_data["min_trade_value"],
+                )
+                return True
+
+            # If trade_value is lower than min_trade_value.
+            logger.warning(
+                "%s: The trade value %s is lower than the minimum %s, not starting a new trade.",
                 market_data["market"],
                 trade_value,
                 market_data["min_trade_value"],
             )
-            return True
+            return False
 
-        logger.warning(
-            "%s: The trade value %s is lower than the minimum %s, not starting a new trade.",
+        # If min_trade_value does not exist, force ok.
+        logger.info(
+            "%s: The trade value %s is higher than the minimum %s.",
             market_data["market"],
             trade_value,
             market_data["min_trade_value"],
         )
-        return False
+        return True
 
     def get_market_data(self, market):
         """
@@ -211,7 +253,7 @@ class HODLv2Bot:
 
         if market_data[0] and ticker_data[0]:
 
-            logger.info("%s: Market data retrieved successfully.", market)
+            logger.info("%s | OK: Market data retrieved successfully.", market)
             return True, {
                 "market": market,
                 "base": market_data[1]["base"],
@@ -223,8 +265,8 @@ class HODLv2Bot:
                 "ticker": ticker_data[1],
             }
 
-        logger.warning(
-            "%s: Unable to retrieve required market data, not starting a new trade.",
+        logger.info(
+            "%s | NOT OK: Unable to retrieve required market data, trying again...",
             market,
         )
         return False, {}
@@ -265,15 +307,15 @@ class HODLv2Bot:
         balance = self.get_balance(market, quote)
         if float(balance) >= float(required):
             logger.info(
-                "%s: Got enough %s balance (%s) to initiate trade.",
+                "%s | OK: Got enough %s balance (%s).",
                 market,
                 quote,
                 balance,
             )
             return True
 
-        logger.warning(
-            "%s: Not enough %s balance (%s) to initiate trade, required: %s.)",
+        logger.info(
+            "%s | NOT OK: Not enough %s balance (%s), required: %s.",
             market,
             quote,
             balance,
@@ -287,6 +329,8 @@ class HODLv2Bot:
         """
 
         data = self.backend.find_one("markets", market)
+
+        # If next_trade_price can be retrieved from the backend and exists.
         if data[0]:
             if (
                 "next_trade_price" in data[1]
@@ -296,9 +340,18 @@ class HODLv2Bot:
                     data[1]["next_trade_price"],
                     data[1]["next_trade_price_updated_at"],
                 ]
+        # If next_trade_price can retrieved from backend but does not exist.
+        else:
+            if isinstance(data[0], type(None)):
+                logger.info(
+                    "%s | next_trade_price not found yet, forcing next price to 999999999999999.",
+                    market,
+                )
+                return [999999999999999, 999999999999999]
 
-        logger.critical(
-            "%s: Unable to retrieve next_trade_price data from backend.", market
+        # If backend is not accessible.
+        logger.error(
+            "%s | Unable to retrieve next_trade_price data from backend.", market
         )
         return [0, 0]
 
@@ -310,7 +363,7 @@ class HODLv2Bot:
         if self.open_side == "buy":
             if float(last_price) <= float(next_trade_price):
                 logger.info(
-                    "%s: last_price (%s) <= next_trade_price (%s), lets start a new trade.",
+                    "%s | OK: last_price (%s) is lower than next_trade_price (%s).",
                     market,
                     last_price,
                     next_trade_price,
@@ -319,7 +372,7 @@ class HODLv2Bot:
         else:
             if float(last_price) >= float(next_trade_price):
                 logger.info(
-                    "%s: last_price (%s) >= next_trade_price (%s), lets start a new trade.",
+                    "%s | OK: last_price (%s) is higher than next_trade_price (%s).",
                     market,
                     last_price,
                     next_trade_price,
@@ -327,10 +380,10 @@ class HODLv2Bot:
                 return True
 
         logger.info(
-            "%s: last_price: (%s) | next_trade_price: (%s)",
+            "%s | NOT OK: next_trade_price (%s) is not reached yet, the current price is %s.",
             market,
-            last_price,
             next_trade_price,
+            last_price,
         )
         return False
 
@@ -409,7 +462,7 @@ class HODLv2Bot:
                 aggregates[aggregate["_id"]]["profit_perc"] = aggregate["sum_val"]
 
         else:
-            logger.critical("Unable to retrieve aggregates from backend.")
+            logger.error("Unable to retrieve aggregates from backend.")
 
         return aggregates
 
@@ -436,7 +489,7 @@ class HODLv2Bot:
         if count[0]:
             return count[1]
 
-        logger.critical("Unable to retrieve document count from backend.")
+        logger.error("Unable to retrieve document count from backend.")
         return "n/a"
 
     def check_next_trade_price_reset(self, market):
@@ -457,14 +510,11 @@ class HODLv2Bot:
                 update_next_trade_price = self.backend.update_one(
                     "markets", market, {"next_trade_price": 999999999999}, True
                 )
-
                 if update_next_trade_price[0]:
-                    logger.info("%s: Next trade price have been reset.", market)
-                else:
-                    logger.error("%s: Unable to reset next trade price.", market)
+                    logger.info("%s | OK: Next trade price have been reset.", market)
             else:
                 logger.info(
-                    "%s: Next trade price reset is not required, next reset at %s.",
+                    "%s | OK: Next trade price reset is not required, next reset at %s.",
                     market,
                     time.strftime("%d-%m-%Y %H:%M", time.localtime(reset_at)),
                 )
@@ -476,18 +526,12 @@ class HODLv2Bot:
 
         # Retrieve market data
         market_data = self.get_market_data(market)
+        if market_data[0]:
 
-        # Check if balance is sufficient
-        check_balance = self.check_balance(market, self.quote, self.trade_value)
-
-        # Check if max trades is reached
-        max_trades = self.check_max_trades(market)
-
-        # Check if trade value is above the minimum
-        trade_value = self.check_trade_value(market_data[1])
-
-        # If market data, balance and max trades are ok
-        if market_data[0] and check_balance and max_trades and trade_value:
+            # Last price to mongoDB for future reference
+            self.backend.update_one(
+                "markets", market, {"last": market_data[1]["ticker"]["last"]}, True
+            )
 
             # Check if next trade price should be reset
             self.check_next_trade_price_reset(market)
@@ -498,10 +542,25 @@ class HODLv2Bot:
                 self.get_next_trade_price_data(market)[0],
                 market_data[1]["ticker"]["last"],
             ):
-                logger.info("%s: New trade required.", market)
-                return True, market_data[1]
 
-        logger.info("%s: No new trade required based on the criteria.", market)
+                # Check if balance is sufficient
+                check_balance = self.check_balance(market, self.quote, self.trade_value)
+
+                # Check if max trades is reached
+                max_trades = self.check_max_trades(market)
+
+                # Check if trade value is above the minimum
+                trade_value = self.check_trade_value(market_data[1])
+
+                # If market data, balance and max trades are ok
+                if check_balance and max_trades and trade_value:
+                    logger.info(
+                        "%s | FINAL: New trade required based on the criteria, lets go!",
+                        market,
+                    )
+                    return True, market_data[1]
+
+        logger.info("%s | FINAL: No new trade required based on the criteria.", market)
         return False, {}
 
     def new_trade(self, market, market_data):
@@ -516,7 +575,7 @@ class HODLv2Bot:
         )
         if not market_open_order[0]:
             logger.error(
-                "%s: Unable to create market open order, trade stopped.", market
+                "%s | Unable to create market open order, trade stopped.", market
             )
             return
 
@@ -525,17 +584,17 @@ class HODLv2Bot:
 
             open_order_details = self.fetch_order(market, market_open_order[1]["id"])
             if open_order_details[0]:
-                logger.error("%s: Open order details retrieved.", market)
+                logger.info("%s | Open order details retrieved.", market)
                 break
 
             if i == 4:
                 logger.error(
-                    "%s: Unable to retrieve open order details, trade stopped.", market
+                    "%s | Unable to retrieve open order details, trade stopped.", market
                 )
                 return
 
             logger.warning(
-                "%s: Unable to retrieve open order details, trying again...", market
+                "%s | Unable to retrieve open order details, trying again...", market
             )
 
             time.sleep(15)
@@ -549,19 +608,6 @@ class HODLv2Bot:
         next_trade_price = self.calculate_next_trade_price(
             open_order_details[1]["average"],
         )
-        update_next_trade_price = self.backend.update_one(
-            "markets",
-            market,
-            {
-                "next_trade_price": next_trade_price,
-                "next_trade_price_updated_at": int(time.time()),
-            },
-            True,
-        )
-        if not update_next_trade_price[0]:
-            logger.critical(
-                "%s: Unable to update next trade price details to backend.", market
-            )
 
         # Calculate trade value
         close_trade_value = profit_in_trade_value(
@@ -584,13 +630,15 @@ class HODLv2Bot:
 
             if i == 4:
                 logger.error(
-                    "%s: Unable to create limit close order, trade stopped.", market
+                    "%s | Unable to create limit close order, trade stopped.", market
                 )
                 return
 
             logger.warning(
-                "%s: Unable to create limit close order, trying again...", market
+                "%s | Unable to create limit close order, trying again...", market
             )
+
+            time.sleep(15)
 
         # Insert data into database
         data = {
@@ -607,12 +655,34 @@ class HODLv2Bot:
         }
         insert = self.backend.insert_one("trades", data)
         if not insert[0]:
-            logger.critical("%s: Unable to insert trade details to backend.", market)
+            error_msg = "Unable to insert trade details to backend."
+            logger.critical(error_msg)
+            self.notify.send(error_msg)
+            return
+
+        update_next_trade_price = self.backend.update_one(
+            "markets",
+            market,
+            {
+                "next_trade_price": next_trade_price,
+                "next_trade_price_updated_at": int(time.time()),
+            },
+            True,
+        )
+        if not update_next_trade_price[0]:
+            error_msg = "Unable to update next trade price details to backend."
+            logger.critical(error_msg)
+            self.notify.send(error_msg)
+            return
 
         close_value = float(limit_close_order[1]["price"]) * float(close_trade_value)
 
         logger.info(
-            "%s: Trade opened | Id: %s | Side: %s | Price: %s %s | Amount: %s %s | Cost: %s %s | Fee: %s %s",
+            """%s | Trade opened
+Id: %s | Side: %s | Price: %s %s | Amount: %s %s | Cost: %s %s | Fee: %s %s
+
+Closing order
+Side: %s | Price: %s %s | Amount: %s %s | Value: %s %s""",
             market,
             limit_close_order[1]["id"],
             self.open_side,
@@ -624,6 +694,13 @@ class HODLv2Bot:
             self.quote,
             open_order_details[1]["fee"]["cost"],
             open_order_details[1]["fee"]["currency"],
+            self.close_side,
+            limit_close_order[1]["price"],
+            self.quote,
+            close_trade_value,
+            self.base,
+            close_value,
+            self.quote,
         )
         self.notify.send(
             f"""<b>Trade opened</b>
@@ -681,7 +758,7 @@ class HODLv2Bot:
                     )
                     if update[0]:
                         logger.info(
-                            "%s: Trade closed (%s) | Id: %s",
+                            "%s | Trade closed (%s) | Id: %s",
                             market,
                             close_order["status"],
                             close_order["id"],
@@ -692,10 +769,9 @@ class HODLv2Bot:
                             Market: {market}""",
                         )
                     else:
-                        logger.critical(
-                            "%s: Unable to update closed order details to backend.",
-                            market,
-                        )
+                        error_msg = "Unable to update closed order details to backend."
+                        logger.critical(error_msg)
+                        self.notify.send(error_msg)
 
                 elif status == "active" and close_order["status"] == "closed":
 
@@ -717,7 +793,13 @@ class HODLv2Bot:
                     if update[0]:
 
                         logger.info(
-                            "%s: Trade closed | Id: %s | Profit: %s %s (%s%%) | Open fee: %s %s | Close fee: %s %s",
+                            """%s | Trade closed
+Id: %s | Profit: %s %s (%s%%) | Open fee: %s %s | Close fee: %s %s
+
+Statistics
+Active trades: %s | Finished trades: %s
+Total profit (Ex. fees): %s
+Total fees spend: %s""",
                             market,
                             close_order["id"],
                             profit,
@@ -727,6 +809,10 @@ class HODLv2Bot:
                             open_order["fee"]["currency"],
                             close_order["fee"]["cost"],
                             close_order["fee"]["currency"],
+                            self.get_count("trades", {"status": "active"}),
+                            self.get_count("trades", {"status": "finished"}),
+                            self.stringify_profit_aggregates(),
+                            self.stringify_total_fees(),
                         )
                         self.notify.send(
                             f"""<b>Trade closed</b>
@@ -747,9 +833,6 @@ class HODLv2Bot:
                             {self.stringify_total_fees()}""",
                         )
                     else:
-                        logger.critical(
-                            "%s: Unable to update trade details to backend.", market
-                        )
-            else:
-                pass
-                # logger.critical("Unable to retrieve closed order details from backend.")
+                        error_msg = "Unable to update trade details to backend."
+                        logger.critical(error_msg)
+                        self.notify.send(error_msg)

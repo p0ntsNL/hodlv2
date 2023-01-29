@@ -37,7 +37,7 @@ class Notify:
         token = self.config["PushoverSettings"]["PushoverAppToken"]
 
         # Only send when enabled
-        if enabled != "true":
+        if str(enabled) != "true":
             return
 
         # Send pushover
