@@ -8,7 +8,7 @@
 
 Free and open-source self-hosted automated crypto trading bot written in Python with the HODL strategy in mind.
 
-### [Documentation](https://github.com/p0ntsNL/hodlv2/wiki) · [Install](https://github.com/p0ntsNL/hodlv2/wiki/Installation) · [Configuration](https://github.com/p0ntsNL/hodlv2/wiki/Configuration)
+### [Documentation](https://github.com/p0ntsNL/hodlv2/wiki) · [Installation](https://github.com/p0ntsNL/hodlv2/wiki/Installation) · [Configuration](https://github.com/p0ntsNL/hodlv2/wiki/Configuration)
 
 ## Disclaimer
 
@@ -22,6 +22,14 @@ expect.
 
 We strongly recommend you to have coding and Python knowledge. Do not
 hesitate to read the source code and understand the mechanism of this bot.
+
+## Donations
+
+**This is all voluntary work**, so if you want to support my efforts please donate.
+
+**BTC**: 3NmtbaPxJNTbMtj85WESzaCnkQcgkP4eP6
+
+**ETH**: 0x65496ff94588e8418bb461ac9b7e96681db1dff3
 
 ## The story
 
@@ -47,6 +55,7 @@ All [exchanges supported by ccxt](https://github.com/ccxt/ccxt/#supported-crypto
 Exchanges confirmed working by the community:
 
 - [X] [Kraken](https://kraken.com/)
+- [X] [Coinbase](https://coinbase.com/join/WARMER_5?src=referral-link)
 
 ## Roadmap
 
@@ -56,137 +65,21 @@ The (short-term) HODLv2 roadmap can be found in [Projects](https://github.com/p0
 
 Detailed documentation can be found in the [wiki](https://github.com/p0ntsNL/hodlv2/wiki).
 
-## Features
+- [The Story & How does it work?](https://github.com/p0ntsNL/hodlv2/wiki)
+- [Installation](https://github.com/p0ntsNL/hodlv2/wiki/Installation)
+- [Configuration](https://github.com/p0ntsNL/hodlv2/wiki/Configuration)
 
-- [x] **Python3.8 or higher**: For botting on any operating system - Windows, macOS and Linux.
-- [x] **Data persistence**: Persistence is achieved through [MongoDB](https://mongodb.com).
-- [x] **Alerting**: Push notifications to your mobile phone through [Pushover](https://pushover.com).
+## Installation
 
-## Quick Installation
-
-A quick guide on how to install HODLv2.
-
-A more detailed installation guide can be found in the [wiki](https://github.com/p0ntsNL/hodlv2/wiki/Install).
-
-### Requirements 
-
-Before installing HODLv2, you need to install some requirements:
-
-- [Python >= 3.8.x](https://docs.python-guide.org/starting/installation/)
-- [pip](https://pip.pypa.io/en/stable/installing/)
-- [MongoDB](https://www.mongodb.com/docs/manual/administration/install-community/)
-- [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-
-### Python (pip)
-
-The bot requires Python3.8 or higher.
-
-A few extra libraries should be installed through pip:
-```
-pip3 install ccxt       # Crypto exchange trading library
-pip3 install requests   # HTTP library
-pip3 install pymongo    # MongoDB interaction tool
-pip3 install pyyaml     # yaml framework
-pip3 install schema     # yaml config validator
-```
-
-### Clone
-
-You can now clone HODLv2 into your desired project directory from the [hodlv2 GitHub repository](https://github.com/p0ntsnl/hodlv2):
-
-Normal:
-```
-git clone -b main https://github.com/p0ntsnl/hodlv2.git
-```
-
-Advanced:
-```
-# Download `develop` branch of HODLv2 repository
-git clone https://github.com/p0ntsnl/hodlv2.git
-
-# Stable
-git checkout main
-
-# Develop
-git checkout develop
-```
+- [Ubuntu / Debian](https://github.com/p0ntsNL/hodlv2/wiki/Installation-%7C-Ubuntu-&-Debian)
+- [MacOS](https://github.com/p0ntsNL/hodlv2/wiki/Installation-%7C-MacOS)
+- Windows (coming soon)
+- Docker (coming soon)
 
 ## Configuration
 
-A more detailed configuration guide can be found in the [wiki](https://github.com/p0ntsNL/hodlv2/wiki/Configuration).
+A detailed configuration guide can be found in the [wiki](https://github.com/p0ntsNL/hodlv2/wiki/Configuration).
 
-Rename or copy config/config.example.yaml to config/config.yaml and populate the config options.
-
-```
-ExchangeSettings:
-  Exchange: "kraken"            # https://github.com/ccxt/ccxt#supported-cryptocurrency-exchange-markets
-  ExchangeKey: ""               # Exchange API key (balance, trade, websocket access)
-  ExchangeSecret: ""            # Exchange Secret key
-  ExchangePassword: ""          # Exchange password; optional for some exchanges
-
-BotSettings:
-  BTC/USD:                      # Market name; BASE/QUOTE
-    Side: "buy"                 # buy/sell
-    MaxTrades: 10               # Max open trades at a time (integer)
-    TradeValue: 10.5            # Trade value per trade (float)
-    PercOpen: 1                 # 1 = 1%
-    PercClose: 1                # 1 = 1%
-    TakeProfitIn: "USD"         # BTC or USD for BTC/USD
-    ResetNextTradePrice: 1      # 1 = 1 day
-  DOT/USD:                      # Market name; BASE/QUOTE
-    Side: "buy"                 # buy/sell
-    MaxTrades: 10               # Max open trades at a time (integer)
-    TradeValue: 20.50           # Trade value per trade (float)
-    PercOpen: 2                 # 2 = 2%
-    PercClose: 2.5              # 2.5 = 2.5%
-    TakeProfitIn: "DOT"         # DOT or USD for DOT/USD
-    ResetNextTradePrice: 2      # 2 = 2 days
-  EWT/USD:                      # Market name; BASE/QUOTE
-    Side: "sell"                # buy/sell
-    MaxTrades: 10               # Max open trades at a time (integer)
-    TradeValue: 101.6           # Trade value per trade (float)
-    PercOpen: 2.5               # 2.5 = 2.5%
-    PercClose: 2.5              # 2.5 = 2.5%
-    TakeProfitIn: "USD"         # EWT or USD for EWT/USD
-    ResetNextTradePrice: 3      # 3 = 3 days
-  LINK/USD:                     # Market name; BASE/QUOTE
-    Side: "sell"                # buy/sell
-    MaxTrades: 10               # Max open trades at a time (integer)
-    TradeValue: 10.5            # Trade value per trade (float)
-    PercOpen: 1.5               # 1.5 = 1.5%
-    PercClose: 1.5              # 1.5 = 1.5%
-    TakeProfitIn: "LINK"        # LINK or USD for LINK/USD
-    ResetNextTradePrice: 4      # 4 = 4 days
-
-MongoDbSettings:
-  Host: "localhost"             # default: localhost
-  Port: 27017                   # default: 27017
-
-PushoverSettings:
-  PushoverEnabled: "false"      # true/false
-  PushoverUserKey: ""           # Pushover User Key; optional for push notifications
-  PushoverAppToken: ""          # Pushover App Token; optional for push notifications
-
-LoggingSettings:
-  LogLevel: "INFO"              # Log level; default: INFO (CRITICAL / ERROR / WARNING / INFO / DEBUG)
-```
-
-## Run
-
-After configuration, from the main directory, run the following command to start the bot:
-```
-python3 hodlv2/main.py
-```
-* The prefered way to run is through systemd or in a screen.
-
-If successful, you should see the current version printed in the console and logging (hodlv2.log). Otherwise please refer to the logging (hodlv2.log) for errors.
-```
-Starting HODLv2 2023.1
-```
-
-You might have to add the hodlv2 folder to your PYTHONPATH.
-```
-export PYTHONPATH=$PYTHONPATH:/path/to/hodlv2_folder
-```
+## Need help?
 
 If you are unsuccessful, please refer to the [wiki](https://github.com/p0ntsNL/hodlv2/wiki) for more in-depth documentation, join [telegram](https://t.me/hodlv2) and ask your question there or [create an issue](https://github.com/p0ntsNL/hodlv2/issues) on GitHub.
