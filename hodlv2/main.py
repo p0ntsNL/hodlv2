@@ -47,7 +47,7 @@ class Worker:
         """
 
         # Version check
-        self.version = "2023.1"
+        self.version = "2023.2"
         logger.info("")
         start_msg = f"Starting HODLv2 {self.version}"
         logger.info(start_msg)
