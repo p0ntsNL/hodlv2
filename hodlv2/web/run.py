@@ -18,4 +18,4 @@ db = client["hodlv2"]
 
 if __name__ == "__main__":
     app.secret_key = WEB_FLASK_SECRET
-    app.run(host=WEB_HOST, port=WEB_PORT, use_reloader=False)
+    app.run(host=WEB_HOST, port=WEB_PORT)
