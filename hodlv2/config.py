@@ -9,6 +9,7 @@ MONGODB_PORT = 27017
 # Webinterface settings (default: 0.0.0.0:8080)
 WEB_HOST = "0.0.0.0"
 WEB_PORT = 8080
+WEB_FLASK_SECRET = "update-this-secret-for-session-security"
 
 # Logging settings
 LOGLEVEL = "INFO"
