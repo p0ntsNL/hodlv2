@@ -3,7 +3,6 @@
 ![](https://img.shields.io/github/stars/p0ntsNL/hodlv2?style=social)
 ![](https://img.shields.io/github/forks/p0ntsNL/hodlv2?style=social)
 [![](https://img.shields.io/badge/Telegram%20community-HODLV2?logo=telegram)](https://t.me/hodlv2)
-[![HODLv2 PR](https://github.com/p0ntsnl/hodlv2/workflows/PR/badge.svg)](https://github.com/p0ntsnl/hodlv2/actions/)
 [![HODLv2 CodeQL](https://github.com/p0ntsnl/hodlv2/workflows/CodeQL/badge.svg)](https://github.com/p0ntsnl/hodlv2/actions/)
 
 Free and open-source self-hosted automated crypto trading bot written in Python with the HODL strategy in mind.
