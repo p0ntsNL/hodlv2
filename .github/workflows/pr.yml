@@ -12,6 +12,7 @@ jobs:
           python-root-list: "hodlv2"
           virtual-env: "python-lint-plus"
           use-black: true
+          black-version: "22.12.10"
           use-isort: true
           use-pylint: true
           use-yapf: false
