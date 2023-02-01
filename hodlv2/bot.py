@@ -15,8 +15,8 @@ from hodlv2.misc import (  # isort:skip
     set_profit,  # isort:skip
     set_fees,  # isort:skip
     find_key,  # isort:skip
-    calculate_next_trade_price, #isort:skip
-    calculate_close_price, # isort:skip
+    calculate_next_trade_price,  # isort:skip
+    calculate_close_price,  # isort:skip
     calculate_trade_value,  # isort:skip
     profit_in_trade_value,  # isort:skip
 )  # isort:skip
@@ -110,9 +110,9 @@ class Bot:
         open_orders = "n/a"
 
         # If open orders is retrieved from exchange
-        if self.orders['open'][0]:
+        if self.orders["open"][0]:
             open_orders = 0
-            for order in self.orders['open'][1]:
+            for order in self.orders["open"][1]:
                 if order["symbol"] == market:
                     open_orders += 1
 
@@ -139,10 +139,10 @@ class Bot:
         TO DO
         """
 
-        if self.orders['open'][0]:
+        if self.orders["open"][0]:
 
             counter = 0
-            for order in self.orders['open'][1]:
+            for order in self.orders["open"][1]:
                 if order["symbol"] == market:
                     counter += 1
 
@@ -504,10 +504,12 @@ class Bot:
         # Create market open order
         # If market order can not be created, do not proceed with the rest
         market_open_order = self.exchange.create_market_order(
-            market, market_data["ticker"]["last"], calculate_trade_value(
+            market,
+            market_data["ticker"]["last"],
+            calculate_trade_value(
                 self.settings["trade_value"],
                 market_data["ticker"]["last"],
-            )
+            ),
         )
         if not market_open_order[0]:
             logger.error(
@@ -518,7 +520,9 @@ class Bot:
         # Retrieve open order details up to 5 times, otherwise do not proceed
         for i in range(5):
 
-            open_order_details = self.exchange.fetch_order(market, market_open_order[1]["id"])
+            open_order_details = self.exchange.fetch_order(
+                market, market_open_order[1]["id"]
+            )
             if open_order_details[0]:
                 logger.info("%s | Open order details retrieved.", market)
                 break
@@ -546,7 +550,7 @@ class Bot:
         next_trade_price = calculate_next_trade_price(
             open_order_details[1]["average"],
             self.settings["perc_open"],
-            self.settings["open_side"]
+            self.settings["open_side"],
         )
 
         # Calculate trade value
@@ -667,7 +671,7 @@ Side: %s | Price: %s %s | Amount: %s %s | Value: %s %s""",
         TO DO
         """
 
-        closed_orders = self.orders['closed']
+        closed_orders = self.orders["closed"]
         for close_order in closed_orders[1]:
 
             trade = self.backend.find_one_exists(

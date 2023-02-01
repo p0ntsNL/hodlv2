@@ -52,10 +52,8 @@ def calculate_next_trade_price(open_price, perc_open, open_side):
     """
 
     data = {
-        "buy": float(open_price)
-        - ((float(open_price) / 100) * float(perc_open)),
-        "sell": float(open_price)
-        + ((float(open_price) / 100) * float(perc_open)),
+        "buy": float(open_price) - ((float(open_price) / 100) * float(perc_open)),
+        "sell": float(open_price) + ((float(open_price) / 100) * float(perc_open)),
     }
 
     return data[open_side]
@@ -67,10 +65,8 @@ def calculate_close_price(open_price, perc_close, open_side):
     """
 
     data = {
-        "buy": float(open_price)
-        + ((float(open_price) / 100) * float(perc_close)),
-        "sell": float(open_price)
-        - ((float(open_price) / 100) * float(perc_close)),
+        "buy": float(open_price) + ((float(open_price) / 100) * float(perc_close)),
+        "sell": float(open_price) - ((float(open_price) / 100) * float(perc_close)),
     }
 
     return data[open_side]
