@@ -1,5 +1,5 @@
-# This service file has hodlv2 installed in /opt
-# Set your Environment and WorkingDirectory accordingly.
+# This service file can be used if you are running on Ubuntu or Debian, or any other distro that uses systemd.
+# This service file has hodlv2 installed in /opt, set your Environment and WorkingDirectory variables accordingly.
 
 [Unit]
 Description=HODLv2 Bot

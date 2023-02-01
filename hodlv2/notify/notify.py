@@ -1,6 +1,8 @@
 # pylint: disable=broad-except
 """
-TO DO
+Notify class.
+The notify class sends trade update notifications.
+Currently defaults to Pushover which is the only on available.
 """
 
 import logging
@@ -12,12 +14,12 @@ logger = logging.getLogger(__name__)
 
 class Notify:
     """
-    TO DO
+    Notify class
     """
 
     def __init__(self, config):
         """
-        TO DO
+        Init all variables and objects the class needs to work
         """
 
         # Load config
@@ -28,7 +30,8 @@ class Notify:
 
     def send_pushover(self, msg):
         """
-        TO DO
+        Send pushover.
+        :param msg: The message to send.
         """
 
         # Variables
@@ -52,7 +55,8 @@ class Notify:
 
     def send(self, msg):
         """
-        TO DO
+        Catch all that distributes requests to specific notification types.
+        :param msg: The message to send.
         """
 
         # Pushover
