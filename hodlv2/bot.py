@@ -505,7 +505,7 @@ class Bot:
         # If market order can not be created, do not proceed with the rest
         market_open_order = self.exchange.create_market_order(
             market,
-            market_data["ticker"]["last"],
+            self.settings["open_side"],
             calculate_trade_value(
                 self.settings["trade_value"],
                 market_data["ticker"]["last"],
