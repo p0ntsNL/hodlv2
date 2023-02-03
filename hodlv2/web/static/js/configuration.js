@@ -115,7 +115,6 @@ $(document).ready(function() {
     var market = market_dropdown.val();
     var bot_id = market_dropdown.attr('name').split('_')[1];
     let takeprofitin_dropdown = $('.'+bot_id+'-take-profit-in-dropdown');
-    console.log(takeprofitin_dropdown);
     takeprofitin_dropdown.empty();
     takeprofitin_dropdown.append($('<option></option>').attr('value', market.split('/')[0]).text(market.split('/')[0]));
     takeprofitin_dropdown.append($('<option selected="selected"></option>').attr('value', market.split('/')[1]).text(market.split('/')[1]));
