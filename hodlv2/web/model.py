@@ -4,7 +4,8 @@ import sys
 
 import bcrypt
 import yaml
-from flask import request, session
+import ccxt
+from flask import request, session, jsonify
 from run import app, db
 
 
@@ -220,3 +221,18 @@ def get_configuration():
         return data
     except Exception as error:
         return "Unable to retrieve configuration from database."
+
+def get_exchanges():
+    return ccxt.exchanges
+
+def update_markets():
+    exchange_name = request.form["exchange"]
+    exchange_class = getattr(ccxt, exchange_name)
+    exchange = exchange_class({})
+    exchange_markets = exchange.load_markets()
+
+    markets = []
+    for k,v in exchange_markets.items():
+        if v['spot'] and v['active']:
+            markets.append(k)
+    return jsonify(markets)
