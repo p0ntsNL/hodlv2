@@ -127,6 +127,7 @@ class Worker:
                 # Loop markets
                 for market in self.markets:
 
+
                     # Load market settings
                     self.bot.bot_init(market)
 
