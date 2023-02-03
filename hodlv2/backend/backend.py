@@ -163,6 +163,9 @@ class Backend:
 
             if modified_count == 1 or not isinstance(upserted_id, type(None)):
                 return True, {}
+
+            logger.debug("update_one: Unable to update %s in %s. (already exists)", _id, collection)
+            return False, {}
         except Exception as error:
             logger.debug("update_one error: %s", error)
 
