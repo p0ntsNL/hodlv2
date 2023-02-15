@@ -40,6 +40,10 @@ class Configuration:
                 "PushoverUserKey": "",
                 "PushoverAppToken": "",
             },
+            "PushbulletSettings": {
+                "PushbulletEnabled": "false",
+                "PushbulletApiKey": "",
+            },
         }
 
         # Objects

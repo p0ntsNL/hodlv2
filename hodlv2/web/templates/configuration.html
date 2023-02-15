@@ -58,7 +58,25 @@
                           <input type="text" class="form-control" name="PushoverAppToken" value="{{configuration.PushoverSettings.PushoverAppToken}}">
                       </div>
                     </div>
-                </div>
+                  </div>
+                  <div class="card shadow mb-3">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Pushbullet settings</h6>
+                    </div>
+                    <div class="card-body">
+                      <div class="mb-2">
+                          <label for="PushbulletEnabled" class="form-label">Enabled</label>
+                          <select class="form-control" name="PushbulletEnabled">
+                            <option {% if configuration.PushbulletSettings.PushbulletEnabled == 'true' %} selected="selected" {% endif %}>true</option>
+                            <option {% if configuration.PushbulletSettings.PushbulletEnabled == 'false' %} selected="selected" {% endif %}>false</option>
+                          </select>
+                      </div>
+                      <div class="mb-2">
+                          <label for="PushbulletApiKey" class="form-label">API key</label>
+                          <input type="text" class="form-control" name="PushbulletApiKey" value="{{configuration.PushbulletSettings.PushbulletApiKey}}">
+                      </div>
+                    </div>
+                  </div>
             </div>
             <div class="col-lg-8">
                   <div class="card shadow mb-3">

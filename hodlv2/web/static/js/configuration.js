@@ -55,24 +55,27 @@ $(document).ready(function() {
       $('.bot-container').empty();
     };
     var exchange = $('#exchange').val();
+    if (exchange == undefined) {
+      var exchange = 'kraken';
+    };
     $('.exchange_response').html("Loading markets...");
     $.ajax({
        url: '/updatemarkets',
        type: 'post',
        data: {exchange: exchange},
        success: function(response){
-	 $('.market-dropdown').each(function() {
+         $('.market-dropdown').each(function() {
            let market_dropdown = $(this);
            market_dropdown.empty();
-	   var active_market = market_dropdown.prev('.market-hidden').val();
-	   var bot_id = market_dropdown.prev('.market-hidden').attr('name').split('_')[1];
+           var active_market = market_dropdown.prev('.market-hidden').val();
+           var bot_id = market_dropdown.prev('.market-hidden').attr('name').split('_')[1];
            let takeprofitin_dropdown = $('.'+bot_id+'-take-profit-in-dropdown');
-	   var active_takeprofitin = takeprofitin_dropdown.prev('.'+bot_id+'-take-profit-in-hidden').val();
+           var active_takeprofitin = takeprofitin_dropdown.prev('.'+bot_id+'-take-profit-in-hidden').val();
            var counter = 0;
            $.each(response, function (key, value) {
              if (active_market == value) {
 
-	       var base = value.split('/')[0];
+               var base = value.split('/')[0];
                var quote = value.split('/')[1];
 
                takeprofitin_dropdown.empty();

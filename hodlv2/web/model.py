@@ -72,6 +72,10 @@ def checkconfig():
         if not data["ExchangePassword"]:
             del data["ExchangePassword"]
 
+        # Add PushbulletSettings if it does not exist yet
+        if "PushbulletSettings" not in config:
+            config["PushbulletSettings"] = {}
+
         # Loop through form fields
         bot_sync = {}
         bot_markets = []
@@ -81,6 +85,8 @@ def checkconfig():
                 config["ExchangeSettings"][k] = v
             if k.startswith("Pushover"):
                 config["PushoverSettings"][k] = v
+            if k.startswith("Pushbullet"):
+                config["PushbulletSettings"][k] = v
             if k.startswith("Bot"):
                 bot_id = k.split("_")[1]
                 bot_k = k.split("_")[2]
@@ -124,6 +130,7 @@ def checkconfig():
         )
         return "ok"
     except Exception as error:
+        print (error)
         return f"Unable to verify and save configuration: {error}"
 
 
@@ -218,8 +225,17 @@ def get_configuration():
         del data["_id"]
         data["ExchangeSettings"]["ExchangeSecret"] = ""
         data["ExchangeSettings"]["ExchangePassword"] = ""
+
+        # Add default Pushbullet configuration if it does not exist yet
+        if "PushbulletSettings" not in data:
+            data["PushbulletSettings"] = {
+                "PushbulletEnabled":"false",
+                "PushbulletApiKey":"",
+            }
+
         return data
     except Exception as error:
+        print (error)
         return "Unable to retrieve configuration from database."
 
 def get_exchanges():
