@@ -57,7 +57,6 @@ class Backend:
         try:
             indexes = self._db["trades"].index_information()
             if "profit_currency_1_profit_1_status_1" not in indexes:
-                print("hier")
                 self._db["trades"].create_index(
                     [
                         ("profit_currency", pymongo.ASCENDING),
