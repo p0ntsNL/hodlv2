@@ -706,112 +706,114 @@ Side: %s | Price: %s %s | Amount: %s %s | Value: %s %s""",
             # Loop closed orders
             for close_order in closed_orders[1]:
 
-                trade = self.backend.find_one_exists(
-                    "trades", close_order["id"], "profit", False
-                )
-                if trade[0]:
+                if 'id' in close_order:
 
-                    market = trade[1]["market"]
-                    open_order = trade[1]["open"]
-                    profit_in = trade[1]["profit_in"]
-                    profit_currency = trade[1]["profit_currency"]
-                    status = trade[1]["status"]
-                    profit_perc = find_key(trade[1], "profit_perc", "int")
+                    trade = self.backend.find_one_exists(
+                        "trades", close_order["id"], "profit", False
+                    )
+                    if trade[0]:
 
-                    if status == "active" and close_order["status"] in [
-                        "canceled",
-                        "expired",
-                        "rejected",
-                    ]:
+                        market = trade[1]["market"]
+                        open_order = trade[1]["open"]
+                        profit_in = trade[1]["profit_in"]
+                        profit_currency = trade[1]["profit_currency"]
+                        status = trade[1]["status"]
+                        profit_perc = find_key(trade[1], "profit_perc", "int")
 
-                        # Update close order and profit to backend
-                        update = self.backend.update_one(
-                            "trades",
-                            close_order["id"],
-                            {
-                                "close": close_order,
-                                "profit": 0,
-                                "status": close_order["status"],
-                            },
-                            False,
-                        )
-                        if update[0]:
-                            logger.info(
-                                "%s | Trade closed (%s) | Id: %s",
-                                market,
-                                close_order["status"],
+                        if status == "active" and close_order["status"] in [
+                            "canceled",
+                            "expired",
+                            "rejected",
+                        ]:
+
+                            # Update close order and profit to backend
+                            update = self.backend.update_one(
+                                "trades",
                                 close_order["id"],
+                                {
+                                    "close": close_order,
+                                    "profit": 0,
+                                    "status": close_order["status"],
+                                },
+                                False,
                             )
-                            self.notify.send(
-                                f"""<b>Trade closed ({close_order['status']})</b>
-                                Id: {close_order['id']}
-                                Market: {market}""",
+                            if update[0]:
+                                logger.info(
+                                    "%s | Trade closed (%s) | Id: %s",
+                                    market,
+                                    close_order["status"],
+                                    close_order["id"],
+                                )
+                                self.notify.send(
+                                    f"""<b>Trade closed ({close_order['status']})</b>
+                                    Id: {close_order['id']}
+                                    Market: {market}""",
+                                )
+                            else:
+                                error_msg = "Unable to update closed order details to backend."
+                                logger.critical(error_msg)
+                                self.notify.send(error_msg)
+
+                        elif status == "active" and close_order["status"] == "closed":
+
+                            profit = set_profit(profit_in, open_order, close_order)
+                            fees = set_fees(open_order["fee"], close_order["fee"])
+
+                            # Update close order and profit to backend
+                            update = self.backend.update_one(
+                                "trades",
+                                close_order["id"],
+                                {
+                                    "close": close_order,
+                                    "profit": profit,
+                                    "fees": fees,
+                                    "status": "finished",
+                                },
+                                False,
                             )
-                        else:
-                            error_msg = "Unable to update closed order details to backend."
-                            logger.critical(error_msg)
-                            self.notify.send(error_msg)
+                            if update[0]:
 
-                    elif status == "active" and close_order["status"] == "closed":
-
-                        profit = set_profit(profit_in, open_order, close_order)
-                        fees = set_fees(open_order["fee"], close_order["fee"])
-
-                        # Update close order and profit to backend
-                        update = self.backend.update_one(
-                            "trades",
-                            close_order["id"],
-                            {
-                                "close": close_order,
-                                "profit": profit,
-                                "fees": fees,
-                                "status": "finished",
-                            },
-                            False,
-                        )
-                        if update[0]:
-
-                            logger.info(
-                                """%s | Trade closed
-Id: %s | Profit: %s %s (%s%%) | Open fee: %s %s | Close fee: %s %s
+                                logger.info(
+                                    """%s | Trade closed
+Id: %s | Profit:     %s %s (%s%%) | Open fee: %s %s | Close fee: %s %s
 
 Statistics
-Active trades: %s | Finished trades: %s
-Total profit (Ex. fees): %s
-Total fees spend: %s""",
-                                market,
-                                close_order["id"],
-                                profit,
-                                profit_currency,
-                                profit_perc,
-                                open_order["fee"]["cost"],
-                                open_order["fee"]["currency"],
-                                close_order["fee"]["cost"],
-                                close_order["fee"]["currency"],
-                                self.get_count("trades", {"status": "active"}),
-                                self.get_count("trades", {"status": "finished"}),
-                                self.stringify_profit_aggregates(),
-                                self.stringify_total_fees(),
-                            )
-                            self.notify.send(
-                                f"""<b>Trade closed</b>
-                                Id: {close_order['id']}
-                                Market: {market}
-                                Profit: {profit:.8f} {profit_currency} ({profit_perc:.2f}%)
-                                Open fee: {open_order["fee"]["cost"]} {open_order["fee"]["currency"]}
-                                Close fee: {close_order["fee"]["cost"]} {close_order["fee"]["currency"]}
+Active trades: %    s | Finished trades: %s
+Total profit (Ex    . fees): %s
+Total fees spend    : %s""",
+                                    market,
+                                    close_order["id"],
+                                    profit,
+                                    profit_currency,
+                                    profit_perc,
+                                    open_order["fee"]["cost"],
+                                    open_order["fee"]["currency"],
+                                    close_order["fee"]["cost"],
+                                    close_order["fee"]["currency"],
+                                    self.get_count("trades", {"status": "active"}),
+                                    self.get_count("trades", {"status": "finished"}),
+                                    self.stringify_profit_aggregates(),
+                                    self.stringify_total_fees(),
+                                )
+                                self.notify.send(
+                                    f"""<b>Trade closed</b>
+                                    Id: {close_order['id']}
+                                    Market: {market}
+                                    Profit: {profit:.8f} {profit_currency} ({profit_perc:.2f}%)
+                                    Open fee: {open_order["fee"]["cost"]} {open_order["fee"]["currency"]}
+                                    Close fee: {close_order["fee"]["cost"]} {close_order["fee"]["currency"]}
 
-                                <b>Statistics</b>
-                                Active trades: {self.get_count("trades", {"status": "active"})}
-                                Finished trades: {self.get_count("trades", {"status": "finished"})}
+                                    <b>Statistics</b>
+                                    Active trades: {self.get_count("trades", {"status": "active"})}
+                                    Finished trades: {self.get_count("trades", {"status": "finished"})}
 
-                                <b>Total profit (Ex. fees)</b>
-                                {self.stringify_profit_aggregates()}
+                                    <b>Total profit (Ex. fees)</b>
+                                    {self.stringify_profit_aggregates()}
 
-                                <b>Total fees spend</b>
-                                {self.stringify_total_fees()}""",
-                            )
-                        else:
-                            error_msg = "Unable to update trade details to backend."
-                            logger.critical(error_msg)
-                            self.notify.send(error_msg)
+                                    <b>Total fees spend</b>
+                                    {self.stringify_total_fees()}""",
+                                )
+                            else:
+                                error_msg = "Unable to update trade details to backend."
+                                logger.critical(error_msg)
+                                self.notify.send(error_msg)
