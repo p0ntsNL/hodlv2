@@ -540,7 +540,7 @@ class Bot:
         # Calculate close price
         close_price = calculate_close_price(
             open_order_details[1]["average"],
-            self.settings["perc_open"],
+            self.settings["perc_close"],
             self.settings["open_side"],
         )
 
@@ -590,7 +590,7 @@ class Bot:
             "open": open_order_details[1],
             "close": limit_close_order[1],
             "profit_in": self.settings["profit_in"],
-            "profit_perc": self.settings["perc_open"],
+            "profit_perc": self.settings["perc_close"],
             "base": self.settings["base"],
             "quote": self.settings["quote"],
             "profit_currency": self.settings["quote"]
