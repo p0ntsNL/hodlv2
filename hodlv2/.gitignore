@@ -1,4 +1,6 @@
 __pycache__/
+__pycache__/__pycache/
+*.pyc
 config/
 *.log*
 *.py[cod]

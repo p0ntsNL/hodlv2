@@ -17,7 +17,11 @@
                     <div class="card-body">
                       <div class="mb-2">
                           <label for="Exchange" class="form-label">Exchange</label>
-		          <input required type="text" class="form-control" name="Exchange" value="{{configuration.ExchangeSettings.Exchange}}">
+                          <select class="form-control select2" id="exchange" name="Exchange" data-toggle="select2">
+		          {% for exchange in exchanges %}
+			    <option {% if configuration.ExchangeSettings.Exchange == exchange %} selected="selected" {% endif %}>{{ exchange }}</option>
+			  {% endfor %}
+                          </select>
                       </div>
                       <div class="mb-2">
                           <label for="ExchangeKey" class="form-label">API key</label>
@@ -54,7 +58,25 @@
                           <input type="text" class="form-control" name="PushoverAppToken" value="{{configuration.PushoverSettings.PushoverAppToken}}">
                       </div>
                     </div>
-                </div>
+                  </div>
+                  <div class="card shadow mb-3">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Pushbullet settings</h6>
+                    </div>
+                    <div class="card-body">
+                      <div class="mb-2">
+                          <label for="PushbulletEnabled" class="form-label">Enabled</label>
+                          <select class="form-control" name="PushbulletEnabled">
+                            <option {% if configuration.PushbulletSettings.PushbulletEnabled == 'true' %} selected="selected" {% endif %}>true</option>
+                            <option {% if configuration.PushbulletSettings.PushbulletEnabled == 'false' %} selected="selected" {% endif %}>false</option>
+                          </select>
+                      </div>
+                      <div class="mb-2">
+                          <label for="PushbulletApiKey" class="form-label">API key</label>
+                          <input type="text" class="form-control" name="PushbulletApiKey" value="{{configuration.PushbulletSettings.PushbulletApiKey}}">
+                      </div>
+                    </div>
+                  </div>
             </div>
             <div class="col-lg-8">
                   <div class="card shadow mb-3">
@@ -65,7 +87,64 @@
 		      <div class="bot-container">
 			  {% for market,data in configuration["BotSettings"].items() %}
 			    {% set bot_id = range(10000000) | random %}
-			    <div class="row"><div class="col-12"><span class="font-weight-bold">Bot #{{ bot_id }}</span></div><div class="mb-2 col-md-6"><label for="BotMarket" class="form-label">Market</label><input required type="text" class="form-control" pattern="^\S+/\S+$" name="Bot_{{ bot_id }}_Market" title="Example: BTC/USD" value="{{ market }}"></div><div class="mb-2 col-md-6"><label for="BotSide" class="form-label">Side</label><select class="form-control" name="Bot_{{ bot_id }}_Side"><option {% if data['Side'] == "buy" %} selected="selected" {% endif %}>buy</option><option {% if data['Side'] == "sell" %} selected="selected" {% endif %}>sell</option></select></div><div class="mb-2 col-md-6"><label for="BotTradeValue" class="form-label">Trade value</label><input required type="number" step="0.00001" min="0.00001" class="form-control" name="Bot_{{ bot_id }}_TradeValue_" value="{{ data['TradeValue'] }}"></div><div class="mb-2 col-md-6"><label for="BotMaxTrades" class="form-label">Max trades</label><input required type="number" step="1" min="1" class="form-control" name="Bot_{{ bot_id }}_MaxTrades_" value="{{ data['MaxTrades'] }}"></div><div class="mb-2 col-md-6"><label for="BotPercOpen" class="form-label">Perc open</label><div class="input-group"><input required type="number" step="0.01" min="0.5" max="99" class="form-control" name="Bot_{{ bot_id }}_PercOpen" value="{{ data['PercOpen'] }}"><div class="input-group-text">%</div></div></div><div class="mb-2 col-md-6"><label for="BotPercClose" class="form-label">Perc close</label><div class="input-group"><input required type="number" step="0.01" min="0.5" max="99" class="form-control" name="Bot_{{ bot_id }}_PercClose" value="{{ data['PercClose'] }}"><div class="input-group-text">%</div></div></div><div class="mb-2 col-md-6"><label for="BotTakeProfitIn" class="form-label">Take profit in</label><input required type="text" class="form-control take-profit-in" name="Bot_{{ bot_id }}_TakeProfitIn" value="{{ data['TakeProfitIn'] }}"></div><div class="mb-2 col-md-6"><label for="BotResetNextTradePrice" class="form-label">Reset next trade price after</label><div class="input-group"><input required type="number" step="1" min="0" class="form-control" name="Bot_{{ bot_id }}_ResetNextTradePrice" value="{{ data['ResetNextTradePrice'] }}"><div class="input-group-text">day(s)</div></div></div><div class="col-12"><a type="button" href="#" class="btn btn-primary delete">Delete bot</a><br><br><hr><br></div></div>
+				<div class="row">
+					<div class="col-12">
+						<span class="font-weight-bold">Bot #{{ bot_id }}</span>
+					</div>
+					<div class="mb-2 col-md-6">
+						<label for="BotMarket" class="form-label">Market</label>
+						<input type="hidden" class="form-control market-hidden" name="Bot_{{ bot_id }}_Market_hidden" value="{{ market }}">
+                                                <select required class="form-control select2 market-dropdown" name="Bot_{{ bot_id }}_Market">
+                                                </select>
+			  			<div class="exchange_response text-info"></div>
+					</div>
+					<div class="mb-2 col-md-6">
+						<label for="BotSide" class="form-label">Side</label>
+						<select class="form-control" name="Bot_{{ bot_id }}_Side">
+							<option {% if data['Side'] == "buy" %} selected="selected" {% endif %}>buy</option>
+							<option {% if data['Side'] == "sell" %} selected="selected" {% endif %}>sell</option>
+						</select>
+					</div>
+					<div class="mb-2 col-md-6">
+						<label for="BotTradeValue" class="form-label">Trade value</label>
+						<input required type="number" step="0.00001" min="0.00001" class="form-control" name="Bot_{{ bot_id }}_TradeValue_" value="{{ data['TradeValue'] }}">
+					</div>
+					<div class="mb-2 col-md-6">
+						<label for="BotMaxTrades" class="form-label">Max trades</label>
+						<input required type="number" step="1" min="1" class="form-control" name="Bot_{{ bot_id }}_MaxTrades_" value="{{ data['MaxTrades'] }}">
+					</div>
+					<div class="mb-2 col-md-6">
+						<label for="BotPercOpen" class="form-label">Perc open</label>
+						<div class="input-group">
+							<input required type="number" step="0.01" min="0.5" max="99" class="form-control" name="Bot_{{ bot_id }}_PercOpen" value="{{ data['PercOpen'] }}">
+							<div class="input-group-text">%</div>
+						</div>
+					</div>
+					<div class="mb-2 col-md-6">
+						<label for="BotPercClose" class="form-label">Perc close</label>
+						<div class="input-group">
+							<input required type="number" step="0.01" min="0.5" max="99" class="form-control" name="Bot_{{ bot_id }}_PercClose" value="{{ data['PercClose'] }}">
+							<div class="input-group-text">%</div>
+						</div>
+					</div>
+					<div class="mb-2 col-md-6 takeprofitin">
+						<label for="BotTakeProfitIn" class="form-label">Take profit in</label>
+						<input type="hidden" class="form-control take-profit-in {{ bot_id }}-take-profit-in-hidden" name="Bot_{{ bot_id }}_TakeProfitIn_hidden" value="{{ data['TakeProfitIn'] }}">
+                                                <select required class="form-control take-profit-in-dropdown {{ bot_id }}-take-profit-in-dropdown" name="Bot_{{ bot_id }}_TakeProfitIn">
+                                                </select>
+					</div>
+					<div class="mb-2 col-md-6">
+						<label for="BotResetNextTradePrice" class="form-label">Reset next trade price after</label>
+						<div class="input-group">
+							<input required type="number" step="1" min="0" class="form-control" name="Bot_{{ bot_id }}_ResetNextTradePrice" value="{{ data['ResetNextTradePrice'] }}">
+							<div class="input-group-text">day(s)</div>
+						</div>
+					</div>
+					<div class="col-12">
+						<a type="button" href="#" class="btn btn-primary delete">Delete bot</a>
+						<br><br><hr><br>
+					</div>
+				</div>
 			  {% endfor %}
 		      </div>
                     </div>
@@ -108,6 +187,7 @@
   <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
   <script src="static/js/hodlv2-admin.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
   <script src="../static/js/configuration.js"></script>

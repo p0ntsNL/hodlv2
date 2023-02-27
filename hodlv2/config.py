@@ -1,6 +1,7 @@
 """
 Default configuration file for the database, webinterface and logging.
-Updating this configuration file is for advanced users only.
+Updating this file is for advanced users only.
+Changing either one requires a restart of the bot and web-interface.
 """
 
 # MongoDB host settings  (default: 127.0.0.1:27017)
