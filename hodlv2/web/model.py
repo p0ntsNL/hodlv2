@@ -151,9 +151,9 @@ def get_active_trades():
         active_trades = db.trades.find({"status": "active"}).sort("open.info.opentm", 1)
         trades = []
         for t in active_trades:
-            get_data = db.markets.find_one({"_id": t["market"]})
-            t["last"] = get_data["last"]
-            t["next_trade_price"] = get_data["next_trade_price"]
+            get_last = db.markets.find_one({"_id": t["market"]})
+            t["last"] = get_last["last"]
+            t["next_trade_price"] = get_last["next_trade_price"]
             trades.append(t)
         return trades, len(trades)
     except Exception as error:
