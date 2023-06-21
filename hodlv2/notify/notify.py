@@ -25,9 +25,6 @@ class Notify:
         # Load config
         self.config = config
 
-        # Force pushover
-        self.notifier = "pushover"
-
     def send_pushover(self, msg):
         """
         Send pushover.
@@ -87,7 +84,7 @@ class Notify:
         """
 
         # Pushover
-        if self.notifier == "pushover":
-            self.send_pushover(msg)
-        elif self.notifier == "pushbullet":
-            self.send_pushbullet(msg)
+        self.send_pushover(msg)
+
+        # Pushbullet
+        self.send_pushbullet(msg)
