@@ -45,7 +45,6 @@ def registerUser():
 
 
 def finduser():
-
     try:
         find = db.users.find()
         if find:
@@ -59,7 +58,6 @@ def finduser():
 
 
 def checkconfig():
-
     try:
         config = db.configuration.find_one({"_id": "configuration"})
         data = request.form.to_dict()
@@ -80,7 +78,6 @@ def checkconfig():
         bot_sync = {}
         bot_markets = []
         for k, v in data.items():
-
             if k.startswith("Exchange"):
                 config["ExchangeSettings"][k] = v
             if k.startswith("Pushover"):
@@ -98,7 +95,6 @@ def checkconfig():
 
         # Create BotSettings
         for k, v in data.items():
-
             if k.startswith("Bot"):
                 bot_id = k.split("_")[1]
                 bot_k = k.split("_")[2]
@@ -130,12 +126,11 @@ def checkconfig():
         )
         return "ok"
     except Exception as error:
-        print (error)
+        print(error)
         return f"Unable to verify and save configuration: {error}"
 
 
 def get_health():
-
     health = {
         "health": False,
         "backend": False,
@@ -152,14 +147,13 @@ def get_health():
 
 
 def get_active_trades():
-
     try:
         active_trades = db.trades.find({"status": "active"}).sort("open.info.opentm", 1)
         trades = []
         for t in active_trades:
-            get_last = db.markets.find_one({"_id": t["market"]})
-            t["last"] = get_last["last"]
-            t["next_trade_price"] = get_last["next_trade_price"]
+            get_data = db.markets.find_one({"_id": t["market"]})
+            t["last"] = get_data["last"]
+            t["next_trade_price"] = get_data["next_trade_price"]
             trades.append(t)
         return trades, len(trades)
     except Exception as error:
@@ -167,7 +161,6 @@ def get_active_trades():
 
 
 def get_finished_trades():
-
     try:
         finished_trades = db.trades.find({"status": "finished"}).sort(
             "close.info.closetm", -1
@@ -181,7 +174,6 @@ def get_finished_trades():
 
 
 def get_profits():
-
     try:
         profit_aggregates = db.trades.aggregate(
             [
@@ -212,7 +204,6 @@ def get_profits():
 
 
 def get_logging():
-
     try:
         return db.logs.find().sort("timestamp", 1)
     except Exception as error:
@@ -220,7 +211,6 @@ def get_logging():
 
 
 def get_configuration():
-
     try:
         data = db.configuration.find_one({"_id": "configuration"})
         del data["_id"]
@@ -230,17 +220,19 @@ def get_configuration():
         # Add default Pushbullet configuration if it does not exist yet
         if "PushbulletSettings" not in data:
             data["PushbulletSettings"] = {
-                "PushbulletEnabled":"false",
-                "PushbulletApiKey":"",
+                "PushbulletEnabled": "false",
+                "PushbulletApiKey": "",
             }
 
         return data
     except Exception as error:
-        print (error)
+        print(error)
         return "Unable to retrieve configuration from database."
+
 
 def get_exchanges():
     return ccxt.exchanges
+
 
 def update_markets():
     exchange_name = request.form["exchange"]
@@ -249,7 +241,7 @@ def update_markets():
     exchange_markets = exchange.load_markets()
 
     markets = []
-    for k,v in exchange_markets.items():
-        if v['spot'] and v['active']:
+    for k, v in exchange_markets.items():
+        if v["spot"] and v["active"]:
             markets.append(k)
     return jsonify(markets)

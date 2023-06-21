@@ -108,7 +108,7 @@
 			      </div>
 			    </td>
 			    <td>{{t['open']['average']}} {{t['market'].split('/')[1]}}<br>{{t['open']['amount']}} {{t['market'].split('/')[0]}}</td>
-          <td>{{t['next_trade_price']}} {{t['market'].split('/')[1]}}<br><span class="text-danger font-weight-bold">-{{'%0.2f' % ((t['close']['next_trade_price'] - t['last'])/t['last'] * 100)}}</span></td>
+          <td>{{t['next_trade_price']}} {{t['market'].split('/')[1]}}<br><span class="text-danger font-weight-bold">-{{'%0.2f' % ((t['next_trade_price'] - t['last'])/t['last'] * 100)}}</span></td>
 			    <td>{{t['close']['price']}} {{t['market'].split('/')[1]}}<br><span class="text-success font-weight-bold">+{{'%0.2f' % ((t['close']['price'] - t['last'])/t['last'] * 100)}}</span></td>
 		          </tr>
                         {%endfor%}
