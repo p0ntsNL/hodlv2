@@ -30,6 +30,7 @@ def configuration():
         return render_template(
             "configuration.html",
             configuration=get_configuration(),
+            exchanges=get_exchanges(),
             username=finduser()[1],
         )
     else:
@@ -93,6 +94,11 @@ def checkUserpassword():
 @app.route("/checkconfig", methods=["POST"])
 def checkConfig():
     return checkconfig()
+
+
+@app.route("/updatemarkets", methods=["POST"])
+def updateMarkets():
+    return update_markets()
 
 
 @app.route("/logout", methods=["GET"])

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# pylint: disable=too-many-instance-attributes,too-many-public-methods,attribute-defined-outside-init
+# pylint: disable=broad-except
 """
 Main bot class
 """
@@ -11,100 +11,84 @@ from hodlv2.backend.backend import Backend
 from hodlv2.exchange.exchange import Exchange
 from hodlv2.notify.notify import Notify
 
-from hodlv2.misc.misc import (  # isort:skip
-    calculate_profit,  # isort:skip
-    calculate_fees,  # isort:skip
+from hodlv2.misc import (  # isort:skip
+    set_profit,  # isort:skip
+    set_fees,  # isort:skip
+    find_key,  # isort:skip
+    calculate_next_trade_price,  # isort:skip
+    calculate_close_price,  # isort:skip
     calculate_trade_value,  # isort:skip
     profit_in_trade_value,  # isort:skip
-    find_key,  # isort:skip
 )  # isort:skip
 
 logger = logging.getLogger(__name__)
 
 
-class HODLv2Bot:
+class Bot:
     """
     TO DO
     """
 
-    def __init__(self, config):
+    def __init__(self, config, init=False):
         """
         TO DO
         """
 
-        self.health = True
+        # Variables
+        self.settings = {}
 
-        self.config = config
-        self.ccxt = Exchange(self.config)
-        self.notify = Notify(self.config)
+        # Objects
+        self.exchange = Exchange(config)
+        self.notify = Notify(config)
         self.backend = Backend()
 
-        self.markets_data = self.config["BotSettings"]
-        self.markets = self.markets_data.keys()
+        # Variables
+        self.markets_data = config["BotSettings"]
 
-        self.open_orders = self.ccxt.get_open_orders()
-        self.closed_orders = self.ccxt.get_closed_orders()
+        self.orders = {
+            "open_on_backend": self.backend.find("trades", {"status": "active"}, {"status":1, "market":1})[1],
+            "open_on_exchange": self.exchange.get_open_orders(),
+            "closed": self.exchange.get_closed_orders(),
+        }
 
-        # Set health
-        if not self.backend.healthcheck() or not self.ccxt.healthcheck():
-            self.health = False
-
-    def healthcheck(self):
-        """
-        Return self.health
-        """
-        return self.health
+        if init:
+            self.exchange.get_balances()
+        self.exchange_health = self.exchange.health
 
     def bot_init(self, market):
         """
         TO DO
         """
 
-        self.base = market.split("/")[0]
-        self.quote = market.split("/")[1]
-        self.trade_value = float(self.markets_data[market]["TradeValue"])
-        self.side = self.markets_data[market]["Side"]
-        self.max_trades = int(self.markets_data[market]["MaxTrades"])
-        self.perc_open = float(self.markets_data[market]["PercOpen"])
-        self.perc_close = float(self.markets_data[market]["PercClose"])
-        self.next_trade_price_reset = int(
+        self.settings = {}
+        self.settings["market"] = market
+        self.settings["base"] = market.split("/")[0]
+        self.settings["quote"] = market.split("/")[1]
+        self.settings["trade_value"] = float(self.markets_data[market]["TradeValue"])
+        self.settings["side"] = self.markets_data[market]["Side"]
+        self.settings["max_trades"] = int(self.markets_data[market]["MaxTrades"])
+        self.settings["perc_open"] = float(self.markets_data[market]["PercOpen"])
+        self.settings["perc_close"] = float(self.markets_data[market]["PercClose"])
+        self.settings["next_trade_price_reset"] = int(
             self.markets_data[market]["ResetNextTradePrice"]
         )
-        self.open_side = self.side
-        self.close_side = "sell" if self.side == "buy" else "buy"
-        self.profit_in = (
+        self.settings["open_side"] = self.settings["side"]
+        self.settings["close_side"] = (
+            "sell" if self.settings["side"] == "buy" else "buy"
+        )
+        self.settings["profit_in"] = (
             "base"
-            if self.markets_data[market]["TakeProfitIn"] == self.base
+            if self.markets_data[market]["TakeProfitIn"] == self.settings["base"]
             else "quote"
         )
-
-    def open_closed_ok(self):
-        """
-        TO DO
-        """
-
-        if self.open_orders[0] and self.closed_orders[0]:
-            logger.info(
-                "Successfully retrieved open and closed orders from the exchange."
-            )
-            return True
-
-        logger.error("Unable to retrieve open and closed orders from the exchange.")
-        return False
-
-    def fetch_order(self, market, order_id):
-        """
-        TO DO
-        """
-
-        return self.ccxt.fetch_order(market, order_id)
+        self.settings["open_orders"] = self.backend.find("trades", {"status": "active", "market":market}, {"status":1, "market":1})
 
     def get_balance(self, market, quote):
         """
         TO DO
         """
 
-        balances = self.ccxt.get_balances()
+        balances = self.exchange.get_balances()
         if balances[0]:
             logger.info(
                 "%s | Available %s balance: %s",
@@ -121,28 +105,6 @@ class HODLv2Bot:
         )
         return 0
 
-    def get_ticker_data(self, market):
-        """
-        TO DO
-        """
-
-        return self.ccxt.get_ticker_data(market)
-
-    def create_market_order(self, market, last):
-        """
-        TO DO
-        """
-
-        trade_value = calculate_trade_value(self.trade_value, last)
-        return self.ccxt.create_market_order(market, self.open_side, trade_value)
-
-    def create_limit_order(self, market, trade_value, price):
-        """
-        TO DO
-        """
-
-        return self.ccxt.create_limit_order(market, self.close_side, trade_value, price)
-
     def no_open_orders(self, market):
         """
         TO DO
@@ -151,11 +113,9 @@ class HODLv2Bot:
         open_orders = "n/a"
 
         # If open orders is retrieved from exchange
-        if self.open_orders[0]:
-            open_orders = 0
-            for order in self.open_orders[1]:
-                if order["symbol"] == market:
-                    open_orders += 1
+        if self.settings["open_orders"][0]:
+
+            open_orders = len(list(self.settings["open_orders"][1]))
 
             if open_orders == 0:
                 logger.info("%s | OK: 0 open orders found.", market)
@@ -180,26 +140,23 @@ class HODLv2Bot:
         TO DO
         """
 
-        if self.open_orders[0]:
+        if self.settings["open_orders"][0]:
 
-            counter = 0
-            for order in self.open_orders[1]:
-                if order["symbol"] == market:
-                    counter += 1
+            open_trades = len(list(self.settings["open_orders"][1]))
 
-            if int(counter) < int(self.max_trades):
+            if int(open_trades) < int(self.settings["max_trades"]):
                 logger.info(
                     "%s | OK: The maximum amount of trades (%s) is not reached yet (%s).",
                     market,
-                    self.max_trades,
-                    counter,
+                    self.settings["max_trades"],
+                    open_trades,
                 )
                 return True
 
         logger.info(
             "%s | NOT OK: The max amount of trades (%s) is reached.",
             market,
-            self.max_trades,
+            self.settings["max_trades"],
         )
         return False
 
@@ -209,7 +166,7 @@ class HODLv2Bot:
         """
 
         trade_value = calculate_trade_value(
-            self.trade_value, market_data["ticker"]["last"]
+            self.settings["trade_value"], market_data["ticker"]["last"]
         )
 
         # If min_trade_value exists
@@ -248,8 +205,8 @@ class HODLv2Bot:
         TO DO
         """
 
-        market_data = self.ccxt.get_market_data(market)
-        ticker_data = self.get_ticker_data(market)
+        market_data = self.exchange.get_market_data(market)
+        ticker_data = self.exchange.get_ticker_data(market)
 
         if market_data[0] and ticker_data[0]:
 
@@ -270,34 +227,6 @@ class HODLv2Bot:
             market,
         )
         return False, {}
-
-    def calculate_close_price(self, open_price):
-        """
-        TO DO
-        """
-
-        data = {
-            "buy": float(open_price)
-            + ((float(open_price) / 100) * float(self.perc_close)),
-            "sell": float(open_price)
-            - ((float(open_price) / 100) * float(self.perc_close)),
-        }
-
-        return data[self.open_side]
-
-    def calculate_next_trade_price(self, open_price):
-        """
-        TO DO
-        """
-
-        data = {
-            "buy": float(open_price)
-            - ((float(open_price) / 100) * float(self.perc_open)),
-            "sell": float(open_price)
-            + ((float(open_price) / 100) * float(self.perc_open)),
-        }
-
-        return data[self.open_side]
 
     def check_balance(self, market, quote, required):
         """
@@ -350,7 +279,7 @@ class HODLv2Bot:
                 return [999999999999999, 999999999999999]
 
         # If backend is not accessible.
-        logger.error(
+        logger.warning(
             "%s | Unable to retrieve next_trade_price data from backend.", market
         )
         return [0, 0]
@@ -360,7 +289,7 @@ class HODLv2Bot:
         TO DO
         """
 
-        if self.open_side == "buy":
+        if self.settings["open_side"] == "buy":
             if float(last_price) <= float(next_trade_price):
                 logger.info(
                     "%s | OK: last_price (%s) is lower than next_trade_price (%s).",
@@ -502,7 +431,7 @@ class HODLv2Bot:
         if next_trade_price_updated_at != 0:
 
             reset_at = int(next_trade_price_updated_at) + (
-                int(self.next_trade_price_reset) * 86400
+                int(self.settings["next_trade_price_reset"]) * 86400
             )
 
             if int(time.time()) > int(reset_at):
@@ -544,7 +473,9 @@ class HODLv2Bot:
             ):
 
                 # Check if balance is sufficient
-                check_balance = self.check_balance(market, self.quote, self.trade_value)
+                check_balance = self.check_balance(
+                    market, self.settings["quote"], self.settings["trade_value"]
+                )
 
                 # Check if max trades is reached
                 max_trades = self.check_max_trades(market)
@@ -570,8 +501,13 @@ class HODLv2Bot:
 
         # Create market open order
         # If market order can not be created, do not proceed with the rest
-        market_open_order = self.create_market_order(
-            market, market_data["ticker"]["last"]
+        market_open_order = self.exchange.create_market_order(
+            market,
+            self.settings["open_side"],
+            calculate_trade_value(
+                self.settings["trade_value"],
+                market_data["ticker"]["last"],
+            ),
         )
         if not market_open_order[0]:
             logger.error(
@@ -582,7 +518,9 @@ class HODLv2Bot:
         # Retrieve open order details up to 5 times, otherwise do not proceed
         for i in range(5):
 
-            open_order_details = self.fetch_order(market, market_open_order[1]["id"])
+            open_order_details = self.exchange.fetch_order(
+                market, market_open_order[1]["id"]
+            )
             if open_order_details[0]:
                 logger.info("%s | Open order details retrieved.", market)
                 break
@@ -600,18 +538,22 @@ class HODLv2Bot:
             time.sleep(15)
 
         # Calculate close price
-        close_price = self.calculate_close_price(
+        close_price = calculate_close_price(
             open_order_details[1]["average"],
+            self.settings["perc_close"],
+            self.settings["open_side"],
         )
 
         # Calculate next trade price
-        next_trade_price = self.calculate_next_trade_price(
+        next_trade_price = calculate_next_trade_price(
             open_order_details[1]["average"],
+            self.settings["perc_open"],
+            self.settings["open_side"],
         )
 
         # Calculate trade value
         close_trade_value = profit_in_trade_value(
-            self.profit_in,
+            self.settings["profit_in"],
             open_order_details[1]["filled"],
             open_order_details[1]["cost"],
             close_price,
@@ -620,8 +562,9 @@ class HODLv2Bot:
         # Create limit close order up to 5 times, otherwise do not proceed
         for i in range(5):
 
-            limit_close_order = self.create_limit_order(
+            limit_close_order = self.exchange.create_limit_order(
                 market,
+                self.settings["close_side"],
                 close_trade_value,
                 close_price,
             )
@@ -646,11 +589,13 @@ class HODLv2Bot:
             "market": market,
             "open": open_order_details[1],
             "close": limit_close_order[1],
-            "profit_in": self.profit_in,
-            "profit_perc": self.perc_open,
-            "base": self.base,
-            "quote": self.quote,
-            "profit_currency": self.quote if self.profit_in == "quote" else self.base,
+            "profit_in": self.settings["profit_in"],
+            "profit_perc": self.settings["perc_close"],
+            "base": self.settings["base"],
+            "quote": self.settings["quote"],
+            "profit_currency": self.settings["quote"]
+            if self.settings["profit_in"] == "quote"
+            else self.settings["base"],
             "status": "active",
         }
         insert = self.backend.insert_one("trades", data)
@@ -685,154 +630,190 @@ Closing order
 Side: %s | Price: %s %s | Amount: %s %s | Value: %s %s""",
             market,
             limit_close_order[1]["id"],
-            self.open_side,
+            self.settings["open_side"],
             open_order_details[1]["average"],
-            self.quote,
+            self.settings["quote"],
             open_order_details[1]["filled"],
-            self.base,
+            self.settings["base"],
             open_order_details[1]["cost"],
-            self.quote,
+            self.settings["quote"],
             open_order_details[1]["fee"]["cost"],
             open_order_details[1]["fee"]["currency"],
-            self.close_side,
+            self.settings["close_side"],
             limit_close_order[1]["price"],
-            self.quote,
+            self.settings["quote"],
             close_trade_value,
-            self.base,
+            self.settings["base"],
             close_value,
-            self.quote,
+            self.settings["quote"],
         )
         self.notify.send(
             f"""<b>Trade opened</b>
             Id: {limit_close_order[1]["id"]}
             Market: {market}
-            Side: {self.open_side}
-            Price: {open_order_details[1]['average']} {self.quote}
-            Amount: {open_order_details[1]['filled']} {self.base}
-            Cost: {open_order_details[1]['cost']} {self.quote}
+            Side: {self.settings['open_side']}
+            Price: {open_order_details[1]['average']} {self.settings['quote']}
+            Amount: {open_order_details[1]['filled']} {self.settings['base']}
+            Cost: {open_order_details[1]['cost']} {self.settings['quote']}
             Fee: {open_order_details[1]["fee"]["cost"]} {open_order_details[1]["fee"]["currency"]}
 
             <b>Closing order</b>
-            Side: {self.close_side}
-            Price: {limit_close_order[1]['price']} {self.quote}
-            Amount: {close_trade_value} {self.base}
-            Value: {close_value} {self.quote}""",
+            Side: {self.settings['close_side']}
+            Price: {limit_close_order[1]['price']} {self.settings['quote']}
+            Amount: {close_trade_value} {self.settings['base']}
+            Value: {close_value} {self.settings['quote']}""",
         )
+
+    def single_check_order(self, order_id):
+
+        fetch_order = self.exchange.fetch_order(
+            self.settings["market"],
+            order_id,
+        )
+        if fetch_order[0]:
+            return fetch_order[1]
+
+        return {}
 
     def check_closed_orders(self):
         """
         TO DO
         """
 
-        closed_orders = self.closed_orders
-        for close_order in closed_orders[1]:
+        closed_orders = self.orders["closed"]
+        open_on_backend = list(self.orders["open_on_backend"])
+        open_on_exchange = self.orders["open_on_exchange"]
+        if closed_orders[1]:
 
-            trade = self.backend.find_one_exists(
-                "trades", close_order["id"], "profit", False
-            )
-            if trade[0]:
+            # Extend closed orders with active orders if needed
+            if open_on_exchange[0] and len(open_on_backend) > 0:
+                open_on_backend_count = len(open_on_backend)
+                open_on_exchange_count = len(open_on_exchange[1])
+                if open_on_backend_count > open_on_exchange_count:
 
-                market = trade[1]["market"]
-                open_order = trade[1]["open"]
-                profit_in = trade[1]["profit_in"]
-                profit_currency = trade[1]["profit_currency"]
-                status = trade[1]["status"]
-                profit_perc = find_key(trade[1], "profit_perc", "int")
-
-                if status == "active" and close_order["status"] in [
-                    "canceled",
-                    "expired",
-                    "rejected",
-                ]:
-
-                    # Update close order and profit to backend
-                    update = self.backend.update_one(
-                        "trades",
-                        close_order["id"],
-                        {
-                            "close": close_order,
-                            "profit": 0,
-                            "status": close_order["status"],
-                        },
-                        False,
+                    logger.warning(
+                        f'Found {open_on_backend_count-open_on_exchange_count} open trades that should have been closed already.'
                     )
-                    if update[0]:
-                        logger.info(
-                            "%s | Trade closed (%s) | Id: %s",
-                            market,
-                            close_order["status"],
-                            close_order["id"],
-                        )
-                        self.notify.send(
-                            f"""<b>Trade closed ({close_order['status']})</b>
-                            Id: {close_order['id']}
-                            Market: {market}""",
-                        )
-                    else:
-                        error_msg = "Unable to update closed order details to backend."
-                        logger.critical(error_msg)
-                        self.notify.send(error_msg)
+                    logger.warning('Additionally checking all ({open_on_backend_count}) active orders on the exchange separately.')
+                    logger.warning('This will take around ({open_on_backend_count}) seconds.')
 
-                elif status == "active" and close_order["status"] == "closed":
+                    extra_orders = []
+                    for order in open_on_backend:
+                        extra_orders.append(self.single_check_order(order["_id"]))
+                        time.sleep(1)
+                    closed_orders[1].extend(extra_orders)
 
-                    profit = calculate_profit(profit_in, open_order, close_order)
-                    fees = calculate_fees(open_order["fee"], close_order["fee"])
+            # Loop closed orders
+            for close_order in closed_orders[1]:
 
-                    # Update close order and profit to backend
-                    update = self.backend.update_one(
-                        "trades",
-                        close_order["id"],
-                        {
-                            "close": close_order,
-                            "profit": profit,
-                            "fees": fees,
-                            "status": "finished",
-                        },
-                        False,
+                if 'id' in close_order:
+
+                    trade = self.backend.find_one_exists(
+                        "trades", close_order["id"], "profit", False
                     )
-                    if update[0]:
+                    if trade[0]:
 
-                        logger.info(
-                            """%s | Trade closed
-Id: %s | Profit: %s %s (%s%%) | Open fee: %s %s | Close fee: %s %s
+                        market = trade[1]["market"]
+                        open_order = trade[1]["open"]
+                        profit_in = trade[1]["profit_in"]
+                        profit_currency = trade[1]["profit_currency"]
+                        status = trade[1]["status"]
+                        profit_perc = find_key(trade[1], "profit_perc", "int")
+
+                        if status == "active" and close_order["status"] in [
+                            "canceled",
+                            "expired",
+                            "rejected",
+                        ]:
+
+                            # Update close order and profit to backend
+                            update = self.backend.update_one(
+                                "trades",
+                                close_order["id"],
+                                {
+                                    "close": close_order,
+                                    "profit": 0,
+                                    "status": close_order["status"],
+                                },
+                                False,
+                            )
+                            if update[0]:
+                                logger.info(
+                                    "%s | Trade closed (%s) | Id: %s",
+                                    market,
+                                    close_order["status"],
+                                    close_order["id"],
+                                )
+                                self.notify.send(
+                                    f"""<b>Trade closed ({close_order['status']})</b>
+                                    Id: {close_order['id']}
+                                    Market: {market}""",
+                                )
+                            else:
+                                error_msg = "Unable to update closed order details to backend."
+                                logger.critical(error_msg)
+                                self.notify.send(error_msg)
+
+                        elif status == "active" and close_order["status"] == "closed":
+
+                            profit = set_profit(profit_in, open_order, close_order)
+                            fees = set_fees(open_order["fee"], close_order["fee"])
+
+                            # Update close order and profit to backend
+                            update = self.backend.update_one(
+                                "trades",
+                                close_order["id"],
+                                {
+                                    "close": close_order,
+                                    "profit": profit,
+                                    "fees": fees,
+                                    "status": "finished",
+                                },
+                                False,
+                            )
+                            if update[0]:
+
+                                logger.info(
+                                    """%s | Trade closed
+Id: %s | Profit:     %s %s (%s%%) | Open fee: %s %s | Close fee: %s %s
 
 Statistics
-Active trades: %s | Finished trades: %s
-Total profit (Ex. fees): %s
-Total fees spend: %s""",
-                            market,
-                            close_order["id"],
-                            profit,
-                            profit_currency,
-                            profit_perc,
-                            open_order["fee"]["cost"],
-                            open_order["fee"]["currency"],
-                            close_order["fee"]["cost"],
-                            close_order["fee"]["currency"],
-                            self.get_count("trades", {"status": "active"}),
-                            self.get_count("trades", {"status": "finished"}),
-                            self.stringify_profit_aggregates(),
-                            self.stringify_total_fees(),
-                        )
-                        self.notify.send(
-                            f"""<b>Trade closed</b>
-                            Id: {close_order['id']}
-                            Market: {market}
-                            Profit: {profit:.8f} {profit_currency} ({profit_perc:.2f}%)
-                            Open fee: {open_order["fee"]["cost"]} {open_order["fee"]["currency"]}
-                            Close fee: {close_order["fee"]["cost"]} {close_order["fee"]["currency"]}
+Active trades: %    s | Finished trades: %s
+Total profit (Ex    . fees): %s
+Total fees spend    : %s""",
+                                    market,
+                                    close_order["id"],
+                                    profit,
+                                    profit_currency,
+                                    profit_perc,
+                                    open_order["fee"]["cost"],
+                                    open_order["fee"]["currency"],
+                                    close_order["fee"]["cost"],
+                                    close_order["fee"]["currency"],
+                                    self.get_count("trades", {"status": "active"}),
+                                    self.get_count("trades", {"status": "finished"}),
+                                    self.stringify_profit_aggregates(),
+                                    self.stringify_total_fees(),
+                                )
+                                self.notify.send(
+                                    f"""<b>Trade closed</b>
+                                    Id: {close_order['id']}
+                                    Market: {market}
+                                    Profit: {profit:.8f} {profit_currency} ({profit_perc:.2f}%)
+                                    Open fee: {open_order["fee"]["cost"]} {open_order["fee"]["currency"]}
+                                    Close fee: {close_order["fee"]["cost"]} {close_order["fee"]["currency"]}
 
-                            <b>Statistics</b>
-                            Active trades: {self.get_count("trades", {"status": "active"})}
-                            Finished trades: {self.get_count("trades", {"status": "finished"})}
+                                    <b>Statistics</b>
+                                    Active trades: {self.get_count("trades", {"status": "active"})}
+                                    Finished trades: {self.get_count("trades", {"status": "finished"})}
 
-                            <b>Total profit (Ex. fees)</b>
-                            {self.stringify_profit_aggregates()}
+                                    <b>Total profit (Ex. fees)</b>
+                                    {self.stringify_profit_aggregates()}
 
-                            <b>Total fees spend</b>
-                            {self.stringify_total_fees()}""",
-                        )
-                    else:
-                        error_msg = "Unable to update trade details to backend."
-                        logger.critical(error_msg)
-                        self.notify.send(error_msg)
+                                    <b>Total fees spend</b>
+                                    {self.stringify_total_fees()}""",
+                                )
+                            else:
+                                error_msg = "Unable to update trade details to backend."
+                                logger.critical(error_msg)
+                                self.notify.send(error_msg)

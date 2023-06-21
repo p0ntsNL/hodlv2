@@ -8,7 +8,7 @@ Label [issues](https://github.com/p0ntsNL/hodlv2/issues) are a good initial cont
 
 Few pointers for contributions:
 
-- Create your PR against the `develop` branch, not `main`.
+- Create your PR against the `main`.
 - New features must be checked with black, isort and pylint (PEP8 compliant), a workflow runs automatically on every PR.
 - PR's can be declared as `[WIP]` - which signify Work in Progress Pull Requests (which are not finished).
 

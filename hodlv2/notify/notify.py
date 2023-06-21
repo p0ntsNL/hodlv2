@@ -1,6 +1,8 @@
 # pylint: disable=broad-except
 """
-TO DO
+Notify class.
+The notify class sends trade update notifications.
+Currently defaults to Pushover which is the only on available.
 """
 
 import logging
@@ -12,12 +14,12 @@ logger = logging.getLogger(__name__)
 
 class Notify:
     """
-    TO DO
+    Notify class
     """
 
     def __init__(self, config):
         """
-        TO DO
+        Init all variables and objects the class needs to work
         """
 
         # Load config
@@ -28,7 +30,8 @@ class Notify:
 
     def send_pushover(self, msg):
         """
-        TO DO
+        Send pushover.
+        :param msg: The message to send.
         """
 
         # Variables
@@ -40,7 +43,7 @@ class Notify:
         if str(enabled) != "true":
             return
 
-        # Send pushover
+        # Send
         try:
             requests.post(
                 "https://api.pushover.net/1/messages.json",
@@ -50,11 +53,41 @@ class Notify:
         except Exception as error:
             logger.debug("Unable to send pushover: %s", error)
 
+    def send_pushbullet(self, msg):
+        """
+        Send pushbullet.
+        :param msg: The message to send.
+        """
+
+        # Variables
+        enabled = self.config["PushbulletSettings"]["PushbulletEnabled"]
+        key = self.config["PushbulletSettings"]["PushbulletApiKey"]
+
+        # Only send when enabled
+        if str(enabled) != "true":
+            return
+
+        # Send
+        try:
+            url = "https://api.pushbullet.com/v2/pushes"
+            headers = {"content-type": "application/json", "Authorization": 'Bearer '+key}
+            data = {"type": "note", "title": "HODLv2", "body": msg}
+            requests.post(url,
+                headers=headers,
+                data=json.dumps(data),
+                timeout=10,
+            )
+        except Exception as error:
+            logger.debug("Unable to send pushbullet: %s", error)
+
     def send(self, msg):
         """
-        TO DO
+        Catch all that distributes requests to specific notification types.
+        :param msg: The message to send.
         """
 
         # Pushover
         if self.notifier == "pushover":
             self.send_pushover(msg)
+        elif self.notifier == "pushbullet":
+            self.send_pushbullet(msg)

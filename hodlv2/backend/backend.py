@@ -1,6 +1,7 @@
 # pylint: disable=broad-except
 """
-Main backend class.
+Backend class.
+The backend class connects to the configured database.
 Currently defaults to MongoDB which is the only backend available.
 """
 
@@ -18,11 +19,12 @@ class Backend:
     Backend class
     """
 
-    def __init__(self):
+    def __init__(self, verify_indexes=False):
         """
         Init all variables and objects the class needs to work
         """
 
+        # Variables
         self.health = True
 
         # MongoDB
@@ -34,11 +36,27 @@ class Backend:
                 self.port,
             )
             self._db = self.client["hodlv2"]
+            stats = self._db.command("dbstats")
+            if stats["ok"] != 1:
+                raise SystemError("MongoDB hodlv2 database status failed.")
+        except Exception as error:
+            msg = f"Unable to connect to MongoDB: {error}"
+            logger.critical(msg)
+            self.health = False
+        else:
 
-            # Indexes
+            # Verify indexes
+            if verify_indexes:
+                self.verify_mongodb_indexes()
+
+    def verify_mongodb_indexes(self):
+        """
+        Make sure MongoDB indexes exist.
+        """
+
+        try:
             indexes = self._db["trades"].index_information()
             if "profit_currency_1_profit_1_status_1" not in indexes:
-                print("hier")
                 self._db["trades"].create_index(
                     [
                         ("profit_currency", pymongo.ASCENDING),
@@ -67,15 +85,9 @@ class Backend:
                     ]
                 )
         except Exception as error:
-            msg = f"Unable to connect to MongoDB: {error}"
+            msg = f"Unable to verify MongoDB indexes: {error}"
             logger.critical(msg)
             self.health = False
-
-    def healthcheck(self):
-        """
-        Return self.health
-        """
-        return self.health
 
     def find(self, collection, first, second):
         """
@@ -150,6 +162,9 @@ class Backend:
 
             if modified_count == 1 or not isinstance(upserted_id, type(None)):
                 return True, {}
+
+            logger.debug("update_one: Unable to update %s in %s. (already exists)", _id, collection)
+            return False, {}
         except Exception as error:
             logger.debug("update_one error: %s", error)
 

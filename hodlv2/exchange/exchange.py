@@ -1,6 +1,7 @@
 # pylint: disable=broad-except
 """
-TO DO
+Exchange class.
+The exchange class connects to the configured exchange through CCXT.
 """
 
 import logging
@@ -14,18 +15,19 @@ logger = logging.getLogger(__name__)
 
 class Exchange:
     """
-    TO DO
+    Exchange class
     """
 
     def __init__(self, config):
         """
-        TO DO
+        Init all variables and objects the class needs to work
         """
 
+        # Variables
         self.health = True
-
-        # Load
         self.config = config
+
+        # Objects
         self.notify = Notify(self.config)
 
         try:
@@ -52,7 +54,8 @@ class Exchange:
 
     def get_market_data(self, market):
         """
-        TO DO
+        Retrieves market data from the exchange.
+        :param market: name of the market to query for
         """
 
         try:
@@ -66,7 +69,7 @@ class Exchange:
 
     def get_balances(self):
         """
-        TO DO
+        Retrieves all balance data from the exchange.
         """
 
         try:
@@ -76,11 +79,13 @@ class Exchange:
             logger.debug("get_balances error: %s", error)
 
         logger.error("Unable to retrieve balance data from exchange.")
+        self.health = False
         return [False, {}]
 
     def get_ticker_data(self, market):
         """
-        TO DO
+        Retrieves ticker data from the exchange.
+        :param market: name of the market to query for
         """
 
         try:
@@ -94,7 +99,7 @@ class Exchange:
 
     def get_open_orders(self):
         """
-        TO DO
+        Retrieves open orders from the exchange.
         """
 
         try:
@@ -109,7 +114,7 @@ class Exchange:
 
     def get_closed_orders(self):
         """
-        TO DO
+        Retrieves closed orders from the exchange.
         """
 
         try:
@@ -124,7 +129,9 @@ class Exchange:
 
     def fetch_order(self, market, orderid):
         """
-        TO DO
+        Retrieves order data from a specific order.
+        :param market: name of the market to query for
+        :param orderid: the orderid to query for
         """
 
         try:
@@ -138,7 +145,11 @@ class Exchange:
 
     def create_limit_order(self, market, side, trade_value, price):
         """
-        TO DO
+        Initiate a limit order on the exchange.
+        :param market: name of the market
+        :param side: buy or sell
+        :param trade_value: trade value of the order
+        :param price: price of the order
         """
 
         try:
@@ -156,7 +167,10 @@ class Exchange:
 
     def create_market_order(self, market, side, trade_value):
         """
-        TO DO
+        Initiate a market order on the exchange.
+        :param market: name of the market
+        :param side: buy or sell
+        :param trade_value: trade value of the order
         """
 
         try:
