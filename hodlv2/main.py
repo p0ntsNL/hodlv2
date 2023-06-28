@@ -36,11 +36,10 @@ logger.addHandler(
 
 # check min. python version
 if sys.version_info < (3, 8):
-    ERROR_MSG = "Bot stopped! HODLv2 required Python version >= 3.8"
+    ERROR_MSG = "Bot stopped! HODLv2 requires Python version >= 3.8"
     logger.critical(ERROR_MSG)
     sys.exit(ERROR_MSG)
 
 if __name__ == "__main__":
-
     worker = Worker()
     worker.worker()

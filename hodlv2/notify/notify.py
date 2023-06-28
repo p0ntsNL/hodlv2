@@ -5,6 +5,7 @@ The notify class sends trade update notifications.
 Currently defaults to Pushover which is the only on available.
 """
 
+import json
 import logging
 
 import requests
@@ -67,9 +68,13 @@ class Notify:
         # Send
         try:
             url = "https://api.pushbullet.com/v2/pushes"
-            headers = {"content-type": "application/json", "Authorization": 'Bearer '+key}
+            headers = {
+                "content-type": "application/json",
+                "Authorization": "Bearer " + key,
+            }
             data = {"type": "note", "title": "HODLv2", "body": msg}
-            requests.post(url,
+            requests.post(
+                url,
                 headers=headers,
                 data=json.dumps(data),
                 timeout=10,

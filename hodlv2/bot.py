@@ -46,7 +46,9 @@ class Bot:
         self.markets_data = config["BotSettings"]
 
         self.orders = {
-            "open_on_backend": self.backend.find("trades", {"status": "active"}, {"status":1, "market":1})[1],
+            "open_on_backend": self.backend.find(
+                "trades", {"status": "active"}, {"status": 1, "market": 1}
+            )[1],
             "open_on_exchange": self.exchange.get_open_orders(),
             "closed": self.exchange.get_closed_orders(),
         }
@@ -81,7 +83,9 @@ class Bot:
             if self.markets_data[market]["TakeProfitIn"] == self.settings["base"]
             else "quote"
         )
-        self.settings["open_orders"] = self.backend.find("trades", {"status": "active", "market":market}, {"status":1, "market":1})
+        self.settings["open_orders"] = self.backend.find(
+            "trades", {"status": "active", "market": market}, {"status": 1, "market": 1}
+        )
 
     def get_balance(self, market, quote):
         """
@@ -114,7 +118,6 @@ class Bot:
 
         # If open orders is retrieved from exchange
         if self.settings["open_orders"][0]:
-
             open_orders = len(list(self.settings["open_orders"][1]))
 
             if open_orders == 0:
@@ -141,7 +144,6 @@ class Bot:
         """
 
         if self.settings["open_orders"][0]:
-
             open_trades = len(list(self.settings["open_orders"][1]))
 
             if int(open_trades) < int(self.settings["max_trades"]):
@@ -171,7 +173,6 @@ class Bot:
 
         # If min_trade_value exists
         if not isinstance(market_data["min_trade_value"], type(None)):
-
             # If trade_value is higher than min_trade_value
             if float(trade_value) >= float(market_data["min_trade_value"]):
                 logger.info(
@@ -209,7 +210,6 @@ class Bot:
         ticker_data = self.exchange.get_ticker_data(market)
 
         if market_data[0] and ticker_data[0]:
-
             logger.info("%s | OK: Market data retrieved successfully.", market)
             return True, {
                 "market": market,
@@ -325,12 +325,10 @@ class Bot:
         get_fees = self.backend.find("trades", {"fees": {"$exists": 1}}, {"fees": 1})
 
         if get_fees[0]:
-
             for fee in get_fees[1]:
                 for order_type, fee_data in fee["fees"].items():
                     dummy = order_type
                     for currency, value in fee_data.items():
-
                         if currency not in fees:
                             fees[currency] = 0
 
@@ -377,14 +375,12 @@ class Bot:
 
         if get_profit_aggregates[0] and get_profit_perc_aggregates[0]:
             for aggregate in get_profit_aggregates[1]:
-
                 if aggregate["_id"] not in aggregates:
                     aggregates[aggregate["_id"]] = {}
 
                 aggregates[aggregate["_id"]]["profit"] = aggregate["sum_val"]
 
             for aggregate in get_profit_perc_aggregates[1]:
-
                 if aggregate["_id"] not in aggregates:
                     aggregates[aggregate["_id"]] = {}
 
@@ -429,13 +425,11 @@ class Bot:
         next_trade_price_updated_at = self.get_next_trade_price_data(market)[1]
 
         if next_trade_price_updated_at != 0:
-
             reset_at = int(next_trade_price_updated_at) + (
                 int(self.settings["next_trade_price_reset"]) * 86400
             )
 
             if int(time.time()) > int(reset_at):
-
                 update_next_trade_price = self.backend.update_one(
                     "markets", market, {"next_trade_price": 999999999999}, True
                 )
@@ -456,7 +450,6 @@ class Bot:
         # Retrieve market data
         market_data = self.get_market_data(market)
         if market_data[0]:
-
             # Last price to mongoDB for future reference
             self.backend.update_one(
                 "markets", market, {"last": market_data[1]["ticker"]["last"]}, True
@@ -471,7 +464,6 @@ class Bot:
                 self.get_next_trade_price_data(market)[0],
                 market_data[1]["ticker"]["last"],
             ):
-
                 # Check if balance is sufficient
                 check_balance = self.check_balance(
                     market, self.settings["quote"], self.settings["trade_value"]
@@ -517,7 +509,6 @@ class Bot:
 
         # Retrieve open order details up to 5 times, otherwise do not proceed
         for i in range(5):
-
             open_order_details = self.exchange.fetch_order(
                 market, market_open_order[1]["id"]
             )
@@ -561,7 +552,6 @@ class Bot:
 
         # Create limit close order up to 5 times, otherwise do not proceed
         for i in range(5):
-
             limit_close_order = self.exchange.create_limit_order(
                 market,
                 self.settings["close_side"],
@@ -665,7 +655,6 @@ Side: %s | Price: %s %s | Amount: %s %s | Value: %s %s""",
         )
 
     def single_check_order(self, order_id):
-
         fetch_order = self.exchange.fetch_order(
             self.settings["market"],
             order_id,
@@ -684,18 +673,20 @@ Side: %s | Price: %s %s | Amount: %s %s | Value: %s %s""",
         open_on_backend = list(self.orders["open_on_backend"])
         open_on_exchange = self.orders["open_on_exchange"]
         if closed_orders[1]:
-
             # Extend closed orders with active orders if needed
             if open_on_exchange[0] and len(open_on_backend) > 0:
                 open_on_backend_count = len(open_on_backend)
                 open_on_exchange_count = len(open_on_exchange[1])
                 if open_on_backend_count > open_on_exchange_count:
-
                     logger.warning(
-                        f'Found {open_on_backend_count-open_on_exchange_count} open trades that should have been closed already.'
+                        f"Found {open_on_backend_count-open_on_exchange_count} open trades that should have been closed already."
                     )
-                    logger.warning('Additionally checking all ({open_on_backend_count}) active orders on the exchange separately.')
-                    logger.warning('This will take around ({open_on_backend_count}) seconds.')
+                    logger.warning(
+                        "Additionally checking all ({open_on_backend_count}) active orders on the exchange separately."
+                    )
+                    logger.warning(
+                        "This will take around ({open_on_backend_count}) seconds."
+                    )
 
                     extra_orders = []
                     for order in open_on_backend:
@@ -705,14 +696,11 @@ Side: %s | Price: %s %s | Amount: %s %s | Value: %s %s""",
 
             # Loop closed orders
             for close_order in closed_orders[1]:
-
-                if 'id' in close_order:
-
+                if "id" in close_order:
                     trade = self.backend.find_one_exists(
                         "trades", close_order["id"], "profit", False
                     )
                     if trade[0]:
-
                         market = trade[1]["market"]
                         open_order = trade[1]["open"]
                         profit_in = trade[1]["profit_in"]
@@ -725,7 +713,6 @@ Side: %s | Price: %s %s | Amount: %s %s | Value: %s %s""",
                             "expired",
                             "rejected",
                         ]:
-
                             # Update close order and profit to backend
                             update = self.backend.update_one(
                                 "trades",
@@ -750,12 +737,13 @@ Side: %s | Price: %s %s | Amount: %s %s | Value: %s %s""",
                                     Market: {market}""",
                                 )
                             else:
-                                error_msg = "Unable to update closed order details to backend."
+                                error_msg = (
+                                    "Unable to update closed order details to backend."
+                                )
                                 logger.critical(error_msg)
                                 self.notify.send(error_msg)
 
                         elif status == "active" and close_order["status"] == "closed":
-
                             profit = set_profit(profit_in, open_order, close_order)
                             fees = set_fees(open_order["fee"], close_order["fee"])
 
@@ -772,7 +760,6 @@ Side: %s | Price: %s %s | Amount: %s %s | Value: %s %s""",
                                 False,
                             )
                             if update[0]:
-
                                 logger.info(
                                     """%s | Trade closed
 Id: %s | Profit:     %s %s (%s%%) | Open fee: %s %s | Close fee: %s %s

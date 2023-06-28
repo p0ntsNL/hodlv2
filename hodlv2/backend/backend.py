@@ -44,7 +44,6 @@ class Backend:
             logger.critical(msg)
             self.health = False
         else:
-
             # Verify indexes
             if verify_indexes:
                 self.verify_mongodb_indexes()
@@ -153,7 +152,6 @@ class Backend:
         """
 
         try:
-
             update = self._db[collection].update_one(
                 {"_id": _id}, {"$set": data}, upsert=upsert
             )
@@ -163,7 +161,11 @@ class Backend:
             if modified_count == 1 or not isinstance(upserted_id, type(None)):
                 return True, {}
 
-            logger.debug("update_one: Unable to update %s in %s. (already exists)", _id, collection)
+            logger.debug(
+                "update_one: Unable to update %s in %s. (already exists)",
+                _id,
+                collection,
+            )
             return False, {}
         except Exception as error:
             logger.debug("update_one error: %s", error)
@@ -190,7 +192,6 @@ class Backend:
         return False, {}
 
     def aggregate(self, collection, sort=None, match=None, group=None):
-
         """
         Aggregate data based on search query..
         :param collection: name of the collection to use

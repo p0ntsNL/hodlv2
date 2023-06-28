@@ -98,6 +98,15 @@
                                                 </select>
 			  			<div class="exchange_response text-info"></div>
 					</div>
+        </div>
+        <div class="row">
+					<div class="mb-2 col-md-6">
+						<label for="BotEntry" class="form-label">Entry</label>
+						<select class="form-control" name="Bot_{{ bot_id }}_Entry">
+							<option {% if data['Entry'] == "market" %} selected="selected" {% endif %}>Market order</option>
+							<option {% if data['Entry'] == "limit" %} selected="selected" {% endif %}>Limit order</option>
+						</select>
+					</div>
 					<div class="mb-2 col-md-6">
 						<label for="BotSide" class="form-label">Side</label>
 						<select class="form-control" name="Bot_{{ bot_id }}_Side">

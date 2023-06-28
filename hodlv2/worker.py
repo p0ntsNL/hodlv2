@@ -112,7 +112,6 @@ class Worker:
         iteration = 0
 
         while True:
-
             iteration += 1
 
             logger.info("")
@@ -123,18 +122,14 @@ class Worker:
 
             # If healthy
             if self.health_status["health"]:
-
                 # Loop markets
                 for market in self.markets:
-
-
                     # Load market settings
                     self.bot.bot_init(market)
 
                     # Check if a new trade should be initiated
                     new_trade = self.bot.check_new_trade(market)
                     if new_trade[0]:
-
                         # Initiate new trade
                         self.bot.new_trade(market, new_trade[1])
 

@@ -1,12 +1,9 @@
 # pylint: disable-all
-import os
-import sys
 
 import bcrypt
-import yaml
 import ccxt
-from flask import request, session, jsonify
-from run import app, db
+from flask import jsonify, request, session
+from run import db
 
 
 def getHashed(pwd):

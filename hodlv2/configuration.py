@@ -89,7 +89,6 @@ class Configuration:
 
             # If no configuration is found, use and save the default configuration
             if isinstance(get_config[0], type(None)):
-
                 logger.info("No config found in the backend, using default config.")
 
                 # Send config to backend and remove it afterwards

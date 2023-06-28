@@ -1,5 +1,4 @@
 # pylint: disable-all
-import json
 
 from flask import redirect, render_template, request, session, url_for
 from model import *
