@@ -103,8 +103,8 @@
 					<div class="mb-2 col-md-6">
 						<label for="BotEntryOrderType" class="form-label">Entry order type</label>
 						<select class="form-control" name="Bot_{{ bot_id }}_EntryOrderType">
-							<option {% if data['EntryOrderType'] == "market" %} selected="selected" {% endif %}>Market order</option>
-							<option {% if data['EntryOrderType'] == "limit" %} selected="selected" {% endif %}>Limit order</option>
+							<option {% if data['EntryOrderType'] == "market" %} selected="selected" {% endif %}>market</option>
+							<option {% if data['EntryOrderType'] == "limit" %} selected="selected" {% endif %}>limit</option>
 						</select>
 					</div>
 					<div class="mb-2 col-md-6">
