@@ -101,10 +101,10 @@
         </div>
         <div class="row">
 					<div class="mb-2 col-md-6">
-						<label for="BotEntry" class="form-label">Entry</label>
-						<select class="form-control" name="Bot_{{ bot_id }}_Entry">
-							<option {% if data['Entry'] == "market" %} selected="selected" {% endif %}>Market order</option>
-							<option {% if data['Entry'] == "limit" %} selected="selected" {% endif %}>Limit order</option>
+						<label for="BotEntryOrderType" class="form-label">Entry order type</label>
+						<select class="form-control" name="Bot_{{ bot_id }}_EntryOrderType">
+							<option {% if data['EntryOrderType'] == "market" %} selected="selected" {% endif %}>Market order</option>
+							<option {% if data['EntryOrderType'] == "limit" %} selected="selected" {% endif %}>Limit order</option>
 						</select>
 					</div>
 					<div class="mb-2 col-md-6">
